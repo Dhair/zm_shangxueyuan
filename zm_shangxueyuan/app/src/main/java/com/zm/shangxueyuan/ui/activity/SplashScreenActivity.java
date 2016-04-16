@@ -61,7 +61,7 @@ public class SplashScreenActivity extends AbsActivity {
                 case GO_MAIN:
                     if (getActivity() != null && !getActivity().isFinishing()) {
                         SplashScreenActivity splashScreenActivity = getActivity();
-                        Intent intent = new Intent(splashScreenActivity, PersonalActivity.class);
+                        Intent intent = new Intent(splashScreenActivity, HomeActivity.class);
                         splashScreenActivity.startActivity(intent);
                         splashScreenActivity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                         sendEmptyMessageDelayed(GO_FINISH, 600);

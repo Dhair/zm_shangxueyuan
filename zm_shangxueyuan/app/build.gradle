@@ -67,4 +67,5 @@ dependencies {
     compile 'com.github.orhanobut:logger:1.12'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile project(':AndroidUtils')
+    compile project(':sliding_menu_library')
 }

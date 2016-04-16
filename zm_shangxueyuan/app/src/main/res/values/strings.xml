@@ -56,4 +56,9 @@
 
     <string name="feedback_succ">发送成功</string>
     <string name="feedback_fail">发送失败</string>
+
+    <string name="menu_video">视频</string>
+    <string name="menu_video_en">VIDEO</string>
+    <string name="menu_gallery">图库</string>
+    <string name="menu_gallery_en">PICTURE</string>
 </resources>

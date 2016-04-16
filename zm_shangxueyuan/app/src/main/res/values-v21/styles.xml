@@ -28,7 +28,8 @@
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
     </style>
 
-    <style name="Appd" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.NoActionBar.Translucent">
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
     <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
     <!--<item name="android:statusBarColor">@color/black</item>-->

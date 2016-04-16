@@ -1,7 +1,5 @@
 package com.zm.shangxueyuan.db;
 
-import android.content.Context;
-
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
@@ -19,9 +17,9 @@ import java.util.List;
  */
 public class NavDBUtil {
 
-    public static synchronized List<NavModel> queryNav(Context context) {
+    public static synchronized List<NavModel> queryNav() {
         List<NavModel> navList = new Select().from(NavModel.class)
-                .orderBy(VideoDBConstant.ORDER_ID + " ASC").execute();
+                .orderBy(VideoDBConstant.ORDER_ID + " DESC").execute();
         if (navList == null) {
             navList = new LinkedList<>();
         }
