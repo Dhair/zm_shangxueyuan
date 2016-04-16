@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/small_bg_style" >
+
+    <ImageView
+        android:id="@+id/content_img"
+        style="@style/small_img_style" />
+
+    <TextView
+        android:id="@+id/content_text"
+        style="@style/content_text_style"
+        android:layout_below="@+id/content_img" />
+
+    <ImageView
+        android:id="@+id/topic_img"
+        style="@style/topic_img_style" />
+
+    <ImageView
+        android:id="@+id/audio_mark_img"
+        style="@style/audio_mark_style" />
+
+    <ImageView
+        android:id="@+id/new_video_img"
+        style="@style/new_video_style" />
+
+    <ImageView
+        android:id="@+id/delete_img"
+        style="@style/delete_img_style" />
+
+</RelativeLayout>

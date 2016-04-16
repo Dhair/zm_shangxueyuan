@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#C8541A</color>
+    <color name="colorPrimaryDark">#C8541A</color>
+    <color name="colorAccent">#ED7102</color>
+    <color name="colorPrimary_splash">#ee7300</color>
+
+    <color name="gray">#66000000</color>
+    <color name="gray_3C">#3CCCCCCC</color>
+    <color name="gray_7F">#7F000000</color>
+    <color name="gray_CC">#CCCCCC</color>
+    <color name="red">#FF0000</color>
+    <color name="gray_D7">#D7D7D7</color>
+    <color name="black_20">#7D000000</color>
+    <color name="black_50">#80000000</color>
+    <color name="gray_66">#666666</color>
+
+    <color name="white_00_alpha">#00ffffff</color>
+    <color name="white_10_alpha">#1Affffff</color>
+    <color name="white_20_alpha">#33ffffff</color>
+    <color name="white_25_alpha">#40ffffff</color>
+    <color name="white_30_alpha">#4Dffffff</color>
+    <color name="white_35_alpha">#59ffffff</color>
+    <color name="white_40_alpha">#66ffffff</color>
+    <color name="white_45_alpha">#73ffffff</color>
+    <color name="white_50_alpha">#80ffffff</color>
+    <color name="white_55_alpha">#8Cffffff</color>
+    <color name="white_60_alpha">#99ffffff</color>
+    <color name="white_65_alpha">#A6ffffff</color>
+    <color name="white_70_alpha">#B3ffffff</color>
+    <color name="white_75_alpha">#BFffffff</color>
+    <color name="white_80_alpha">#BBffffff</color>
+    <color name="white_90_alpha">#E6ffffff</color>
+    <color name="white_95_alpha">#F3ffffff</color>
+
+    <color name="wallpaper_bg">#5A000000</color>
+    <color name="black_7_alpha">#12000000</color>
+    <color name="black_10_alpha">#1A000000</color>
+    <color name="black_15_alpha">#26000000</color>
+    <color name="black_20_alpha">#33000000</color>
+    <color name="black_30_alpha">#4D000000</color>
+    <color name="black_40_alpha">#66000000</color>
+    <color name="black_50_alpha">#80000000</color>
+    <color name="black_54_alpha">#8A000000</color>
+    <color name="black_55_alpha">#8C000000</color>
+    <color name="black_60_alpha">#99000000</color>
+    <color name="black_70_alpha">#B3000000</color>
+    <color name="black_80_alpha">#CC000000</color>
+    <color name="black_87_alpha">#DE000000</color>
+    <color name="black_90_alpha">#E6000000</color>
+</resources>
