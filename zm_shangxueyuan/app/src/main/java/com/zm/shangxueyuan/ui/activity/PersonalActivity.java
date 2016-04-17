@@ -1,5 +1,7 @@
 package com.zm.shangxueyuan.ui.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -30,6 +32,11 @@ public class PersonalActivity extends AbsActionBarActivity {
 
     @Bind(R.id.mine_about)
     LinearLayout mAbout;
+
+    public static Intent getIntent(Context context) {
+        Intent intent = new Intent(context, PersonalActivity.class);
+        return intent;
+    }
 
     @Override
     protected void initData() {

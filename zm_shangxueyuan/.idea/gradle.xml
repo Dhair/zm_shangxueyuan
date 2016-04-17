@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/AndroidUtils" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/sliding_menu_library" />
+            <option value="$PROJECT_DIR$/view_pager_indicator_library" />
           </set>
         </option>
       </GradleProjectSettings>

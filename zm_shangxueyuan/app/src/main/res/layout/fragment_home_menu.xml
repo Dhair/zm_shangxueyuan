@@ -74,6 +74,7 @@
                 android:verticalSpacing="@dimen/menu_spacing"/>
 
             <LinearLayout
+                android:id="@+id/gallery_title_box"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"

@@ -1,28 +1,53 @@
 package com.zm.shangxueyuan.ui.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.ui.fragment.HomeContentFragment;
 import com.zm.shangxueyuan.ui.fragment.HomeMenuFragment;
+import com.zm.shangxueyuan.ui.provider.BusProvider;
+import com.zm.shangxueyuan.ui.provider.event.MenuControlEvent;
+import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
 
 /**
  * Creator: dengshengjin on 16/4/16 22:31
  * Email: deng.shengjin@zuimeia.com
  */
 public class HomeActivity extends AbsSlidingActivity {
-    private Fragment menuFragment, contentFragment;
+    private Fragment mMenuFragment, contentFragment;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        initLogic(bundle);
+        init(bundle);
     }
 
-    private void initLogic(Bundle savedInstanceState) {
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        MenuNavHelper.getInstance().queryNavData(new MenuNavHelper.NavInitedCallback() {
+            @Override
+            public void callback() {
+                long delayTimeMills = (mMenuFragment != null && mMenuFragment.isVisible()) ? 0l : 100l;
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        BusProvider.getInstance().post(new MenuNavInitedEvent());
+                    }
+                }, delayTimeMills);
+            }
+        });
+    }
+
+    private void init(Bundle savedInstanceState) {
         initMenuViews(savedInstanceState);
         initContentViews();
     }
@@ -31,11 +56,11 @@ public class HomeActivity extends AbsSlidingActivity {
         setBehindContentView(R.layout.activity_home_menu_frame);
         if (savedInstanceState == null) {
             FragmentTransaction t = this.getSupportFragmentManager().beginTransaction();
-            menuFragment = new HomeMenuFragment();
-            t.replace(R.id.menu_frame, menuFragment);
+            mMenuFragment = new HomeMenuFragment();
+            t.replace(R.id.menu_frame, mMenuFragment);
             t.commit();
         } else {
-            menuFragment = getSupportFragmentManager().findFragmentById(R.id.menu_frame);
+            mMenuFragment = getSupportFragmentManager().findFragmentById(R.id.menu_frame);
         }
 
         // customize the SlidingMenu
@@ -56,5 +81,29 @@ public class HomeActivity extends AbsSlidingActivity {
         contentFragment = new HomeContentFragment();
         t.replace(R.id.content_frame, contentFragment);
         t.commit();
+    }
+
+    @Subscribe
+    public void onMenuEvent(MenuControlEvent event) {
+        final SlidingMenu slidingMenu = getSlidingMenu();
+        if (slidingMenu.isMenuShowing()) {
+            slidingMenu.showContent();
+        } else {
+            slidingMenu.showMenu();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Register ourselves so that we can provide the initial value.
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Always unregister when an object no longer should be on the bus.
+        BusProvider.getInstance().unregister(this);
     }
 }

@@ -270,4 +270,8 @@ public class VideoModel extends Model implements Serializable {
     public static boolean isTopicVideo(VideoModel videoModel) {
         return videoModel.getType().equals("topic");
     }
+
+    public static boolean isTopVideo(VideoModel videoModel) {
+        return videoModel.isTop();
+    }
 }

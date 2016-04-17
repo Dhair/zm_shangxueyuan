@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/loading_box"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingBottom="50dp">
+
+        <ProgressBar
+            android:id="@+id/loading_pro"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:indeterminateDrawable="@drawable/progress_bar_circle2"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/loading_text"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:text="@string/loading"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:visibility="gone">
+        </TextView>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/loading_no_data_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:paddingTop="80dp"
+        android:text="@string/data_load_empty"
+        android:textColor="@color/black_50"
+        android:textSize="16sp"
+        android:visibility="gone"/>
+
+</RelativeLayout>

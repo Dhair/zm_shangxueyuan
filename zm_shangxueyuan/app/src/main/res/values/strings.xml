@@ -59,6 +59,9 @@
 
     <string name="menu_video">视频</string>
     <string name="menu_video_en">VIDEO</string>
+    <string name="topic">专题</string>
     <string name="menu_gallery">图库</string>
     <string name="menu_gallery_en">PICTURE</string>
+    <string name="data_load_empty">暂无相关内容</string>
+    <string name="data_load_try_again">网络连接失败,点击重试</string>
 </resources>

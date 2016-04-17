@@ -77,6 +77,10 @@ public class VideoDBUtil {
     }
 
     public static List<VideoModel> getTopicVideos(long tId) {
-        return new Select().from(VideoModel.class).where("tId=? and type=0 ", tId).orderBy("tOrder ASC").limit("16").execute();
+        return new Select().from(VideoModel.class).where("tid=? and type=?", tId, "topic").orderBy("tOrder ASC").limit("16").execute();
+    }
+
+    public static List<VideoModel> queryVideoWithNav(long cId) {
+        return new Select().from(VideoModel.class).where("cid = ? and valid=1", cId).orderBy("cOrder DESC").execute();
     }
 }

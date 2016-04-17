@@ -8,16 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 
+import com.squareup.otto.Subscribe;
 import com.umeng.analytics.MobclickAgent;
 import com.zm.shangxueyuan.R;
-import com.zm.shangxueyuan.db.GalleryDBUtil;
-import com.zm.shangxueyuan.db.NavDBUtil;
+import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.ui.adapter.GalleryNavAdapter;
 import com.zm.shangxueyuan.ui.adapter.NavAdapter;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
+import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
 import com.zm.utils.PhoneUtil;
 
 import java.util.List;
@@ -31,6 +33,7 @@ public class HomeMenuFragment extends BaseFragment {
     private Executor mExecutor = Executors.newSingleThreadExecutor();
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private int mMenuWidth;
+    private LinearLayout mGalleryTitleBox;
 
     @Override
     protected void initData() {
@@ -38,9 +41,9 @@ public class HomeMenuFragment extends BaseFragment {
                 - getResources().getDimensionPixelOffset(R.dimen.menu_margin) * 2
                 - getResources().getDimensionPixelOffset(R.dimen.slidingmenu_offset)
                 - getResources().getDimensionPixelOffset(R.dimen.menu_spacing) * 2;
-        mMenuWidth = (int) (mMenuWidth/3.0f);
-        mVideoAdapter = new NavAdapter(getApplicationContext(),mMenuWidth);
-        mGalleryAdapter = new GalleryNavAdapter(getApplicationContext(),mMenuWidth);
+        mMenuWidth = (int) (mMenuWidth / 3.0f);
+        mVideoAdapter = new NavAdapter(getApplicationContext(), mMenuWidth);
+        mGalleryAdapter = new GalleryNavAdapter(getApplicationContext(), mMenuWidth);
     }
 
     @Override
@@ -50,6 +53,8 @@ public class HomeMenuFragment extends BaseFragment {
         mVideoGrid.setAdapter(mVideoAdapter);
         mGalleryGrid = (GridView) view.findViewById(R.id.gallery_grid);
         mGalleryGrid.setAdapter(mGalleryAdapter);
+        mGalleryTitleBox = (LinearLayout) view.findViewById(R.id.gallery_title_box);
+        mGalleryTitleBox.setVisibility(View.GONE);
         updateStatusBarHeightV19(view);
         return view;
     }
@@ -68,29 +73,26 @@ public class HomeMenuFragment extends BaseFragment {
 
     @Override
     protected void initWidgetActions() {
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<NavModel> videoNavList = NavDBUtil.queryNav();
-                mVideoAdapter.setNavList(videoNavList);
-                List<GalleryCategoryModel> galleryNavList = GalleryDBUtil.query();
-                mGalleryAdapter.setNavList(galleryNavList);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mVideoAdapter.notifyDataSetChanged();
-                        ViewGroup.LayoutParams videoLp = mVideoGrid.getLayoutParams();
-                        videoLp.height = mVideoGrid.getWidth();
-                        mVideoGrid.requestLayout();
-                        mGalleryAdapter.notifyDataSetChanged();
-                        ViewGroup.LayoutParams galleryLp = mGalleryGrid.getLayoutParams();
-                        galleryLp.height = mGalleryGrid.getWidth();
-                        mGalleryGrid.requestLayout();
 
-                    }
-                });
-            }
-        });
+    }
+
+    @Subscribe
+    public void updateNavData(MenuNavInitedEvent menuNavInitedEvent) {
+        List<NavModel> videoNavList = MenuNavHelper.getInstance().getVideoNavModels();
+        mVideoAdapter.setNavList(videoNavList);
+        final List<GalleryCategoryModel> galleryNavList = MenuNavHelper.getInstance().getGalleryNavModels();
+        mGalleryAdapter.setNavList(galleryNavList);
+        mVideoAdapter.notifyDataSetChanged();
+        ViewGroup.LayoutParams videoLp = mVideoGrid.getLayoutParams();
+        videoLp.height = mVideoGrid.getWidth();
+        mVideoGrid.requestLayout();
+        if (galleryNavList != null && !galleryNavList.isEmpty()) {
+            mGalleryTitleBox.setVisibility(View.VISIBLE);
+            mGalleryAdapter.notifyDataSetChanged();
+            ViewGroup.LayoutParams galleryLp = mGalleryGrid.getLayoutParams();
+            galleryLp.height = mGalleryGrid.getWidth();
+            mGalleryGrid.requestLayout();
+        }
     }
 
     @Override
@@ -106,10 +108,7 @@ public class HomeMenuFragment extends BaseFragment {
         super.onPause();
         MobclickAgent.onPageEnd(getClass().getSimpleName());
         // Always unregister when an object no longer should be on the bus.
-        try {
-            BusProvider.getInstance().unregister(this);
-        } catch (Exception e) {
-        }
+        BusProvider.getInstance().unregister(this);
     }
 
 }
