@@ -2,11 +2,10 @@ package com.zm.shangxueyuan.ui.fragment;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 
@@ -19,19 +18,17 @@ import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.ui.adapter.GalleryNavAdapter;
 import com.zm.shangxueyuan.ui.adapter.NavAdapter;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
+import com.zm.shangxueyuan.ui.provider.event.MenuClickedEvent;
+import com.zm.shangxueyuan.ui.provider.event.MenuControlEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
 import com.zm.utils.PhoneUtil;
 
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class HomeMenuFragment extends BaseFragment {
     private GridView mVideoGrid, mGalleryGrid;
     private NavAdapter mVideoAdapter;
     private GalleryNavAdapter mGalleryAdapter;
-    private Executor mExecutor = Executors.newSingleThreadExecutor();
-    private Handler mHandler = new Handler(Looper.getMainLooper());
     private int mMenuWidth;
     private LinearLayout mGalleryTitleBox;
 
@@ -73,7 +70,13 @@ public class HomeMenuFragment extends BaseFragment {
 
     @Override
     protected void initWidgetActions() {
-
+        mVideoGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BusProvider.getInstance().post(new MenuControlEvent());
+                BusProvider.getInstance().post(new MenuClickedEvent(position));
+            }
+        });
     }
 
     @Subscribe

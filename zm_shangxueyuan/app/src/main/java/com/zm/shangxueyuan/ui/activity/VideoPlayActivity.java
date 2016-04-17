@@ -15,13 +15,13 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-import com.orhanobut.logger.Logger;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.helper.StorageHelper;
@@ -31,13 +31,13 @@ import com.zm.shangxueyuan.utils.MobclickAgentUtil;
 import com.zm.shangxueyuan.utils.ToastUtil;
 import com.zm.shangxueyuan.utils.network.HttpUtils;
 
-public class VideoPlayActivity extends AbsActionBarActivity implements SurfaceHolder.Callback {
+public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Callback {
     private VideoView mVideoView;
     private ProgressDialog progressDialog;
     private MediaController controller;
-    public static final String STATUS_MODEL = "statusModel";
+    public static final String STATUS_MODEL = "mStatusModel";
     public static final String VIDEO_MODEL = "videoModel";
-    private VideoStatusModel statusModel;
+    private VideoStatusModel mStatusModel;
     private VideoModel videoModel;
     private String videoUrl;
     private AlertDialog.Builder builder;
@@ -78,9 +78,9 @@ public class VideoPlayActivity extends AbsActionBarActivity implements SurfaceHo
 
     @Override
     protected void initData() {
-        statusModel = (VideoStatusModel) getIntent().getSerializableExtra(STATUS_MODEL);
+        mStatusModel = (VideoStatusModel) getIntent().getSerializableExtra(STATUS_MODEL);
         videoModel = (VideoModel) getIntent().getSerializableExtra(VIDEO_MODEL);
-        videoUrl = StorageHelper.getVideoURL(videoModel.getTitleUpload(), statusModel.getPlayType());
+        videoUrl = StorageHelper.getVideoURL(videoModel.getTitleUpload(), mStatusModel.getPlayType());
         builder = new AlertDialog.Builder(VideoPlayActivity.this).setTitle(R.string.tips).setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
 
@@ -127,13 +127,13 @@ public class VideoPlayActivity extends AbsActionBarActivity implements SurfaceHo
             progressDialog.show();
         }
         mVideoView = (VideoView) findViewById(R.id.surface_view);
-        String nativeVideoUrl = StorageHelper.getDownloadedPath(getApplicationContext(), videoModel, statusModel);
+        String nativeVideoUrl = StorageHelper.getDownloadedPath(getApplicationContext(), videoModel, mStatusModel);
 
         if (!TextUtils.isEmpty(nativeVideoUrl)) {// 文件存在且下载标记
-            Logger.i("", "native url=" + nativeVideoUrl);
+            Log.i("", "native url=" + nativeVideoUrl);
             mVideoView.setVideoPath(nativeVideoUrl);
         } else {
-            Logger.i("", "server url=" + videoUrl);
+            Log.i("", "server url=" + videoUrl);
             if (HttpUtils.isMobileDataEnable(getApplicationContext()) && CommonConstant.IS_WARN_2G_3G) {
                 builder.setMessage(getString(R.string.net_2_3g));
                 builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -176,8 +176,8 @@ public class VideoPlayActivity extends AbsActionBarActivity implements SurfaceHo
             public void onPrepared(MediaPlayer mp) {
                 mVideoView.start();
                 progressDialog.dismiss();
-                statusModel.setPlayDate(System.currentTimeMillis());
-                statusModel.save();
+                mStatusModel.setPlayDate(System.currentTimeMillis());
+                mStatusModel.save();
                 MobclickAgentUtil.playClick(getApplicationContext(), videoModel.getTitle());
             }
         });

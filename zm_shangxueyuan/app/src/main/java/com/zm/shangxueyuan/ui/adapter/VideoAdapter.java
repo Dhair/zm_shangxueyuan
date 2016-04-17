@@ -10,8 +10,10 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.utils.CommonUtils;
 import com.zm.shangxueyuan.utils.ImageLoadUtil;
 import com.zm.shangxueyuan.utils.ResUtil;
@@ -31,8 +33,22 @@ public class VideoAdapter extends BaseAdapter {
     private DisplayImageOptions mOptions;
     private int mDisplayWidth;
 
+    private boolean mNeedShowTopicFlag;
+    private boolean mNeedShowDelete;
+    private boolean mNeedShowDownloadType;
+
     public VideoAdapter(Context context) {
+        this(context, true, false);
+    }
+
+    public VideoAdapter(Context context, boolean needShowTopicFlag) {
+        this(context, needShowTopicFlag, false);
+    }
+
+    public VideoAdapter(Context context, boolean needShowTopicFlag, boolean needShowDownloadType) {
         mContext = context;
+        mNeedShowTopicFlag = needShowTopicFlag;
+        mNeedShowDownloadType = needShowDownloadType;
         init(mContext);
     }
 
@@ -65,7 +81,7 @@ public class VideoAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
@@ -79,6 +95,8 @@ public class VideoAdapter extends BaseAdapter {
                 holder.title[i] = (TextView) holder.view[i].findViewById(R.id.title);
                 holder.subTitle[i] = (TextView) holder.view[i].findViewById(R.id.sub_title);
                 holder.flag[i] = (TextView) holder.view[i].findViewById(R.id.flag_text);
+                holder.delete[i] = (ImageView) holder.view[i].findViewById(R.id.delete_image);
+                holder.downloadType[i] = (TextView) holder.view[i].findViewById(R.id.download_type_text);
                 ViewGroup.LayoutParams layoutParamsLeft = holder.view[i].getLayoutParams();
                 layoutParamsLeft.width = layoutW;
             }
@@ -105,8 +123,23 @@ public class VideoAdapter extends BaseAdapter {
                 holder.title[pos].setText(videoModel.getTitle());
                 holder.subTitle[pos].setText(videoModel.getSubTitle());
                 holder.flag[pos].setVisibility(View.GONE);
-                if (VideoModel.isTopicVideo(videoModel)) {
+                if (mNeedShowTopicFlag && VideoModel.isTopicVideo(videoModel)) {
                     holder.flag[pos].setVisibility(View.VISIBLE);
+                }
+                holder.delete[pos].setVisibility(View.GONE);
+                if (mNeedShowDelete) {
+                    holder.delete[pos].setVisibility(View.VISIBLE);
+                }
+                holder.downloadType[pos].setVisibility(View.GONE);
+                if (mNeedShowDownloadType) {
+                    if (videoModel.getDownloadType() == CommonConstant.SD_MODE) {
+                        holder.downloadType[pos].setText(mContext.getString(R.string.video_sd_mode));
+                    } else if (videoModel.getDownloadType() == CommonConstant.HD_MODE) {
+                        holder.downloadType[pos].setText(mContext.getString(R.string.video_hd_mode));
+                    } else if (videoModel.getDownloadType() == CommonConstant.UD_MODE) {
+                        holder.downloadType[pos].setText(mContext.getString(R.string.video_ud_mode));
+                    }
+                    holder.downloadType[pos].setVisibility(View.VISIBLE);
                 }
                 mImageLoader.displayImage(StorageHelper.getImageUrl(videoModel.getImage()), holder.picture[pos], mOptions);
 
@@ -115,9 +148,9 @@ public class VideoAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
 
-                        int[] location = new int[2];
-                        v.getLocationInWindow(location);
-
+                        if (mOnItemClickListener != null) {
+                            mOnItemClickListener.onItemClick(v, videoModel, pos);
+                        }
 
                     }
                 });
@@ -125,10 +158,6 @@ public class VideoAdapter extends BaseAdapter {
         }
 
         return convertView;
-    }
-
-    public List<VideoModel> getVideoList() {
-        return mVideoList;
     }
 
     public void setVideoList(List<VideoModel> videoList) {
@@ -141,6 +170,8 @@ public class VideoAdapter extends BaseAdapter {
         TextView title[] = new TextView[2];
         TextView subTitle[] = new TextView[2];
         TextView flag[] = new TextView[2];
+        ImageView delete[] = new ImageView[2];
+        TextView downloadType[] = new TextView[2];
     }
 
     public void clear() {
@@ -148,5 +179,25 @@ public class VideoAdapter extends BaseAdapter {
         mImageLoader.clearMemoryCache();
         System.gc();
         System.runFinalization();
+    }
+
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setNeedShowDelete(boolean needShowDelete) {
+        mNeedShowDelete = needShowDelete;
+        notifyDataSetChanged();
+    }
+
+    public boolean isNeedShowDelete() {
+        return mNeedShowDelete;
+    }
+
+    public void removeVideoModel(VideoModel videoModel) {
+        mVideoList.remove(videoModel);
+        notifyDataSetChanged();
     }
 }

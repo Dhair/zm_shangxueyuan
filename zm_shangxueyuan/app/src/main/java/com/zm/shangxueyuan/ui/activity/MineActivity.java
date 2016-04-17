@@ -2,19 +2,19 @@ package com.zm.shangxueyuan.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.ui.fragment.AbsMineFragment;
 import com.zm.shangxueyuan.ui.fragment.DownloadFragment;
 import com.zm.shangxueyuan.ui.fragment.FavorFragment;
 import com.zm.shangxueyuan.ui.fragment.HistoryFragment;
-import com.zm.shangxueyuan.ui.fragment.TopicFragment;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
 import com.zm.shangxueyuan.ui.provider.event.EmptyDataEvent;
+import com.zm.shangxueyuan.ui.provider.event.MineDataEditEvent;
 
 /**
  * Creator: dengshengjin on 16/4/16 12:02
@@ -23,11 +23,10 @@ import com.zm.shangxueyuan.ui.provider.event.EmptyDataEvent;
 public class MineActivity extends AbsActionBarActivity {
     public static final String MINE_TITLE = "MineTitle";
     public static final String MINE_TYPE = "MineType";
-    public static final int MINE_TYPE_TOPIC = 1 << 1;
-    public static final int MINE_TYPE_DOWNLOAD = 1 << 2;
-    public static final int MINE_TYPE_COLLECT = 1 << 3;
-    public static final int MINE_TYPE_RECORD_HISTORY = 1 << 4;
-    private Fragment mFragment;
+    public static final int MINE_TYPE_DOWNLOAD = 1 << 1;
+    public static final int MINE_TYPE_COLLECT = 1 << 2;
+    public static final int MINE_TYPE_RECORD_HISTORY = 1 << 3;
+    private AbsMineFragment mFragment;
     private int mType;
 
     public static Intent getIntent(Context context, int mineType) {
@@ -67,13 +66,6 @@ public class MineActivity extends AbsActionBarActivity {
                     mFragment = FavorFragment.newInstance();
                     setActionTitle(R.string.mine_favor);
                     break;
-                case MINE_TYPE_TOPIC:
-                    mFragment = TopicFragment.newInstance();
-                    String title = getIntent().getStringExtra(MINE_TITLE);
-                    if (!TextUtils.isEmpty(title)) {
-                        setActionTitle(title);
-                    }
-                    break;
                 default:
                     break;
             }
@@ -84,7 +76,27 @@ public class MineActivity extends AbsActionBarActivity {
         ft.commit();
     }
 
+
     private void onEditAction() {
+        updateRightUI();
+        BusProvider.getInstance().post(new MineDataEditEvent());
+    }
+
+    private View.OnClickListener mRightClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onEditAction();
+        }
+    };
+
+    private void updateRightUI() {
+        if (mFragment != null) {
+            if (mFragment.isEditStatus()) {//从编辑-》完成
+                setActionTools(R.string.finish, mRightClickListener);
+            } else {//进入编辑状态 从完成-》编辑
+                setActionTools(R.string.edit, mRightClickListener);
+            }
+        }
 
     }
 
@@ -94,14 +106,9 @@ public class MineActivity extends AbsActionBarActivity {
     }
 
     @Subscribe
-    public void menuClick(EmptyDataEvent event) {
-        if (mType != MINE_TYPE_TOPIC && !event.isEmpty()) {
-            setActionTools(R.string.edit, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onEditAction();
-                }
-            });
+    public void onEmptyDataEvent(EmptyDataEvent event) {
+        if (!event.isEmpty()) {
+            updateRightUI();
         }
     }
 

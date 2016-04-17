@@ -145,4 +145,8 @@ public class GalleryTopicModel extends Model implements Serializable {
         }
         return false;
     }
+
+    public static boolean isTopTopic(GalleryTopicModel videoModel) {
+        return videoModel.isTop() && videoModel.getCategoryId() == 0;
+    }
 }

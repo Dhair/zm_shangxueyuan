@@ -136,6 +136,6 @@ public class WebViewActivity extends AbsActionBarActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_user_login;
+        return R.layout.activity_web_view;
     }
 }

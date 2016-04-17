@@ -2,7 +2,8 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg">
 
     <include layout="@layout/activity_header"/>
 
@@ -24,12 +25,12 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginTop="18dp"
-                android:scrollbars="vertical"
                 android:background="@drawable/edit_text_bg"
                 android:gravity="top"
                 android:hint="@string/feedback_content_hint"
                 android:imeOptions="actionNext"
                 android:padding="10dp"
+                android:scrollbars="vertical"
                 android:textColorHint="@color/black_30_alpha"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="16sp"/>

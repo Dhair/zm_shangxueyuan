@@ -21,8 +21,11 @@ import com.zm.shangxueyuan.db.VideoDBUtil;
 import com.zm.shangxueyuan.model.HotWordsModel;
 import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
+import com.zm.shangxueyuan.ui.activity.VideoTopicActivity;
 import com.zm.shangxueyuan.ui.activity.WebViewActivity;
 import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
+import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.ui.widget.SlidingMenuHeaderViewPager;
 
 import java.util.LinkedList;
@@ -41,7 +44,6 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
     private Executor mExecutor = Executors.newCachedThreadPool();
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private VideoAdapter mVideoAdapter;
-    private LayoutInflater mInflater;
 
     public static HomeVideoContentFragment newInstance(NavModel navModel) {
         HomeVideoContentFragment fragment = new HomeVideoContentFragment();
@@ -63,7 +65,6 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
     @Override
     protected View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_video_content, container, false);
-        mInflater = inflater;
         mListView = (ListView) view.findViewById(R.id.list_view);
         mListView.setAdapter(mVideoAdapter);
         showLoading(view);
@@ -74,6 +75,17 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
 
     @Override
     protected void initWidgetActions() {
+        mVideoAdapter.setOnItemClickListener(new OnItemClickListener<VideoModel>() {
+
+            @Override
+            public void onItemClick(View v, VideoModel videoModel, int position) {
+                if (VideoModel.isTopicVideo(videoModel)) {
+                    getActivity().startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                } else {
+                    getActivity().startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                }
+            }
+        });
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -83,6 +95,9 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        if (getActivity() == null || getActivity().isFinishing()) {
+                            return;
+                        }
                         hideLoading();
                         if (topVideoList != null && !topVideoList.isEmpty()) {
                             View headerView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.fragment_home_video_header, null);

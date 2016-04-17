@@ -15,6 +15,8 @@
     <color name="black_50">#80000000</color>
     <color name="gray_66">#666666</color>
 
+    <color name="bg">#f4f4f4</color>
+
     <color name="white_00_alpha">#00ffffff</color>
     <color name="white_10_alpha">#1Affffff</color>
     <color name="white_20_alpha">#33ffffff</color>

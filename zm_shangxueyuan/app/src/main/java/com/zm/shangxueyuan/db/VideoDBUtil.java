@@ -1,12 +1,18 @@
 package com.zm.shangxueyuan.db;
 
+import android.app.DownloadManager;
+import android.content.Context;
+
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
+import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public class VideoDBUtil {
 
@@ -34,7 +40,7 @@ public class VideoDBUtil {
     }
 
     public static List<VideoModel> queryDownloadedVideos() {
-        List<VideoStatusModel> statusList = new Select().from(VideoStatusModel.class).where("downloadStatus = -1").orderBy("downloadDate desc").execute();
+        List<VideoStatusModel> statusList = new Select().from(VideoStatusModel.class).where("downloadStatus = ?", CommonConstant.DOWN_FINISH).orderBy("downloadDate desc").execute();
         List<VideoModel> videoList = new LinkedList<>();
         if (statusList != null) {
             for (VideoStatusModel statusModel : statusList) {
@@ -76,11 +82,74 @@ public class VideoDBUtil {
         return videoList;
     }
 
-    public static List<VideoModel> getTopicVideos(long tId) {
-        return new Select().from(VideoModel.class).where("tid=? and type=?", tId, "topic").orderBy("tOrder ASC").limit("16").execute();
+    public static List<VideoModel> queryTopicVideos(long tId) {
+        return new Select().from(VideoModel.class).where("tid=? and valid=1", tId).orderBy("corder DESC,videoId DESC").limit("25").execute();
     }
 
     public static List<VideoModel> queryVideoWithNav(long cId) {
-        return new Select().from(VideoModel.class).where("cid = ? and valid=1", cId).orderBy("cOrder DESC").execute();
+        return new Select().from(VideoModel.class).where("cid = ? and valid=1", cId).orderBy("corder DESC").execute();
+    }
+
+    public static VideoStatusModel queryVideoStatus(VideoModel videoModel) {
+        VideoStatusModel statusModel = new Select().from(VideoStatusModel.class).where("videoId = ?", videoModel.getVideoId()).orderBy("RANDOM()").executeSingle();
+        if (statusModel == null) {
+            statusModel = videoModel.convert();
+        }
+        return statusModel;
+    }
+
+    public static void playHistoryDelete(Set<Long> videoIds) {
+        ActiveAndroid.beginTransaction();
+        try {
+            for (Iterator<Long> it = videoIds.iterator(); it.hasNext(); ) {
+                long videoId = it.next();
+                VideoStatusModel videoStatusModel = getStatus(videoId);
+                if (videoStatusModel != null) {
+                    videoStatusModel.setPlayDate(0l);
+                    videoStatusModel.save();
+                }
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
+    }
+
+    public static void collectDelete(Set<Long> videoIds) {
+        ActiveAndroid.beginTransaction();
+        try {
+            for (Iterator<Long> it = videoIds.iterator(); it.hasNext(); ) {
+                long videoId = it.next();
+                VideoStatusModel videoStatusModel = VideoDBUtil.getStatus(videoId);
+                if (videoStatusModel != null) {
+                    videoStatusModel.setFavStatus(CommonConstant.UNFAV_STATUS);
+                    videoStatusModel.save();
+                }
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
+    }
+
+    public static void downloadDelete(Context context, Set<Long> videoIds) {
+        DownloadManager mDownloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        ActiveAndroid.beginTransaction();
+        try {
+            for (Iterator<Long> it = videoIds.iterator(); it.hasNext(); ) {
+                long videoId = it.next();
+                VideoStatusModel videoStatusModel = VideoDBUtil.getStatus(videoId);
+                if (videoStatusModel != null) {
+                    mDownloadManager.remove(videoStatusModel.getDownId());
+                    videoStatusModel.setDownId(0l);
+                    videoStatusModel.setDownloadDate(0l);
+                    videoStatusModel.setDownloadStatus(CommonConstant.DOWN_NONE);
+                    videoStatusModel.save();
+                }
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
     }
 }

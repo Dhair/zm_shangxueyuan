@@ -14,20 +14,38 @@ public abstract class AbsLoadingEmptyFragment extends BaseFragment {
     protected ViewStub mViewStub;
     protected LoadingEmptyView mLoadingEmptyView;
 
-    protected void showLoading(View mView) {
+    private void initLoadingEmptyView(View mView) {
         if (mViewStub == null) {
             mViewStub = (ViewStub) mView.findViewById(R.id.view_stub);
             mViewStub.inflate();
 
             mLoadingEmptyView = (LoadingEmptyView) mView.findViewById(R.id.loading_empty_box);
         }
+    }
+
+    protected void showLoading(View mView) {
+        initLoadingEmptyView(mView);
         mViewStub.setVisibility(View.VISIBLE);
-        if(mLoadingEmptyView!=null) {
+        if (mLoadingEmptyView != null) {
             mLoadingEmptyView.updateLoadView();
         }
     }
 
     protected void hideLoading() {
+        if (mViewStub != null) {
+            mViewStub.setVisibility(View.GONE);
+        }
+    }
+
+    protected void showEmpty(View mView, String emptyStr) {
+        initLoadingEmptyView(mView);
+        mViewStub.setVisibility(View.VISIBLE);
+        if (mLoadingEmptyView != null) {
+            mLoadingEmptyView.updateEmptyView(emptyStr, null);
+        }
+    }
+
+    protected void hideEmpty() {
         if (mViewStub != null) {
             mViewStub.setVisibility(View.GONE);
         }

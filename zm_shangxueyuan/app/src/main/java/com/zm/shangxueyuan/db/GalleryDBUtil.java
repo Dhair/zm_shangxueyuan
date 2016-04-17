@@ -39,6 +39,15 @@ public class GalleryDBUtil {
         return list;
     }
 
+    public static synchronized List<GalleryTopicModel> queryTopics() {
+        List<GalleryTopicModel> list = new Select().from(GalleryTopicModel.class)
+                .orderBy(VideoDBConstant.GALLERY_TOPIC_ID + " DESC").execute();
+        if (list == null) {
+            list = new LinkedList<>();
+        }
+        return list;
+    }
+
     public static synchronized void clearGalleryCategory() {
         try {
             new Delete().from(GalleryCategoryModel.class).execute();
@@ -61,6 +70,7 @@ public class GalleryDBUtil {
             ActiveAndroid.endTransaction();
         }
     }
+
 
     public static synchronized void clearGalleryTopics() {
         try {

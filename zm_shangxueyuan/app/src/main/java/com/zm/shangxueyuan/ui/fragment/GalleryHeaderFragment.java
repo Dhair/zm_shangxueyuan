@@ -10,9 +10,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.StorageHelper;
-import com.zm.shangxueyuan.model.VideoModel;
-import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
-import com.zm.shangxueyuan.ui.activity.VideoTopicActivity;
+import com.zm.shangxueyuan.model.GalleryTopicModel;
 import com.zm.shangxueyuan.utils.CommonUtils;
 import com.zm.shangxueyuan.utils.ImageLoadUtil;
 
@@ -20,16 +18,16 @@ import com.zm.shangxueyuan.utils.ImageLoadUtil;
  * Creator: dengshengjin on 16/4/17 16:42
  * Email: deng.shengjin@zuimeia.com
  */
-public class VideoHeaderFragment extends BaseFragment {
+public class GalleryHeaderFragment extends BaseFragment {
     private static final String MODEL = "model";
-    private VideoModel mVideoModel;
+    private GalleryTopicModel mGalleryTopicModel;
     private ImageLoader mImageLoader;
     private DisplayImageOptions mOptions;
 
-    public static VideoHeaderFragment newInstance(VideoModel videoModel) {
-        VideoHeaderFragment fragment = new VideoHeaderFragment();
+    public static GalleryHeaderFragment newInstance(GalleryTopicModel galleryTopicModel) {
+        GalleryHeaderFragment fragment = new GalleryHeaderFragment();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(MODEL, videoModel);
+        bundle.putSerializable(MODEL, galleryTopicModel);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -38,7 +36,7 @@ public class VideoHeaderFragment extends BaseFragment {
     protected void initData() {
         Object object = getArguments().getSerializable(MODEL);
         if (object != null) {
-            mVideoModel = (VideoModel) object;
+            mGalleryTopicModel = (GalleryTopicModel) object;
         }
         if (!ImageLoader.getInstance().isInited()) {
             ImageLoadUtil.initImageLoader(context);
@@ -51,15 +49,11 @@ public class VideoHeaderFragment extends BaseFragment {
     protected View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_video_header_item, container, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.header_image);
-        mImageLoader.displayImage(StorageHelper.getImageUrl(mVideoModel.getImage()), imageView, mOptions);
+        mImageLoader.displayImage(StorageHelper.getImageUrl(mGalleryTopicModel.getImage()), imageView, mOptions);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VideoModel.isTopicVideo(mVideoModel)) {
-                    getActivity().startActivity(VideoTopicActivity.getIntent(getApplicationContext(), mVideoModel.getVideoId(),mVideoModel.getTitle()));
-                } else {
-                    getActivity().startActivity(VideoDetailActivity.getIntent(getApplicationContext(), mVideoModel));
-                }
+
             }
         });
         return view;

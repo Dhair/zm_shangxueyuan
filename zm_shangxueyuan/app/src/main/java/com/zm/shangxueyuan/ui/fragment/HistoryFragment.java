@@ -2,17 +2,15 @@ package com.zm.shangxueyuan.ui.fragment;
 
 import android.os.Bundle;
 
-import com.activeandroid.ActiveAndroid;
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.VideoDBUtil;
-import com.zm.shangxueyuan.model.VideoStatusModel;
-import com.zm.shangxueyuan.ui.adapter.ContentDeleteItemAdapter;
-import com.zm.shangxueyuan.ui.provider.event.ContentEditEvent;
+import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.ui.provider.event.MineDataEditEvent;
 
-import java.util.Iterator;
+import java.util.List;
 
-public final class HistoryFragment extends FavorFragment {
+public final class HistoryFragment extends AbsMineFragment {
 
     public static HistoryFragment newInstance() {
         HistoryFragment fragment = new HistoryFragment();
@@ -22,40 +20,26 @@ public final class HistoryFragment extends FavorFragment {
     }
 
     @Override
-    protected void getData() {
-        adapter = new ContentDeleteItemAdapter(getApplicationContext(), null, imgImageLoader, 0);
-        videoList = VideoDBUtil.queryHistoryVideos();
+    protected List<VideoModel> getVideoList() {
+        return VideoDBUtil.queryHistoryVideos();
     }
 
-    @Override
     @Subscribe
-    public void menuClick(ContentEditEvent event) {
-        super.menuClick(event);
+    public void menuClick(MineDataEditEvent event) {
+        onEditEvent();
     }
 
-    @Override
-    protected String getEmptyText() {
+    protected String getEmptyTxt() {
         return getString(R.string.history_nodata_str);
     }
 
-    /**
-     * 设置成未播放
-     */
     @Override
-    protected void onStopEvent() {
-        ActiveAndroid.beginTransaction();
-        try {
-            for (Iterator<Long> it = set.iterator(); it.hasNext(); ) {
-                long videoId = it.next();
-                VideoStatusModel videoStatusModel = VideoDBUtil.getStatus(videoId);
-                if (videoStatusModel != null) {
-                    videoStatusModel.setPlayDate(0l);
-                    videoStatusModel.save();
-                }
+    protected void onStopFragmentEvent() {
+        getExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                VideoDBUtil.playHistoryDelete(getSelectedIds());
             }
-            ActiveAndroid.setTransactionSuccessful();
-        } finally {
-            ActiveAndroid.endTransaction();
-        }
+        });
     }
 }

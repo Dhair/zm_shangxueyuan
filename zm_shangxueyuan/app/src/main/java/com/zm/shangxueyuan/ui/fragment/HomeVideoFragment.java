@@ -11,10 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import com.squareup.otto.Subscribe;
+import com.umeng.analytics.MobclickAgent;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
+import com.zm.shangxueyuan.ui.provider.event.MenuClickedEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuControlEvent;
 
 import java.util.List;
@@ -52,7 +55,7 @@ public class HomeVideoFragment extends BaseFragment {
         mTabLayout.setupWithViewPager(mVideoPager);
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);//设置TabLayout的Tab操作屏幕可滚动
 
-        mMenuBtn= (ImageButton) view.findViewById(R.id.menu_btn);
+        mMenuBtn = (ImageButton) view.findViewById(R.id.menu_btn);
         return view;
     }
 
@@ -91,5 +94,28 @@ public class HomeVideoFragment extends BaseFragment {
             }
             return mNavModels.size();
         }
+    }
+
+    @Subscribe
+    public void onMenuClickedEvent(MenuClickedEvent menuClickedEvent) {
+        if (mVideoPager != null) {
+            mVideoPager.setCurrentItem(menuClickedEvent.getPosition());
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart(getClass().getSimpleName());
+        // Register ourselves so that we can provide the initial value.
+        BusProvider.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd(getClass().getSimpleName());
+        // Always unregister when an object no longer should be on the bus.
+        BusProvider.getInstance().unregister(this);
     }
 }

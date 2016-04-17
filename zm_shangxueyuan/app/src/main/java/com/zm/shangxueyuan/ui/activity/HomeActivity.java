@@ -47,6 +47,9 @@ public class HomeActivity extends AbsSlidingActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        if (isFinishing()) {
+                            return;
+                        }
                         BusProvider.getInstance().post(new MenuNavInitedEvent());
                     }
                 }, delayTimeMills);
