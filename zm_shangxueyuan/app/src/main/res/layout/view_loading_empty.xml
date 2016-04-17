@@ -14,17 +14,18 @@
         <ProgressBar
             android:id="@+id/loading_pro"
             style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
+            android:indeterminateDuration="600"
             android:indeterminateDrawable="@drawable/progress_bar_circle2"
             android:visibility="gone"/>
 
         <TextView
             android:id="@+id/loading_text"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"

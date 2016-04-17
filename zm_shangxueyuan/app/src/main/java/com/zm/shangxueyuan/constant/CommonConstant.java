@@ -31,4 +31,7 @@ public interface CommonConstant {
 
 
     boolean IS_WARN_2G_3G = true;
+
+
+    String FINISH_ACTION_NAME = "finish_action_name";
 }

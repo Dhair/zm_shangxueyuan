@@ -24,9 +24,9 @@ public class ToastUtil {
         textView.setText(text);
         Toast toast = new Toast(context);
         if (DeviceUtil.hasSmartBar()) {
-            toast.setGravity(Gravity.BOTTOM, 0, 200);
+            toast.setGravity(Gravity.BOTTOM, 0, 500);
         } else {
-            toast.setGravity(Gravity.BOTTOM, 0, 100);
+            toast.setGravity(Gravity.BOTTOM, 0, 300);
         }
 
         if (duration < 0) {

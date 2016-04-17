@@ -110,7 +110,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:drawableRight="@drawable/arrow"
+                            android:drawableRight="@drawable/arrow_02"
                             android:text="@string/mine_download"
                             android:textSize="16sp"/>
 
@@ -144,7 +144,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:drawableRight="@drawable/arrow"
+                            android:drawableRight="@drawable/arrow_02"
                             android:text="@string/mine_record"
                             android:textSize="16sp"/>
 
@@ -178,7 +178,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:drawableRight="@drawable/arrow"
+                            android:drawableRight="@drawable/arrow_02"
                             android:text="@string/mine_favor"
                             android:textSize="16sp"/>
 
@@ -225,7 +225,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:drawableRight="@drawable/arrow"
+                            android:drawableRight="@drawable/arrow_02"
                             android:text="@string/feedback"
                             android:textSize="16sp"/>
 
@@ -261,7 +261,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginTop="0.15dp"
-                            android:drawableRight="@drawable/arrow"
+                            android:drawableRight="@drawable/arrow_02"
                             android:text="@string/about"
                             android:textSize="16sp"/>
 

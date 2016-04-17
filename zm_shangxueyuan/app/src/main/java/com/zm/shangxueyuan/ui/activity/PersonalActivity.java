@@ -53,7 +53,7 @@ public class PersonalActivity extends AbsActionBarActivity {
         mUserLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(UserLoginActivity.getIntent(PersonalActivity.this));
+                startActivity(WebViewActivity.getIntent(PersonalActivity.this, "http://www.shzhibo.net/wx_edu/#user-login", getString(R.string.user)));
             }
         });
         mDownload.setOnClickListener(new View.OnClickListener() {

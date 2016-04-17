@@ -35,6 +35,7 @@
     <string name="video_hd_mode">高清</string>
     <string name="video_ud_mode">超清</string>
     <string name="user">会员中心</string>
+    <string name="news_top">中脉头条</string>
 
     <!-- 友盟统计 -->
     <string name="mob_click_listen">收听次数</string>
@@ -64,4 +65,5 @@
     <string name="menu_gallery_en">PICTURE</string>
     <string name="data_load_empty">暂无相关内容</string>
     <string name="data_load_try_again">网络连接失败,点击重试</string>
+    <string name="exit_warn">再按一次退出程序</string>
 </resources>

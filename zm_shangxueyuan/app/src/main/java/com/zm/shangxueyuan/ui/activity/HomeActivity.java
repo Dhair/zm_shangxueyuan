@@ -1,20 +1,26 @@
 package com.zm.shangxueyuan.ui.activity;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.view.KeyEvent;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.constant.CommonConstant;
+import com.zm.shangxueyuan.helper.ActivityFinishHelper;
 import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.ui.fragment.HomeContentFragment;
 import com.zm.shangxueyuan.ui.fragment.HomeMenuFragment;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
 import com.zm.shangxueyuan.ui.provider.event.MenuControlEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
+import com.zm.shangxueyuan.utils.ToastUtil;
 
 /**
  * Creator: dengshengjin on 16/4/16 22:31
@@ -23,6 +29,7 @@ import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
 public class HomeActivity extends AbsSlidingActivity {
     private Fragment mMenuFragment, contentFragment;
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private ActivityFinishHelper mActivityFinishHelper;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -50,6 +57,8 @@ public class HomeActivity extends AbsSlidingActivity {
     private void init(Bundle savedInstanceState) {
         initMenuViews(savedInstanceState);
         initContentViews();
+        mActivityFinishHelper = new ActivityFinishHelper(HomeActivity.this);
+        mActivityFinishHelper.registerReceiver();
     }
 
     private void initMenuViews(Bundle savedInstanceState) {
@@ -105,5 +114,53 @@ public class HomeActivity extends AbsSlidingActivity {
         super.onPause();
         // Always unregister when an object no longer should be on the bus.
         BusProvider.getInstance().unregister(this);
+    }
+
+    private long mExitTimeMills = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                if (!getSlidingMenu().isMenuShowing()) {
+//                    getSlidingMenu().showMenu();
+//                    return true;
+//                }
+                if (System.currentTimeMillis() - mExitTimeMills > 2000) {// 如果两次按键时间间隔大于800毫秒，则不退出
+                    ToastUtil.showToast(getApplicationContext(), getString(R.string.exit_warn));
+                    mExitTimeMills = System.currentTimeMillis();// 更新firstTime
+                    return true;
+                } else {
+                    Intent intent = new Intent(CommonConstant.FINISH_ACTION_NAME + getPackageName());
+                    sendBroadcast(intent);
+                    finish();
+                }
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mActivityFinishHelper != null) {
+            mActivityFinishHelper.unregisterReceiver();
+        }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return onMyKeyUp(keyCode, event);
+    }
+
+    public boolean onMyKeyUp(int keyCode, KeyEvent event) {
+        if (getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.ECLAIR) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.isTracking() && !event.isCanceled()) {
+                onBackPressed();
+                return true;
+            }
+        }
+        return false;
     }
 }

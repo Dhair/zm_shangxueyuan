@@ -55,6 +55,8 @@
         <attr name="strokeWidth" />
         <!-- View background -->
         <attr name="android:background"/>
+        <!-- Width of the spacing used to draw the circles. -->
+        <attr name="spacing" format="dimension"/>
     </declare-styleable>
 
     <declare-styleable name="LinePageIndicator">

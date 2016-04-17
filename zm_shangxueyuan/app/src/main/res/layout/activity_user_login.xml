@@ -28,7 +28,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_centerInParent="true"
-                android:indeterminateDrawable="@drawable/icon_loading"
+                android:indeterminateDrawable="@drawable/progress_bar_circle2"
                 android:indeterminateDuration="800"/>
         </RelativeLayout>
 

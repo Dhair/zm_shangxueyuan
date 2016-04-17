@@ -42,7 +42,7 @@ public class VideoAdapter extends BaseAdapter {
             ImageLoadUtil.initImageLoader(context);
         }
         mImageLoader = ImageLoader.getInstance();
-        mOptions = CommonUtils.getDisplayImageOptionsBuilder().build();
+        mOptions = CommonUtils.getDisplayImageOptionsBuilder(R.drawable.common_default).build();
     }
 
     @Override
@@ -108,7 +108,6 @@ public class VideoAdapter extends BaseAdapter {
                 if (VideoModel.isTopicVideo(videoModel)) {
                     holder.flag[pos].setVisibility(View.VISIBLE);
                 }
-                holder.picture[pos].setImageResource(R.drawable.common_default);
                 mImageLoader.displayImage(StorageHelper.getImageUrl(videoModel.getImage()), holder.picture[pos], mOptions);
 
                 holder.view[pos].setOnClickListener(new View.OnClickListener() {
@@ -142,5 +141,12 @@ public class VideoAdapter extends BaseAdapter {
         TextView title[] = new TextView[2];
         TextView subTitle[] = new TextView[2];
         TextView flag[] = new TextView[2];
+    }
+
+    public void clear() {
+        mImageLoader.stop();
+        mImageLoader.clearMemoryCache();
+        System.gc();
+        System.runFinalization();
     }
 }

@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 
 import com.umeng.analytics.MobclickAgent;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.helper.ActivityFinishHelper;
 import com.zm.utils.PhoneUtil;
 
 import butterknife.ButterKnife;
@@ -28,6 +29,7 @@ import butterknife.ButterKnife;
 public abstract class AbsActivity extends AppCompatActivity implements IStatusBar {
     private Context mContext;
     private Handler mHandler;
+    private ActivityFinishHelper mActivityFinishHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
     }
 
     private void initAbsData() {
+        mActivityFinishHelper = new ActivityFinishHelper(AbsActivity.this);
+        mActivityFinishHelper.registerReceiver();
     }
 
     private void initAbsWidgets() {
@@ -54,9 +58,10 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
         updateAbsContentView();
     }
 
-    protected void onPreSetContentView(){
+    protected void onPreSetContentView() {
 
     }
+
     protected void initActionBarActions() {
 
     }
@@ -149,6 +154,9 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+        if (mActivityFinishHelper != null) {
+            mActivityFinishHelper.unregisterReceiver();
+        }
     }
 
 }

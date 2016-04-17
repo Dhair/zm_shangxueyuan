@@ -20,8 +20,8 @@ import butterknife.Bind;
  * Creator: dengshengjin on 16/4/16 12:04
  * Email: deng.shengjin@zuimeia.com
  */
-public class UserLoginActivity extends AbsActionBarActivity {
-    private String mUrl;
+public class WebViewActivity extends AbsActionBarActivity {
+    private String mUrl, mTitle;
 
     @Bind(R.id.web_view)
     WebView mWebView;
@@ -29,19 +29,25 @@ public class UserLoginActivity extends AbsActionBarActivity {
     @Bind(R.id.loading_box)
     RelativeLayout mLoadingBox;
 
-    public static Intent getIntent(Context context) {
-        Intent intent = new Intent(context, UserLoginActivity.class);
+    private static final String LINK_URL = "linkUrl";
+    private static final String TITLE = "title";
+
+    public static Intent getIntent(Context context, String linkUrl, String title) {
+        Intent intent = new Intent(context, WebViewActivity.class);
+        intent.putExtra(LINK_URL, linkUrl);
+        intent.putExtra(TITLE, title);
         return intent;
     }
 
     @Override
     protected void initData() {
-        mUrl = "http://www.shzhibo.net/wx_edu/#user-login";
+        mUrl = getIntent().getStringExtra(LINK_URL);
+        mTitle = getIntent().getStringExtra(TITLE);
     }
 
     @Override
     protected void initWidgets() {
-        setActionTitle(R.string.user);
+        setActionTitle(mTitle);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
