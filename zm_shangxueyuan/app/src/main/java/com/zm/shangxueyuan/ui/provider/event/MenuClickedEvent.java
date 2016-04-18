@@ -6,10 +6,14 @@ package com.zm.shangxueyuan.ui.provider.event;
  * @Description 点击菜单栏item的事件
  */
 public class MenuClickedEvent {
+    public static final int VIDEO_CLICK = 1;
+    public static final int GALLERY_CLICK = 2;
     private int position;
+    private int mType;
 
-    public MenuClickedEvent(int position) {
+    public MenuClickedEvent(int type, int position) {
         super();
+        mType = type;
         this.position = position;
     }
 
@@ -17,4 +21,7 @@ public class MenuClickedEvent {
         return position;
     }
 
+    public int getType() {
+        return mType;
+    }
 }

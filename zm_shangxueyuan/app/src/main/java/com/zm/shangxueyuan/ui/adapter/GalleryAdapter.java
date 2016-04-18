@@ -221,4 +221,12 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
         }
         return topicList;
     }
+
+    public int getSelection(int groupPosition) {
+        int totalPosition = 0;
+        for (int i = 0; i < groupPosition; i++) {
+            totalPosition += getChildrenCount(i) + 1;
+        }
+        return totalPosition;
+    }
 }

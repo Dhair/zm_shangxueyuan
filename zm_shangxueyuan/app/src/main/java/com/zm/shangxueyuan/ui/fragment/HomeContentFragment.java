@@ -19,6 +19,7 @@ import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.ui.activity.MineActivity;
 import com.zm.shangxueyuan.ui.activity.PersonalActivity;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
+import com.zm.shangxueyuan.ui.provider.event.MenuClickedEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
 import com.zm.utils.PhoneUtil;
 
@@ -43,6 +44,8 @@ public class HomeContentFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSavedInstanceState = savedInstanceState;
+        // Register ourselves so that we can provide the initial value.
+        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -191,18 +194,50 @@ public class HomeContentFragment extends BaseFragment {
         }
     }
 
+    @Subscribe
+    public void onMenuClickedEvent(MenuClickedEvent menuClickedEvent) {
+        if (menuClickedEvent != null) {
+            if (menuClickedEvent.getType() == MenuClickedEvent.VIDEO_CLICK) {
+                if (mHomeVideoFragment != null) {
+                    mHomeVideoFragment.onMenuClickedEvent(menuClickedEvent.getPosition());
+                }
+                if (mVideoTab != null && mVideoTab.isSelected()) {
+                    return;
+                }
+                changeToVideoFragment();
+                mVideoTab.setSelected(true);
+                mGalleryTab.setSelected(false);
+            } else if (menuClickedEvent.getType() == MenuClickedEvent.GALLERY_CLICK) {
+                if (mHomeGalleryFragment != null) {
+                    mHomeGalleryFragment.onMenuClickedEvent(menuClickedEvent.getPosition());
+                }
+                if (mGalleryTab != null && mGalleryTab.isSelected()) {
+                    return;
+                }
+                changeGalleryFragment();
+                mVideoTab.setSelected(false);
+                mGalleryTab.setSelected(true);
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart(getClass().getSimpleName());
-        // Register ourselves so that we can provide the initial value.
-        BusProvider.getInstance().register(this);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         MobclickAgent.onPageEnd(getClass().getSimpleName());
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
         // Always unregister when an object no longer should be on the bus.
         BusProvider.getInstance().unregister(this);
     }

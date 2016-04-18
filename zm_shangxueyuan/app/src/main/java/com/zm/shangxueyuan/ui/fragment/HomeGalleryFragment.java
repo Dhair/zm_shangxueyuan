@@ -169,6 +169,13 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
         }
     }
 
+    public void onMenuClickedEvent(int position) {
+        if (mListView != null) {
+            int selection = mGalleryAdapter.getSelection(position) + mListView.getHeaderViewsCount();
+            mListView.smoothScrollToPosition(selection);
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -11,13 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.squareup.otto.Subscribe;
 import com.umeng.analytics.MobclickAgent;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
-import com.zm.shangxueyuan.ui.provider.event.MenuClickedEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuControlEvent;
 
 import java.util.List;
@@ -96,10 +94,10 @@ public class HomeVideoFragment extends BaseFragment {
         }
     }
 
-    @Subscribe
-    public void onMenuClickedEvent(MenuClickedEvent menuClickedEvent) {
+    public void onMenuClickedEvent(int position) {
+
         if (mVideoPager != null) {
-            mVideoPager.setCurrentItem(menuClickedEvent.getPosition());
+            mVideoPager.setCurrentItem(position);
         }
     }
 

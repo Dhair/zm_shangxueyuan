@@ -74,7 +74,14 @@ public class HomeMenuFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BusProvider.getInstance().post(new MenuControlEvent());
-                BusProvider.getInstance().post(new MenuClickedEvent(position));
+                BusProvider.getInstance().post(new MenuClickedEvent(MenuClickedEvent.VIDEO_CLICK, position));
+            }
+        });
+        mGalleryGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                BusProvider.getInstance().post(new MenuControlEvent());
+                BusProvider.getInstance().post(new MenuClickedEvent(MenuClickedEvent.GALLERY_CLICK, position));
             }
         });
     }
