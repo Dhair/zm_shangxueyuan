@@ -70,4 +70,5 @@ dependencies {
     compile project(':AndroidUtils')
     compile project(':sliding_menu_library')
     compile project(':view_pager_indicator_library')
+    compile project(':photo_view')
 }

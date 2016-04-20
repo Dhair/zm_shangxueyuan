@@ -1,1 +1,2 @@
 include ':app', ':AndroidUtils','sliding_menu_library','view_pager_indicator_library'
+include 'photo_view'
