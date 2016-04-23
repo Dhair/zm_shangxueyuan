@@ -167,6 +167,23 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
 
             }
         });
+        mVideoAdapter.setOnItemClickListener(new OnItemClickListener<VideoModel>() {
+            @Override
+            public void onItemClick(View v, VideoModel videoModel, int position) {
+                if (VideoModel.isTopicVideo(videoModel)) {
+                    startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                } else {
+                    startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                }
+            }
+        });
+        mGalleryAdapter.setOnItemClickListener(new OnItemClickListener<GalleryTopicModel>() {
+            @Override
+            public void onItemClick(View v, GalleryTopicModel galleryTopicModel, int position) {
+                startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
+            }
+
+        });
         mKeywordText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 
             @Override
