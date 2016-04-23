@@ -21,7 +21,7 @@ public abstract class AbsLoadingEmptyActivity extends AbsActionBarActivity {
 
             mLoadingEmptyView = (LoadingEmptyView) findViewById(R.id.loading_empty_box);
         }
-        mViewStub.setVisibility(View.VISIBLE);
+        mLoadingEmptyView.setVisibility(View.VISIBLE);
     }
 
     protected void showLoading() {
@@ -32,14 +32,14 @@ public abstract class AbsLoadingEmptyActivity extends AbsActionBarActivity {
     }
 
     protected void hideLoading() {
-        if (mViewStub != null) {
-            mViewStub.setVisibility(View.GONE);
+        if (mLoadingEmptyView != null) {
+            mLoadingEmptyView.setVisibility(View.GONE);
         }
     }
 
     protected void showLoadFail(LoadingEmptyView.LoadViewCallback loadViewCallback) {
         initLoadingEmptyView();
-        if (mViewStub != null) {
+        if (mLoadingEmptyView != null) {
             mLoadingEmptyView.updateEmptyView(loadViewCallback);
         }
     }
@@ -59,6 +59,6 @@ public abstract class AbsLoadingEmptyActivity extends AbsActionBarActivity {
     }
 
     protected boolean isLoading() {
-        return mLoadingEmptyView != null && mLoadingEmptyView.isLoading();
+        return mLoadingEmptyView != null && mLoadingEmptyView.getVisibility() == View.VISIBLE && mLoadingEmptyView.isLoading();
     }
 }

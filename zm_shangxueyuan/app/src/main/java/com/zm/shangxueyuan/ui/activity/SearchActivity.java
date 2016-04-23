@@ -17,8 +17,11 @@ import android.widget.TextView;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.db.VideoDBUtil;
+import com.zm.shangxueyuan.model.GalleryTopicModel;
 import com.zm.shangxueyuan.model.KeywordModel;
 import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.restful.ReqRestAdapter;
+import com.zm.shangxueyuan.restful.RestfulRequest;
 import com.zm.shangxueyuan.ui.adapter.GalleryAdapter;
 import com.zm.shangxueyuan.ui.adapter.SearchKeywordAdapter;
 import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
@@ -26,11 +29,16 @@ import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.utils.KeyBoardUtil;
 import com.zm.utils.PhoneUtil;
 
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import butterknife.Bind;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Creator: dengshengjin on 16/4/20 08:49
@@ -62,6 +70,7 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
     private GalleryAdapter mGalleryAdapter;
     private Executor mExecutor = Executors.newCachedThreadPool();
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private RestfulRequest mRequest;
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, SearchActivity.class);
@@ -76,6 +85,7 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
         int itemWidth = (int) (PhoneUtil.getDisplayWidth(getContext()) / 2.0f);
         mVideoAdapter.setItemWidth(itemWidth);
         mGalleryAdapter = new GalleryAdapter(getApplicationContext());
+        mRequest = ReqRestAdapter.getInstance(getContext()).create(RestfulRequest.class);
     }
 
     @Override
@@ -216,19 +226,50 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
                                 showEmptyWidthWarn(getString(R.string.search_no_result));
                                 return;
                             }
-                            hideLoading();
                             mListView.setAdapter(mVideoAdapter);
                             mVideoAdapter.setVideoList(videoList);
                             mVideoAdapter.notifyDataSetChanged();
+                            hideLoading();
                         }
-                    }, 5000);
+                    }, 300);
 
                 }
             });
         } else {
             mTipsTitleText.setText(getString(R.string.search_gallery_result));
             showLoading();
+            mRequest.search(keyword, new Callback<JSONObject>() {
+                @Override
+                public void success(final JSONObject jsonObject, Response response) {
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            final List<GalleryTopicModel> topicList = GalleryTopicModel.parseGalleryTopics(jsonObject);
+                            mHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (isFinishing()) {
+                                        return;
+                                    }
+                                    if (topicList == null || topicList.isEmpty()) {
+                                        showEmptyWidthWarn(getString(R.string.search_no_result));
+                                        return;
+                                    }
+                                    mListView.setAdapter(mGalleryAdapter);
+                                    mGalleryAdapter.setGalleryList(topicList);
+                                    mGalleryAdapter.notifyDataSetChanged();
+                                    hideLoading();
+                                }
+                            }, 5000);
+                        }
+                    });
+                }
 
+                @Override
+                public void failure(RetrofitError error) {
+                    showEmptyWidthWarn(getString(R.string.search_no_result));
+                }
+            });
 
         }
     }
