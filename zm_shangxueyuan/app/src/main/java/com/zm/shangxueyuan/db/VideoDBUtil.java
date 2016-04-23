@@ -122,7 +122,7 @@ public class VideoDBUtil {
                 long videoId = it.next();
                 VideoStatusModel videoStatusModel = VideoDBUtil.getStatus(videoId);
                 if (videoStatusModel != null) {
-                    videoStatusModel.setFavStatus(CommonConstant.UNFAV_STATUS);
+                    videoStatusModel.setFavStatus(CommonConstant.UN_FAV_STATUS);
                     videoStatusModel.save();
                 }
             }
@@ -157,4 +157,5 @@ public class VideoDBUtil {
         return new Select().from(VideoModel.class).where("valid=1 and (title like '%" + keyWord + "%' or content like '%" + keyWord + "%' or sub_title like '%" + keyWord + "%')")
                 .orderBy("videoId DESC").limit("25").execute();
     }
+
 }

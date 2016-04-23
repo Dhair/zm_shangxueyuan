@@ -225,7 +225,7 @@ public class VideoModel extends Model implements Serializable {
     public VideoStatusModel convert() {
         VideoStatusModel statusModel = new VideoStatusModel();
         statusModel.setVideoId(videoId);
-        statusModel.setFavStatus(CommonConstant.UNFAV_STATUS);
+        statusModel.setFavStatus(CommonConstant.UN_FAV_STATUS);
         return statusModel;
     }
 

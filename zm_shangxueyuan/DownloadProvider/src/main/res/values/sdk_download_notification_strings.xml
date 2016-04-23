@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="sdk_download_notification_pause">暂停</string>
+    <string name="sdk_download_notification_cancel">取消</string>
+    <string name="sdk_download_progress_percent">已完成%s </string>
+
+</resources>

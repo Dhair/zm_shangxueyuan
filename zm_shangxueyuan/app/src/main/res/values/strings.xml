@@ -49,6 +49,7 @@
     <string name="share">分享</string>
     <string name="download">下载</string>
     <string name="video_play_fail">该视频播放失败</string>
+    <string name="net_fail">您的网络状况不理想，请检查网络连接后再尝试下载。</string>
     <string name="net_2_3g">您正在使用2G/3G网络，视频下载将可能产生较大流量费用(由运营商收取)，是否继续？</string>
 
 
@@ -86,4 +87,12 @@
     <string name="search">搜索</string>
 
     <string name="share_url" formatted="false">我正在使用中脉商学院播放视频—\"%s\",视频地址:%s。</string>
+    <string name="share_url_picture" formatted="false">我正在使用中脉商学院查看图片—\"%s\",图片地址:%s。</string>
+    <string name="download_fail">视频下载失败，请稍后再试</string>
+
+    <string name="tools_record_history">播放记录</string>
+    <string name="tools_fav">收藏</string>
+    <string name="tools_download">下载</string>
+    <string name="tools_search">搜索</string>
+    <string name="tools_personal">我的</string>
 </resources>

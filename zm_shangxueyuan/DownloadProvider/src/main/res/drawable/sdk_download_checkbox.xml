@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/sdk_download_checkbox_checked" android:state_checked="true"/>
+    <item android:drawable="@drawable/sdk_download_checkbox_unchecked"/>
+
+</selector>

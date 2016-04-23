@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="sdk_download_authority">com.zm.shangxueyuan</string>
+    <string name="sdk_download_permission_access">com.zm.shangxueyuan.permission.ACCESS_DOWNLOAD_MANAGER</string>
+    <string name="sdk_download_permission_access_advanced">com.zm.shangxueyuan.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED</string>
+    <string name="sdk_download_permission_access_all">com.zm.shangxueyuan.permission.ACCESS_ALL_DOWNLOADS</string>
+    <string name="sdk_download_permission_send_download_completed_intents">com.zm.shangxueyuan.permission.SEND_DOWNLOAD_COMPLETED_INTENTS</string>
+    <string name="sdk_download_permission_without_notification">com.zm.shangxueyuan.permission.DOWNLOAD_WITHOUT_NOTIFICATION</string>
+
+</resources>

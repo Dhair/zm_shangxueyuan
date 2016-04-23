@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      Copyright (C) 2010 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="zuimeia_sdk_download_title" msgid="2470985874255839247">"下载内容"</string>
+    <string name="zuimeia_sdk_download_no_downloads" msgid="1029667411186146836">"无下载内容"</string>
+    <string name="zuimeia_sdk_download_missing_title" msgid="830115697868833773">"&lt;未知>"</string>
+    <string name="zuimeia_sdk_download_menu_sort_by_size" msgid="2276438658769422878">"按大小排序"</string>
+    <string name="zuimeia_sdk_download_menu_sort_by_date" msgid="4300882048968609945">"按时间排序"</string>
+    <string name="zuimeia_sdk_download_queued" msgid="104973307780629904">"已加入队列"</string>
+    <string name="zuimeia_sdk_download_running" msgid="4656462962155580641">"正在下载"</string>
+    <string name="zuimeia_sdk_download_pending" msgid="4656462962155580641">"等待下载"</string>
+    <string name="zuimeia_sdk_download_paused">暂停</string>
+    <string name="zuimeia_sdk_download_success" msgid="7006048006543495236">"已完成"</string>
+    <string name="zuimeia_sdk_download_error" msgid="3107369653921738690">"下载失败"</string>
+    <string name="zuimeia_sdk_download_dialog_title_not_available" msgid="4479021195995400471">"下载失败"</string>
+    <string name="zuimeia_sdk_download_dialog_failed_body" msgid="587545111677064427">"你想要重新尝试下载该文件？"</string>
+    <string name="zuimeia_sdk_download_dialog_running_body">你想要暂停下载该文件吗？</string>
+    <string name="zuimeia_sdk_download_dialog_paused_body">你想要继续下载该文件吗？</string>
+    <string name="zuimeia_sdk_download_dialog_title_queued_body" msgid="3062862079904954824">"文件尚不可用"</string>
+    <string name="zuimeia_sdk_download_dialog_queued_body" msgid="2506935748423351902">"该文件已加入队列，供以后下载。"</string>
+    <string name="zuimeia_sdk_download_dialog_file_missing_body" msgid="2783781332668129395">"未找到已下载的文件。"</string>
+    <string name="zuimeia_sdk_download_dialog_insufficient_space_on_external" msgid="7534108515812329821">"无法完成下载，外部存储器的空间不足。"</string>
+    <string name="zuimeia_sdk_download_dialog_insufficient_space_on_cache" msgid="8387210487235302129">"无法完成下载，内部下载存储器的空间不足。"</string>
+    <string name="zuimeia_sdk_download_dialog_cannot_resume" msgid="7704082031608361756">"下载中断，无法继续进行。"</string>
+    <string name="zuimeia_sdk_download_dialog_file_already_exists" msgid="2663737850617642888">"无法下载，目标文件已存在。"</string>
+    <string name="zuimeia_sdk_download_dialog_media_not_found" msgid="5308602145105720991">"无法下载，未安装外部媒体。"</string>
+    <string name="zuimeia_sdk_download_download_no_application_title" msgid="3501359021635168387">"无法打开文件"</string>
+    <string name="zuimeia_sdk_download_remove_download" msgid="6372920256257247857">"清除"</string>
+    <string name="zuimeia_sdk_download_delete_download" msgid="76629022653866471">"删除"</string>
+    <string name="zuimeia_sdk_download_pause_download">暂停</string>
+    <string name="zuimeia_sdk_download_resume_download">继续</string>
+    <string name="zuimeia_sdk_download_keep_queued_download" msgid="5144882786014818569">"保留"</string>
+    <string name="zuimeia_sdk_download_cancel_running_download" msgid="5232704030969221112">"稍后再说"</string>
+    <string name="zuimeia_sdk_download_retry_download" msgid="7617100787922717912">"重试"</string>
+    <string name="zuimeia_sdk_download_deselect_all" msgid="5638030443515705047">"取消勾选"</string>
+
+</resources>

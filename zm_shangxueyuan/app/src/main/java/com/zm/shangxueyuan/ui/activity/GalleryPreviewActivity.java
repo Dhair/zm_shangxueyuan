@@ -24,11 +24,12 @@ import com.zm.shangxueyuan.utils.PermissionUtil;
 import com.zm.shangxueyuan.utils.ToastUtil;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.Bind;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 /**
  * Creator: dengshengjin on 16/4/20 08:48
@@ -104,7 +105,7 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
         mShareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showShare();
             }
         });
         mDownloadBtn.setOnClickListener(new View.OnClickListener() {
@@ -141,8 +142,12 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
             ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
             return;
         }
-        addToSysGallery(file.getAbsolutePath(), "zhongmei_" + System.currentTimeMillis() + "_shangxueyuan.jpg");
-        ToastUtil.showToast(getApplicationContext(), R.string.gallery_success);
+        boolean addToSysGallery = addToSysGallery(file.getAbsolutePath(), "zhongmei_" + System.currentTimeMillis() + "_shangxueyuan.jpg");
+        if (addToSysGallery) {
+            ToastUtil.showToast(getApplicationContext(), R.string.gallery_success);
+        } else {
+            ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+        }
     }
 
     private MediaScannerConnection mConnection;
@@ -168,7 +173,7 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
             });
             mConnection.connect();
             return true;
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -216,6 +221,10 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
             return mGalleryList.get(position).getImageDetailUrl();
         }
 
+        public GalleryModel getModel(int position) {
+            return mGalleryList.get(position);
+        }
+
 
         @Override
         public int getCount() {
@@ -224,5 +233,24 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
             }
             return mGalleryList.size();
         }
+    }
+
+    private void showShare() {
+        ShareSDK.initSDK(this);
+        OnekeyShare oks = new OnekeyShare();
+        oks.disableSSOWhenAuthorize();
+        GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+        oks.setTitle(getString(R.string.share));
+        String pictureUrl = galleryModel.getImageRealUrl();
+        oks.setTitleUrl(pictureUrl);
+        String shareText = String.format(getString(R.string.share_url_picture), galleryModel.getTitleUpload(), pictureUrl);
+        oks.setText(shareText);
+        oks.setUrl(pictureUrl);
+        oks.setComment("");
+        oks.setSite(getString(R.string.app_name));
+        oks.setSiteUrl(pictureUrl);
+        oks.show(this);
+
+
     }
 }

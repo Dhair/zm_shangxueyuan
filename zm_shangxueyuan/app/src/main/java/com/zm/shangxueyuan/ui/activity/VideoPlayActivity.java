@@ -24,6 +24,7 @@ import android.widget.VideoView;
 
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
+import com.zm.shangxueyuan.helper.DownloadManagerHelper;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
@@ -49,7 +50,7 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
         return intent;
     }
 
-    private Handler mHandler1 = new Handler() {
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -66,8 +67,8 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
                             progressDialog.dismiss();
                         }
                     } else {
-                        mHandler1.removeMessages(1);
-                        mHandler1.sendEmptyMessageDelayed(1, 200);
+                        mHandler.removeMessages(1);
+                        mHandler.sendEmptyMessageDelayed(1, 200);
                     }
                     break;
                 default:
@@ -109,25 +110,9 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
     @Override
     protected void initWidgets() {
 
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                }
-                return true;
-            }
-        });
-        if (!isFinishing()) {
-            progressDialog.show();
-        }
+
         mVideoView = (VideoView) findViewById(R.id.surface_view);
-        String nativeVideoUrl = StorageHelper.getDownloadedPath(getApplicationContext(), videoModel, mStatusModel);
+        String nativeVideoUrl = DownloadManagerHelper.getVideoFilePath(getApplicationContext(), videoModel, mStatusModel);
 
         if (!TextUtils.isEmpty(nativeVideoUrl)) {// 文件存在且下载标记
             Log.i("", "native url=" + nativeVideoUrl);
@@ -152,10 +137,38 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
 
                     }
                 });
+                builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        finish();
+                    }
+                });
                 builder.create().show();
                 return;
             } else {
                 mVideoView.setVideoURI(Uri.parse(videoUrl));
+            }
+        }
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.setCancelable(false);
+        progressDialog.setOnKeyListener(new OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                }
+                return true;
+            }
+        });
+        if (!isFinishing()) {
+            if (progressDialog != null) {
+                progressDialog.show();
             }
         }
         controller = new MediaController(VideoPlayActivity.this);
@@ -175,7 +188,9 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
             @Override
             public void onPrepared(MediaPlayer mp) {
                 mVideoView.start();
-                progressDialog.dismiss();
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
                 mStatusModel.setPlayDate(System.currentTimeMillis());
                 mStatusModel.save();
                 MobclickAgentUtil.playClick(getApplicationContext(), videoModel.getTitle());
@@ -206,7 +221,9 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
 
     @Override
     protected void onPause() {
-        progressDialog.dismiss();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
         super.onPause();
     }
 

@@ -1,7 +1,9 @@
 package com.zm.shangxueyuan.ui.activity;
 
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.zm.shangxueyuan.R;
@@ -16,6 +18,9 @@ public abstract class AbsActionBarActivity extends AbsActivity {
 
     @Bind(R.id.title_text)
     TextView mTitle;
+
+    @Bind(R.id.header_box)
+    RelativeLayout mHeaderBox;
 
     @Bind(R.id.right_text)
     TextView mRight;
@@ -62,5 +67,11 @@ public abstract class AbsActionBarActivity extends AbsActivity {
             }
         }
 
+    }
+
+    protected void setActionToolsBg(int bgResId,int backResId,int titleResId){
+        mHeaderBox.setBackgroundResource(bgResId);
+        mBack.setImageResource(backResId);
+        mTitle.setTextColor(ContextCompat.getColor(getContext(),titleResId));
     }
 }

@@ -5,7 +5,7 @@ import android.content.Context;
 import com.alibaba.sdk.android.oss.model.ListObjectsResult;
 import com.alibaba.sdk.android.oss.model.OSSObjectSummary;
 import com.zm.shangxueyuan.constant.CommonConstant;
-import com.zm.shangxueyuan.helper.StorageHelper;
+import com.zm.shangxueyuan.helper.OssHelper;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -66,8 +66,8 @@ public class GalleryModel extends BaseModel {
             String baseUrl = CommonConstant.endpoint + File.separator + ossObjectSummaries.get(i).getKey();
             GalleryModel galleryModel = new GalleryModel();
             galleryModel.setTitleUpload(titleUpload);
-            galleryModel.setImageListUrl(StorageHelper.getImageListUrl(context, baseUrl));
-            galleryModel.setImageDetailUrl(StorageHelper.getImageDetailUrl(context, baseUrl));
+            galleryModel.setImageListUrl(OssHelper.getImageListUrl(context, baseUrl));
+            galleryModel.setImageDetailUrl(OssHelper.getImageDetailUrl(context, baseUrl));
             galleryModel.setImageRealUrl(baseUrl);
             galleryList.add(galleryModel);
         }

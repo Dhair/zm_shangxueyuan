@@ -46,6 +46,7 @@ public class PersonalActivity extends AbsActionBarActivity {
     @Override
     protected void initWidgets() {
         setActionTitle(R.string.personal);
+        setActionToolsBg(R.color.colorPrimary, R.drawable.icon_back_white, R.color.white);
     }
 
     @Override
@@ -91,5 +92,10 @@ public class PersonalActivity extends AbsActionBarActivity {
     @Override
     protected int getContentView() {
         return R.layout.activity_personal;
+    }
+
+    @Override
+    public int getStatusBarColor() {
+        return R.color.colorPrimary;
     }
 }

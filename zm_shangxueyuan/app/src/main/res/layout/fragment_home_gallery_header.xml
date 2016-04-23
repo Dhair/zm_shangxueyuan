@@ -46,8 +46,8 @@
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                app:fillColor="@color/colorPrimary"
-                app:pageColor="@color/white"
+                app:fillColor="@color/white"
+                app:pageColor="@color/white_50_alpha"
                 app:radius_p="3.5dp"
                 app:spacing="12dp"
                 app:strokeWidth="0dp"/>

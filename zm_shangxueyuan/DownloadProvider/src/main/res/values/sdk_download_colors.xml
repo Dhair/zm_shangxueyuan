@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="sdk_download_white">#FFFFFF</color>
+    <color name="sdk_download_white_30">#4CFFFFFF</color>
+    <color name="sdk_download_white_40">#66FFFFFF</color>
+    <color name="sdk_download_white_50">#80FFFFFF</color>
+    <color name="sdk_download_white_60">#9AFFFFFF</color>
+    <color name="sdk_download_white_80">#CCFFFFFF</color>
+    <color name="sdk_download_white_90">#E6FFFFFF</color>
+    <color name="sdk_download_bg_color">#797DAC</color>
+    <color name="sdk_download_parent_item_color">#6C6F9A</color>
+
+</resources>

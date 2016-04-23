@@ -93,14 +93,20 @@ public class HomeMenuFragment extends BaseFragment {
         final List<GalleryCategoryModel> galleryNavList = MenuNavHelper.getInstance().getGalleryNavModels();
         mGalleryAdapter.setNavList(galleryNavList);
         mVideoAdapter.notifyDataSetChanged();
-        ViewGroup.LayoutParams videoLp = mVideoGrid.getLayoutParams();
-        videoLp.height = mVideoGrid.getWidth();
-        mVideoGrid.requestLayout();
+        if (videoNavList != null) {
+            ViewGroup.LayoutParams videoLp = mVideoGrid.getLayoutParams();
+            int videoWidth = (int) (mVideoGrid.getWidth() / 3.0f);
+            int videoRow = (int) Math.ceil(videoNavList.size() / 3.0f);
+            videoLp.height = videoWidth * videoRow;
+            mVideoGrid.requestLayout();
+        }
         if (galleryNavList != null && !galleryNavList.isEmpty()) {
             mGalleryTitleBox.setVisibility(View.VISIBLE);
             mGalleryAdapter.notifyDataSetChanged();
             ViewGroup.LayoutParams galleryLp = mGalleryGrid.getLayoutParams();
-            galleryLp.height = mGalleryGrid.getWidth();
+            int galleryWidth = (int) (mGalleryGrid.getWidth() / 3.0f);
+            int galleryRow = (int) Math.ceil(galleryNavList.size() / 3.0f);
+            galleryLp.height = galleryWidth * galleryRow;
             mGalleryGrid.requestLayout();
         }
     }

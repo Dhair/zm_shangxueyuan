@@ -1,9 +1,14 @@
 package com.zm.shangxueyuan.ui.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +19,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.sdk.download.providers.DownloadManager;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.db.VideoDBUtil;
@@ -22,7 +28,10 @@ import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
 import com.zm.shangxueyuan.utils.CommonUtils;
 import com.zm.shangxueyuan.utils.ImageLoadUtil;
+import com.zm.shangxueyuan.utils.ToastUtil;
+import com.zm.shangxueyuan.utils.network.HttpUtils;
 
+import java.util.Calendar;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -64,9 +73,10 @@ public class VideoDetailActivity extends AbsActionBarActivity {
 
     @Bind(R.id.play_box)
     RelativeLayout mPlayBox;
-
+    DownloadManager mDownloadManager;
     private Executor mExecutor = Executors.newCachedThreadPool();
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private AlertDialog.Builder builder;
 
     public static Intent getIntent(Context context, VideoModel videoModel) {
         Intent intent = new Intent(context, VideoDetailActivity.class);
@@ -84,6 +94,16 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         mOptions = CommonUtils.getDisplayImageOptionsBuilder(R.drawable.play_default).build();
         mImageLoader.displayImage(StorageHelper.getImageUrl(mVideoModel.getImage()), mDetailImage, mOptions);
         mDetailText.setText(mVideoModel.getContent());
+        mDownloadManager = new DownloadManager(getApplicationContext(), getContentResolver(), getPackageName());
+        builder = new AlertDialog.Builder(VideoDetailActivity.this).setTitle(R.string.tips).setNegativeButton(R.string.cancel,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                });
     }
 
     @Override
@@ -98,7 +118,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         mShareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showShare();
+                onShareEvent();
             }
         });
         mTypeBox.setOnClickListener(new View.OnClickListener() {
@@ -129,12 +149,14 @@ public class VideoDetailActivity extends AbsActionBarActivity {
                 if (mFavBtn.isSelected()) {
                     mFavBtn.setSelected(false);
                     if (mStatusModel != null) {
-                        mStatusModel.setFavStatus(CommonConstant.UNFAV_STATUS);
+                        mStatusModel.setFavStatus(CommonConstant.UN_FAV_STATUS);
+                        mStatusModel.setFavDate(Calendar.getInstance().getTimeInMillis());
                     }
                 } else {
                     mFavBtn.setSelected(true);
                     if (mStatusModel != null) {
                         mStatusModel.setFavStatus(CommonConstant.FAV_STATUS);
+                        mStatusModel.setFavDate(Calendar.getInstance().getTimeInMillis());
                     }
                 }
             }
@@ -143,6 +165,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             @Override
             public void onClick(View v) {
                 startActivity(VideoPlayActivity.getIntent(VideoDetailActivity.this, mStatusModel, mVideoModel));
+                saveVideoStatus();
             }
         });
         mExecutor.execute(new Runnable() {
@@ -168,6 +191,9 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             mFavBtn.setSelected(true);
         } else {
             mFavBtn.setSelected(false);
+        }
+        if (mStatusModel.getDownloadType() > 0 && mStatusModel.getDownId() > 0) {
+            mDownloadBtn.setSelected(true);
         }
         int playType = mStatusModel.getPlayType();
         if (playType <= 0) {
@@ -261,15 +287,83 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         return super.onContextItemSelected(item);
     }
 
-    private void onDownloadEvent(int downloadType) {
-        if (mStatusModel != null) {
-            mStatusModel.setDownloadType(downloadType);
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        saveVideoStatus();
+    }
+
+    private void onShareEvent() {
+        ShareSDK.initSDK(this);
+        OnekeyShare oks = new OnekeyShare();
+        oks.disableSSOWhenAuthorize();
+
+        oks.setTitle(getString(R.string.share));
+        String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), mStatusModel.getPlayType());
+        oks.setTitleUrl(videoUrl);
+        String shareText = String.format(getString(R.string.share_url), mVideoModel.getTitle(), videoUrl);
+        oks.setText(shareText);
+        oks.setUrl(videoUrl);
+        oks.setComment("");
+        oks.setSite(getString(R.string.app_name));
+        oks.setSiteUrl(videoUrl);
+        oks.show(this);
+    }
+
+    private boolean onPreDownloadEvent(final int downloadType) {
+        if (!HttpUtils.isNetworkAvailable(getApplicationContext())) {
+            ToastUtil.showToast(getApplicationContext(), getString(R.string.net_fail));
+            return false;
+        }
+        if (HttpUtils.isMobileDataEnable(getApplicationContext()) && CommonConstant.IS_WARN_2G_3G) {
+            builder.setMessage(getString(R.string.net_2_3g));
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    onDownloadEvent(downloadType);
+                }
+            });
+            builder.create().show();
+            return false;
+        }
+        return true;
+    }
+
+    private void onDownloadEvent(int downloadType) {
+        if (!onPreDownloadEvent(downloadType)) {
+            return;
+        }
+        try {
+            String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), downloadType);
+            Uri srcUri = Uri.parse(videoUrl);
+            DownloadManager.Request request = new DownloadManager.Request(srcUri);
+            request.setVisibleInDownloadsUi(true);
+            request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/");
+            request.setDescription(mVideoModel.getTitle());
+            request.setTitle(mVideoModel.getTitle());
+            long downloadId = mDownloadManager.enqueue(request);
+            Log.e("", "downloadId =  " + downloadId + "," + videoUrl);
+            if (downloadId < 0) {
+                ToastUtil.showToast(getApplicationContext(), R.string.download_fail);
+                return;
+            }
+            if (mStatusModel != null) {
+                mStatusModel.setDownloadType(downloadType);
+                mStatusModel.setDownloadStatus(CommonConstant.DOWN_ING);
+                mStatusModel.setDownId(downloadId);
+                mDownloadBtn.setSelected(true);
+                saveVideoStatus();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            ToastUtil.showToast(getApplicationContext(), R.string.download_fail);
+        }
+    }
+
+    //onDestroy onClickPlay onClickDownload
+    private void saveVideoStatus() {
         if (mStatusModel != null) {
             mExecutor.execute(new Runnable() {
                 @Override
@@ -280,25 +374,5 @@ public class VideoDetailActivity extends AbsActionBarActivity {
                 }
             });
         }
-    }
-
-    private void showShare() {
-        ShareSDK.initSDK(this);
-        OnekeyShare oks = new OnekeyShare();
-        oks.disableSSOWhenAuthorize();
-
-        oks.setTitle(getString(R.string.share));// title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
-        String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), mStatusModel.getPlayType());
-        oks.setTitleUrl(videoUrl);// titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-        String shareText = String.format(getString(R.string.share_url), mVideoModel.getTitle(), videoUrl);
-        oks.setText(shareText);
-        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-        //oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
-        oks.setUrl(videoUrl);// url仅在微信（包括好友和朋友圈）中使用
-        oks.setComment("");// comment是我对这条分享的评论，仅在人人网和QQ空间使用
-        oks.setSite(getString(R.string.app_name));  // site是分享此内容的网站名称，仅在QQ空间使用
-        oks.setSiteUrl(videoUrl);    // siteUrl是分享此内容的网站地址，仅在QQ空间使用
-        // 启动分享GUI
-        oks.show(this);
     }
 }
