@@ -6,6 +6,7 @@ import retrofit.Callback;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
+import retrofit.http.Path;
 
 public interface RestfulRequest {
     @FormUrlEncoded
@@ -14,13 +15,17 @@ public interface RestfulRequest {
 
     @FormUrlEncoded
     @POST("/gallery/categories/")
-    void queryGallery(@Field("tmp") String tmp,Callback<JSONObject> callback);
+    void queryGallery(@Field("tmp") String tmp, Callback<JSONObject> callback);
 
     @FormUrlEncoded
     @POST("/config/")
-    void queryConfig(@Field("tmp") String tmp,Callback<JSONObject> callback);
+    void queryConfig(@Field("tmp") String tmp, Callback<JSONObject> callback);
 
     @FormUrlEncoded
     @POST("/feedback/add/")
     void feedback(@Field("content") String content, @Field("contact_info") String contact_info, Callback<JSONObject> callback);
+
+    @FormUrlEncoded
+    @POST("/gallery/category/{id}/topics/")
+    void queryGalleryTopics(@Path("id") long topicId, @Field("tmp") String tmp, Callback<JSONObject> callback);
 }

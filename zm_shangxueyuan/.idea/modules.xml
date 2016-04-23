@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidUtils/AndroidUtils.iml" filepath="$PROJECT_DIR$/AndroidUtils/AndroidUtils.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/oss-android-sdk/oss-android-sdk.iml" filepath="$PROJECT_DIR$/oss-android-sdk/oss-android-sdk.iml" />
       <module fileurl="file://$PROJECT_DIR$/photo_view/photo_view.iml" filepath="$PROJECT_DIR$/photo_view/photo_view.iml" />
       <module fileurl="file://$PROJECT_DIR$/sliding_menu_library/sliding_menu_library.iml" filepath="$PROJECT_DIR$/sliding_menu_library/sliding_menu_library.iml" />
       <module fileurl="file://$PROJECT_DIR$/view_pager_indicator_library/view_pager_indicator_library.iml" filepath="$PROJECT_DIR$/view_pager_indicator_library/view_pager_indicator_library.iml" />

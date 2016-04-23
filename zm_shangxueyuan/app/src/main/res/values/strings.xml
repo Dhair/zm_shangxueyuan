@@ -47,6 +47,7 @@
     <string name="mob_login">登录次数</string>
     <string name="mob_click_share">分享次数</string>
     <string name="share">分享</string>
+    <string name="download">下载</string>
     <string name="video_play_fail">该视频播放失败</string>
     <string name="net_2_3g">您正在使用2G/3G网络，视频下载将可能产生较大流量费用(由运营商收取)，是否继续？</string>
 
@@ -68,4 +69,8 @@
     <string name="data_load_empty">暂无相关内容</string>
     <string name="data_load_try_again">网络连接失败,点击重试</string>
     <string name="exit_warn">再按一次退出程序</string>
+
+    <string name="gallery_detail">图片详情</string>
+    <string name="gallery_success">保存成功</string>
+    <string name="gallery_fail">保存失败</string>
 </resources>

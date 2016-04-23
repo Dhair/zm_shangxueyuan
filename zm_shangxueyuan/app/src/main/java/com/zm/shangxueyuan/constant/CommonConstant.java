@@ -34,4 +34,9 @@ public interface CommonConstant {
 
 
     String FINISH_ACTION_NAME = "finish_action_name";
+
+    String accessKeyId = "UQsawImSq6EPrcTO";
+    String accessKeySecret = "KzdfiUFluyykj71dtq5MI9S0v11xPO";
+    String endpoint = "http://zmstatic.zuimeia.com";
+    String bucketName = "boku";
 }

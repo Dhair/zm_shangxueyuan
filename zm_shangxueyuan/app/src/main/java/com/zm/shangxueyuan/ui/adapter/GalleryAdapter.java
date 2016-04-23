@@ -14,6 +14,7 @@ import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
+import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.utils.CommonUtils;
 import com.zm.shangxueyuan.utils.ImageLoadUtil;
 import com.zm.shangxueyuan.utils.ResUtil;
@@ -118,7 +119,7 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         GroupViewHolder holder;
         if (convertView == null) {
             holder = new GroupViewHolder();
@@ -130,12 +131,14 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
         } else {
             holder = (GroupViewHolder) convertView.getTag();
         }
-        GalleryCategoryModel categoryModel = mCategoryList.get(groupPosition);
+        final GalleryCategoryModel categoryModel = mCategoryList.get(groupPosition);
         holder.titleText.setText(categoryModel.getTitle());
         holder.moreBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (mGalleryCategoryOnItemClickListener != null) {
+                    mGalleryCategoryOnItemClickListener.onItemClick(v, categoryModel, groupPosition);
+                }
             }
         });
         return convertView;
@@ -185,7 +188,9 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
 
                     @Override
                     public void onClick(View v) {
-
+                        if (mGalleryTopicModelOnItemClickListener != null) {
+                            mGalleryTopicModelOnItemClickListener.onItemClick(v, videoModel, 0);
+                        }
 
                     }
                 });
@@ -228,5 +233,16 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
             totalPosition += getChildrenCount(i) + 1;
         }
         return totalPosition;
+    }
+
+    private OnItemClickListener<GalleryCategoryModel> mGalleryCategoryOnItemClickListener;
+    private OnItemClickListener<GalleryTopicModel> mGalleryTopicModelOnItemClickListener;
+
+    public void setGalleryCategoryOnItemClickListener(OnItemClickListener<GalleryCategoryModel> galleryCategoryOnItemClickListener) {
+        mGalleryCategoryOnItemClickListener = galleryCategoryOnItemClickListener;
+    }
+
+    public void setGalleryTopicModelOnItemClickListener(OnItemClickListener<GalleryTopicModel> galleryTopicModelOnItemClickListener) {
+        mGalleryTopicModelOnItemClickListener = galleryTopicModelOnItemClickListener;
     }
 }

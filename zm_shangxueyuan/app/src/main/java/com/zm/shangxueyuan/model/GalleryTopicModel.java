@@ -149,4 +149,25 @@ public class GalleryTopicModel extends Model implements Serializable {
     public static boolean isTopTopic(GalleryTopicModel videoModel) {
         return videoModel.isTop() && videoModel.getCategoryId() == 0;
     }
+
+    public static List<GalleryTopicModel> parseGalleryTopics(JSONObject jsonObject) {
+        if (jsonObject == null) {
+            return null;
+        }
+        List<GalleryTopicModel> list = new LinkedList<>();
+        JSONArray topicArr = jsonObject.optJSONArray("topics");
+        if (topicArr != null) {
+            for (int i = 0, len = topicArr.length(); i < len; i++) {
+                JSONObject topicObj = topicArr.optJSONObject(i);
+                GalleryTopicModel topicModel = new GalleryTopicModel();
+                topicModel.setUploadTitle(topicObj.optString("upload_title"));
+                topicModel.setImage(topicObj.optString("image"));
+                topicModel.setSubTitle(topicObj.optString("sub_title"));
+                topicModel.setTopicId(topicObj.optLong("id"));
+                topicModel.setTitle(topicObj.optString("title"));
+                list.add(topicModel);
+            }
+        }
+        return list;
+    }
 }

@@ -19,6 +19,7 @@ import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.restful.ReqRestAdapter;
 import com.zm.shangxueyuan.restful.RestfulRequest;
+import com.zm.shangxueyuan.utils.PermissionUtil;
 import com.zm.shangxueyuan.utils.network.Connectivity;
 import com.zm.utils.AppUtil;
 
@@ -39,10 +40,12 @@ public class SplashScreenActivity extends AbsActivity {
     public static final int GO_MAIN = -100;
     public static final int GO_UPDATE = -101;
     public static final int GO_FINISH = -102;
+    private static final int EXTERNAL_REQUEST_CODE = 1 << 2;
 
     private SplashHandler mSplashHandler = new SplashHandler(this);
     private RestfulRequest mRequest;
     private Executor mExecutor = Executors.newCachedThreadPool();
+
 
     private static class SplashHandler extends Handler {
         private WeakReference<SplashScreenActivity> mWeakReference;
@@ -61,10 +64,9 @@ public class SplashScreenActivity extends AbsActivity {
                 case GO_MAIN:
                     if (getActivity() != null && !getActivity().isFinishing()) {
                         SplashScreenActivity splashScreenActivity = getActivity();
-                        Intent intent = new Intent(splashScreenActivity, HomeActivity.class);
-                        splashScreenActivity.startActivity(intent);
-                        splashScreenActivity.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                        sendEmptyMessageDelayed(GO_FINISH, 600);
+                        if (!PermissionUtil.requestExternalStorage(splashScreenActivity, EXTERNAL_REQUEST_CODE)) {
+                            splashScreenActivity.startMain();
+                        }
                     }
                     break;
                 case GO_FINISH:
@@ -82,6 +84,25 @@ public class SplashScreenActivity extends AbsActivity {
                 return mWeakReference.get();
             }
             return null;
+        }
+    }
+
+    private void startMain() {
+        Intent intent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+        mSplashHandler.sendEmptyMessageDelayed(GO_FINISH, 600);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case EXTERNAL_REQUEST_CODE:
+                startMain();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
         }
     }
 

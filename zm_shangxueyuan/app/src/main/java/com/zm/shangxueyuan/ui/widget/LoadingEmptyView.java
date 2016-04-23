@@ -63,6 +63,14 @@ public class LoadingEmptyView extends FrameLayout {
             loadText.setText(str);
             loadText.setVisibility(View.VISIBLE);
         }
+        setClickable(false);
+        setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     public void updateEmptyView(String str, final LoadViewCallback myCallback) {

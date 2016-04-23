@@ -18,8 +18,8 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:layout_marginLeft="20dp"
-            android:indeterminateDuration="600"
             android:indeterminateDrawable="@drawable/progress_bar_circle2"
+            android:indeterminateDuration="600"
             android:visibility="gone"/>
 
         <TextView
@@ -39,9 +39,10 @@
     <TextView
         android:id="@+id/loading_no_data_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:gravity="center_horizontal"
-        android:paddingTop="80dp"
+        android:paddingBottom="50dp"
         android:text="@string/data_load_empty"
         android:textColor="@color/black_50"
         android:textSize="16sp"

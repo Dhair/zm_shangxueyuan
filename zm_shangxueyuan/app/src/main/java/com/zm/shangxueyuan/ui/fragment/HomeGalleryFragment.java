@@ -18,7 +18,10 @@ import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.GalleryDBUtil;
 import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
+import com.zm.shangxueyuan.ui.activity.GalleryActivity;
+import com.zm.shangxueyuan.ui.activity.GalleryMoreActivity;
 import com.zm.shangxueyuan.ui.adapter.GalleryAdapter;
+import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.ui.widget.SlidingMenuGalleryViewPager;
 
 import java.util.LinkedList;
@@ -60,11 +63,16 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
 
     @Override
     protected void initWidgetActions() {
-        mListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
+        mGalleryAdapter.setGalleryCategoryOnItemClickListener(new OnItemClickListener<GalleryCategoryModel>() {
             @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                return true;
+            public void onItemClick(View v, GalleryCategoryModel galleryCategoryModel, int position) {
+                getActivity().startActivity(GalleryMoreActivity.getIntent(getApplicationContext(), galleryCategoryModel));
+            }
+        });
+        mGalleryAdapter.setGalleryTopicModelOnItemClickListener(new OnItemClickListener<GalleryTopicModel>() {
+            @Override
+            public void onItemClick(View v, GalleryTopicModel galleryTopicModel, int position) {
+                getActivity().startActivity(GalleryActivity.getIntent(getApplicationContext(), galleryTopicModel));
             }
         });
         mExecutor.execute(new Runnable() {

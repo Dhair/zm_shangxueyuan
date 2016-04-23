@@ -12,6 +12,7 @@ import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
 import com.zm.utils.IOUtil;
+import com.zm.utils.PhoneUtil;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -206,4 +207,28 @@ public class StorageHelper {
         }
         return false;
     }
+
+    public static String getImageTopicUrl(Context context, String sourceUrl) {
+        String finalUrl = sourceUrl + "@" + PhoneUtil.getDisplayWidth(context) + "w";
+        return finalUrl;
+    }
+
+    public static String getImageCommonUrl(Context context, String sourceUrl) {
+        String finalUrl = sourceUrl + "@" + PhoneUtil.getDisplayWidth(context) / 2 + "w";
+        return finalUrl;
+    }
+
+    public static String getImageListUrl(Context context, String sourceUrl) {
+        String resUrl = "@%sw_%sh_0e";
+        String finalUrl = sourceUrl + String.format(resUrl, PhoneUtil.getDisplayWidth(context) / 4, PhoneUtil.getDisplayHeight(context) / 4);
+        return finalUrl;
+    }
+
+    public static String getImageDetailUrl(Context context, String sourceUrl) {
+        String resUrl = "@%sw_%sh_0e";
+        String finalUrl = sourceUrl + String.format(resUrl, PhoneUtil.getDisplayWidth(context), PhoneUtil.getDisplayHeight(context));
+        return finalUrl;
+    }
+
+
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+
+    <include layout="@layout/activity_header"/>
+
+    <com.zm.shangxueyuan.ui.widget.HackyViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/activity_header_height"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/share_btn"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/tools_bar_height"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@drawable/icon_share"
+                android:drawablePadding="3dp"
+                android:gravity="center_vertical"
+                android:text="@string/share"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/download_btn"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/tools_bar_height"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:drawableLeft="@drawable/icon_download_active"
+                android:drawablePadding="3dp"
+                android:gravity="center_vertical"
+                android:text="@string/download"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

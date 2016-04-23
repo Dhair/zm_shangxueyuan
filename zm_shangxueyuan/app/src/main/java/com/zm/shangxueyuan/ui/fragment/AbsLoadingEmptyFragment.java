@@ -50,4 +50,12 @@ public abstract class AbsLoadingEmptyFragment extends BaseFragment {
             mViewStub.setVisibility(View.GONE);
         }
     }
+
+
+    protected void showLoadFail(View mView, LoadingEmptyView.LoadViewCallback loadViewCallback) {
+        initLoadingEmptyView(mView);
+        if (mViewStub != null) {
+            mLoadingEmptyView.updateEmptyView(loadViewCallback);
+        }
+    }
 }
