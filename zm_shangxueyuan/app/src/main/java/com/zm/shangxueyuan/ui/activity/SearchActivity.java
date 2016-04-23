@@ -260,7 +260,7 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
                                     mGalleryAdapter.notifyDataSetChanged();
                                     hideLoading();
                                 }
-                            }, 5000);
+                            }, 300);
                         }
                     });
                 }
