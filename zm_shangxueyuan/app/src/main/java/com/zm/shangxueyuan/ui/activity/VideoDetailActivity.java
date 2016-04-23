@@ -27,6 +27,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import butterknife.Bind;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 /**
  * Creator: dengshengjin on 16/4/16 14:55
@@ -51,7 +53,10 @@ public class VideoDetailActivity extends AbsActionBarActivity {
     @Bind(R.id.share_btn)
     ImageView mShareBtn;
 
-    @Bind(R.id.type_button)
+    @Bind(R.id.type_box)
+    RelativeLayout mTypeBox;
+
+    @Bind(R.id.type_btn)
     TextView mTypeBtn;
 
     @Bind(R.id.detail_text)
@@ -84,13 +89,19 @@ public class VideoDetailActivity extends AbsActionBarActivity {
     @Override
     protected void initWidgets() {
         setActionTitle(mVideoModel.getTitle());
-        registerForContextMenu(mTypeBtn);
+        registerForContextMenu(mTypeBox);
         registerForContextMenu(mDownloadBtn);
     }
 
     @Override
     protected void initWidgetsActions() {
-        mTypeBtn.setOnClickListener(new View.OnClickListener() {
+        mShareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showShare();
+            }
+        });
+        mTypeBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mVideoModel.getClarity().equals("ld")) {
@@ -191,7 +202,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if (v.getId() == mTypeBtn.getId()) { // 播放
+        if (v.getId() == mTypeBox.getId()) { // 播放
             menu.setHeaderTitle(getString(R.string.video_context_menu));
             if (mVideoModel.getClarity().equals("hd")) {//超清
                 menu.add(0, 1, Menu.NONE, getString(R.string.video_ud_mode));
@@ -269,5 +280,25 @@ public class VideoDetailActivity extends AbsActionBarActivity {
                 }
             });
         }
+    }
+
+    private void showShare() {
+        ShareSDK.initSDK(this);
+        OnekeyShare oks = new OnekeyShare();
+        oks.disableSSOWhenAuthorize();
+
+        oks.setTitle(getString(R.string.share));// title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
+        String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), mStatusModel.getPlayType());
+        oks.setTitleUrl(videoUrl);// titleUrl是标题的网络链接，仅在人人网和QQ空间使用
+        String shareText = String.format(getString(R.string.share_url), mVideoModel.getTitle(), videoUrl);
+        oks.setText(shareText);
+        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
+        //oks.setImagePath("/sdcard/test.jpg");//确保SDcard下面存在此张图片
+        oks.setUrl(videoUrl);// url仅在微信（包括好友和朋友圈）中使用
+        oks.setComment("");// comment是我对这条分享的评论，仅在人人网和QQ空间使用
+        oks.setSite(getString(R.string.app_name));  // site是分享此内容的网站名称，仅在QQ空间使用
+        oks.setSiteUrl(videoUrl);    // siteUrl是分享此内容的网站地址，仅在QQ空间使用
+        // 启动分享GUI
+        oks.show(this);
     }
 }

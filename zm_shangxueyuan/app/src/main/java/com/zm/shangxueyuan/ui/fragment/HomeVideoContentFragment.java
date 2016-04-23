@@ -66,7 +66,6 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
     protected View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_video_content, container, false);
         mListView = (ListView) view.findViewById(R.id.list_view);
-        mListView.setAdapter(mVideoAdapter);
         showLoading(view);
 
 
@@ -104,7 +103,9 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
                             initHeaderViews(headerView, topVideoList, newsArr);
                             mListView.addHeaderView(headerView);
                         }
+                        mListView.setAdapter(mVideoAdapter);
                         mVideoAdapter.setVideoList(videoList);
+
                         mVideoAdapter.notifyDataSetChanged();
                     }
                 }, 500);

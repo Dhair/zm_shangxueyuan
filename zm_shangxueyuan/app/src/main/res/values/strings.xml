@@ -84,4 +84,6 @@
     <string name="search_hint">请输入关键字</string>
     <string name="search_keyword">大家都在搜</string>
     <string name="search">搜索</string>
+
+    <string name="share_url" formatted="false">我正在使用中脉商学院播放视频—\"%s\",视频地址:%s。</string>
 </resources>

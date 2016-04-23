@@ -72,4 +72,5 @@ dependencies {
     compile project(':view_pager_indicator_library')
     compile project(':photo_view')
     compile project(':oss-android-sdk')
+    compile project(':zhongmei_sharesdk')
 }
