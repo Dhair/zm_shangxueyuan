@@ -124,4 +124,12 @@ public class GalleryActivity extends AbsLoadingEmptyActivity {
     protected int getContentView() {
         return R.layout.activity_gallery_more;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAdapter != null) {
+            mAdapter.clear();
+        }
+    }
 }

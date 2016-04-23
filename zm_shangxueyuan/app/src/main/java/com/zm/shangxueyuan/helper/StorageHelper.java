@@ -46,7 +46,6 @@ public class StorageHelper {
         return path;
     }
 
-
     // 获取视频url
     public static String getVideoURL(String titleUpload, int videoType) {
         String playTypeStr = "";
@@ -71,7 +70,6 @@ public class StorageHelper {
     public static String getNativeVideoPath(Context context, String titleUpload) {
         return getVideoDir(context) + getLocalVideoFileName(titleUpload);
     }
-
 
 
     // 获取sd卡存储路径

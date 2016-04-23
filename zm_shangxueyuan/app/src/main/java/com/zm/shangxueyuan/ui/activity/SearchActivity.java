@@ -78,6 +78,7 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
         return intent;
     }
 
+
     @Override
     protected void initData() {
         mSearchKeywordAdapter = new SearchKeywordAdapter(getApplicationContext());
@@ -295,5 +296,16 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
     @Override
     protected int getContentView() {
         return R.layout.activity_search;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mVideoAdapter != null) {
+            mVideoAdapter.clear();
+        }
+        if (mGalleryAdapter != null) {
+            mGalleryAdapter.clear();
+        }
     }
 }

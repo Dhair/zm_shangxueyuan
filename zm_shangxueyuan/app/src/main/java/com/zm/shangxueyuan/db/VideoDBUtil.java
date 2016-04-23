@@ -1,10 +1,10 @@
 package com.zm.shangxueyuan.db;
 
-import android.app.DownloadManager;
 import android.content.Context;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Select;
+import com.sdk.download.providers.DownloadManager;
 import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
@@ -35,12 +35,12 @@ public class VideoDBUtil {
         return new Select().from(VideoStatusModel.class).where("videoId = ?", videoId).orderBy("RANDOM()").executeSingle();
     }
 
-    private static VideoModel queryVideo(long videoId) {
+    public static VideoModel queryVideo(long videoId) {
         return new Select().from(VideoModel.class).where("videoId = ?", videoId).orderBy("RANDOM()").executeSingle();
     }
 
     public static List<VideoModel> queryDownloadedVideos() {
-        List<VideoStatusModel> statusList = new Select().from(VideoStatusModel.class).where("downloadStatus = ?", CommonConstant.DOWN_FINISH).orderBy("downloadDate desc").execute();
+        List<VideoStatusModel> statusList = new Select().from(VideoStatusModel.class).where("downloadType > ?", CommonConstant.DOWN_NONE).orderBy("downloadDate desc").execute();
         List<VideoModel> videoList = new LinkedList<>();
         if (statusList != null) {
             for (VideoStatusModel statusModel : statusList) {
@@ -90,8 +90,12 @@ public class VideoDBUtil {
         return new Select().from(VideoModel.class).where("cid = ? and valid=1", cId).orderBy("corder DESC").execute();
     }
 
+    public static VideoStatusModel queryVideoStatus(long videoId){
+        return new Select().from(VideoStatusModel.class).where("videoId = ?", videoId).orderBy("RANDOM()").executeSingle();
+    }
+
     public static VideoStatusModel queryVideoStatus(VideoModel videoModel) {
-        VideoStatusModel statusModel = new Select().from(VideoStatusModel.class).where("videoId = ?", videoModel.getVideoId()).orderBy("RANDOM()").executeSingle();
+        VideoStatusModel statusModel = queryVideoStatus(videoModel.getVideoId());
         if (statusModel == null) {
             statusModel = videoModel.convert();
         }
@@ -133,7 +137,7 @@ public class VideoDBUtil {
     }
 
     public static void downloadDelete(Context context, Set<Long> videoIds) {
-        DownloadManager mDownloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
         ActiveAndroid.beginTransaction();
         try {
             for (Iterator<Long> it = videoIds.iterator(); it.hasNext(); ) {

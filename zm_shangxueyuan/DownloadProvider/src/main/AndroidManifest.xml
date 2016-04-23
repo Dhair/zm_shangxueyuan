@@ -47,7 +47,6 @@
             android:authorities="@string/sdk_download_authority"/>
 
         <service android:name="com.sdk.download.providers.downloads.DownloadService"/>
-
         <receiver
             android:name="com.sdk.download.providers.downloads.DownloadReceiver"
             android:exported="false">

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.VideoDBUtil;
-import com.zm.shangxueyuan.helper.DownloadManagerHelper;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
 import com.zm.shangxueyuan.ui.provider.event.MineDataEditEvent;
@@ -27,9 +26,9 @@ public final class DownloadFragment extends AbsMineFragment {
         if (videoList != null) {
             for (int i = 0; i < videoList.size(); i++) {
                 VideoModel videoModel = videoList.get(i);
-                if (!DownloadManagerHelper.isDownloaded(getApplicationContext(), videoModel.getTitleUpload())) {
-                    videoList.remove(i);
-                }
+//                if (!DownloadManagerHelper.isDownloaded(getApplicationContext(), videoModel.getTitleUpload())) {
+//                    videoList.remove(i);
+//                }
             }
         }
         return videoList;

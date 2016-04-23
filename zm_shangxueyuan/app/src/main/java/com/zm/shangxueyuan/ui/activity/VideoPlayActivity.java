@@ -24,6 +24,7 @@ import android.widget.VideoView;
 
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
+import com.zm.shangxueyuan.db.VideoDBUtil;
 import com.zm.shangxueyuan.helper.DownloadManagerHelper;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.VideoModel;
@@ -43,9 +44,8 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
     private String videoUrl;
     private AlertDialog.Builder builder;
 
-    public static Intent getIntent(Context context, VideoStatusModel statusModel, VideoModel videoModel) {
+    public static Intent getIntent(Context context, VideoModel videoModel) {
         Intent intent = new Intent(context, VideoPlayActivity.class);
-        intent.putExtra(STATUS_MODEL, statusModel);
         intent.putExtra(VIDEO_MODEL, videoModel);
         return intent;
     }
@@ -79,8 +79,8 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
 
     @Override
     protected void initData() {
-        mStatusModel = (VideoStatusModel) getIntent().getSerializableExtra(STATUS_MODEL);
         videoModel = (VideoModel) getIntent().getSerializableExtra(VIDEO_MODEL);
+        mStatusModel = VideoDBUtil.queryVideoStatus(videoModel);
         videoUrl = StorageHelper.getVideoURL(videoModel.getTitleUpload(), mStatusModel.getPlayType());
         builder = new AlertDialog.Builder(VideoPlayActivity.this).setTitle(R.string.tips).setNegativeButton(R.string.cancel,
                 new DialogInterface.OnClickListener() {
@@ -113,7 +113,6 @@ public class VideoPlayActivity extends AbsActivity implements SurfaceHolder.Call
 
         mVideoView = (VideoView) findViewById(R.id.surface_view);
         String nativeVideoUrl = DownloadManagerHelper.getVideoFilePath(getApplicationContext(), videoModel, mStatusModel);
-
         if (!TextUtils.isEmpty(nativeVideoUrl)) {// 文件存在且下载标记
             Log.i("", "native url=" + nativeVideoUrl);
             mVideoView.setVideoPath(nativeVideoUrl);

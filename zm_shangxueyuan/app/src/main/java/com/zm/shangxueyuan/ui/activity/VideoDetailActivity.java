@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,14 +21,17 @@ import com.sdk.download.providers.DownloadManager;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.db.VideoDBUtil;
+import com.zm.shangxueyuan.helper.DownloadManagerHelper;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
+import com.zm.shangxueyuan.service.DownloadListenService;
 import com.zm.shangxueyuan.utils.CommonUtils;
 import com.zm.shangxueyuan.utils.ImageLoadUtil;
 import com.zm.shangxueyuan.utils.ToastUtil;
 import com.zm.shangxueyuan.utils.network.HttpUtils;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -164,7 +165,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         mPlayBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(VideoPlayActivity.getIntent(VideoDetailActivity.this, mStatusModel, mVideoModel));
+                startActivity(VideoPlayActivity.getIntent(VideoDetailActivity.this, mVideoModel));
                 saveVideoStatus();
             }
         });
@@ -172,13 +173,14 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             @Override
             public void run() {
                 mStatusModel = VideoDBUtil.queryVideoStatus(mVideoModel);
+                final boolean hasRecord = DownloadManagerHelper.hasRecordDownloadProvider(getApplicationContext(), mStatusModel.getDownId());
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (isFinishing()) {
                             return;
                         }
-                        onLoadDataUpdateUI();
+                        onLoadDataUpdateUI(hasRecord);
                     }
                 });
 
@@ -186,14 +188,17 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         });
     }
 
-    private void onLoadDataUpdateUI() {
+    private void onLoadDataUpdateUI(boolean hasRecord) {
         if (mStatusModel.getFavStatus() == CommonConstant.FAV_STATUS) {
             mFavBtn.setSelected(true);
         } else {
             mFavBtn.setSelected(false);
         }
-        if (mStatusModel.getDownloadType() > 0 && mStatusModel.getDownId() > 0) {
+        if (mStatusModel.getDownloadType() > CommonConstant.DOWN_NONE && mStatusModel.getDownId() > 0 && hasRecord) {
             mDownloadBtn.setSelected(true);
+        }
+        if (!hasRecord) {
+            mStatusModel.setDownloadType(CommonConstant.DOWN_NONE);
         }
         int playType = mStatusModel.getPlayType();
         if (playType <= 0) {
@@ -335,16 +340,16 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             return;
         }
         try {
-            String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), downloadType);
+            String videoUrl = DownloadManagerHelper.getVideoDownloadURL(mVideoModel.getTitleUpload(), mVideoModel.getVideoId(), downloadType);
             Uri srcUri = Uri.parse(videoUrl);
             DownloadManager.Request request = new DownloadManager.Request(srcUri);
             request.setVisibleInDownloadsUi(true);
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/");
+            File downloadFile = new File(StorageHelper.getNativeVideoPath(getApplicationContext(), mVideoModel.getTitleUpload()));
+            request.setDestinationUri(Uri.fromFile(downloadFile));
             request.setDescription(mVideoModel.getTitle());
             request.setTitle(mVideoModel.getTitle());
             long downloadId = mDownloadManager.enqueue(request);
-            Log.e("", "downloadId =  " + downloadId + "," + videoUrl);
             if (downloadId < 0) {
                 ToastUtil.showToast(getApplicationContext(), R.string.download_fail);
                 return;
@@ -352,9 +357,11 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             if (mStatusModel != null) {
                 mStatusModel.setDownloadType(downloadType);
                 mStatusModel.setDownloadStatus(CommonConstant.DOWN_ING);
+                mStatusModel.setDownloadDate(Calendar.getInstance().getTimeInMillis());
                 mStatusModel.setDownId(downloadId);
                 mDownloadBtn.setSelected(true);
                 saveVideoStatus();
+                startDownloadListen();
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -374,5 +381,12 @@ public class VideoDetailActivity extends AbsActionBarActivity {
                 }
             });
         }
+    }
+
+    private void startDownloadListen() {
+        Intent intent = new Intent(getApplicationContext(), DownloadListenService.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage(getPackageName());
+        getApplicationContext().startService(intent);
     }
 }
