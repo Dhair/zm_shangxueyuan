@@ -18,9 +18,9 @@ import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.GalleryDBUtil;
 import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
+import com.zm.shangxueyuan.ui.activity.GalleryListActivity;
 import com.zm.shangxueyuan.ui.activity.GalleryActivity;
-import com.zm.shangxueyuan.ui.activity.GalleryMoreActivity;
-import com.zm.shangxueyuan.ui.adapter.GalleryAdapter;
+import com.zm.shangxueyuan.ui.adapter.GalleryExpandableAdapter;
 import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.ui.widget.SlidingMenuGalleryViewPager;
 
@@ -37,7 +37,7 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
     private Executor mExecutor = Executors.newCachedThreadPool();
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private ExpandableListView mListView;
-    private GalleryAdapter mGalleryAdapter;
+    private GalleryExpandableAdapter mGalleryAdapter;
 
     public static HomeGalleryFragment newInstance() {
         HomeGalleryFragment fragment = new HomeGalleryFragment();
@@ -48,7 +48,7 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
 
     @Override
     protected void initData() {
-        mGalleryAdapter = new GalleryAdapter(getApplicationContext());
+        mGalleryAdapter = new GalleryExpandableAdapter(getApplicationContext());
     }
 
     @Override
@@ -66,13 +66,13 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
         mGalleryAdapter.setGalleryCategoryOnItemClickListener(new OnItemClickListener<GalleryCategoryModel>() {
             @Override
             public void onItemClick(View v, GalleryCategoryModel galleryCategoryModel, int position) {
-                getActivity().startActivity(GalleryMoreActivity.getIntent(getApplicationContext(), galleryCategoryModel));
+                getActivity().startActivity(GalleryActivity.getIntent(getApplicationContext(), galleryCategoryModel));
             }
         });
         mGalleryAdapter.setGalleryTopicModelOnItemClickListener(new OnItemClickListener<GalleryTopicModel>() {
             @Override
             public void onItemClick(View v, GalleryTopicModel galleryTopicModel, int position) {
-                getActivity().startActivity(GalleryActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                getActivity().startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
             }
         });
         mExecutor.execute(new Runnable() {

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.restful.ReqRestAdapter;
@@ -112,6 +115,19 @@ public class FeedbackActivity extends AbsActionBarActivity {
 
     @Override
     protected void initWidgetsActions() {
+        mPhone.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    KeyBoardUtil.hideSoftKeyboard(FeedbackActivity.this);
+                    onSendAction();
+                    return true;
+                }
+                return false;
+
+            }
+        });
         mHandler.postDelayed(new Runnable() {
 
             @Override
@@ -119,6 +135,7 @@ public class FeedbackActivity extends AbsActionBarActivity {
                 KeyBoardUtil.showSoftKeyboard(mContent, FeedbackActivity.this);
             }
         }, 300);
+
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.ui.activity.MineActivity;
 import com.zm.shangxueyuan.ui.activity.PersonalActivity;
+import com.zm.shangxueyuan.ui.activity.SearchActivity;
 import com.zm.shangxueyuan.ui.provider.BusProvider;
 import com.zm.shangxueyuan.ui.provider.event.MenuClickedEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
@@ -109,7 +110,7 @@ public class HomeContentFragment extends BaseFragment {
         mSearchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(SearchActivity.getIntent(getActivity()));
             }
         });
         mVideoTab.setOnClickListener(new View.OnClickListener() {

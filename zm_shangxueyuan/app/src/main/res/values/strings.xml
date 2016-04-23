@@ -71,6 +71,17 @@
     <string name="exit_warn">再按一次退出程序</string>
 
     <string name="gallery_detail">图片详情</string>
-    <string name="gallery_success">保存成功</string>
+    <string name="gallery_success">成功保存至相册</string>
     <string name="gallery_fail">保存失败</string>
+    <string name="gallery_permission_fail">保存失败，请授权存储空间权限</string>
+
+    <string name="search_title">资源搜索</string>
+    <string name="search_video">搜索视频</string>
+    <string name="search_gallery">搜索图集</string>
+    <string name="search_video_result">搜索视频结果</string>
+    <string name="search_gallery_result">搜索图集结果</string>
+    <string name="search_no_result">没有找到相关信息</string>
+    <string name="search_hint">请输入关键字</string>
+    <string name="search_keyword">大家都在搜</string>
+    <string name="search">搜索</string>
 </resources>

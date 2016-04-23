@@ -3,16 +3,14 @@ package com.zm.shangxueyuan.ui.adapter;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.StorageHelper;
-import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
 import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.utils.CommonUtils;
@@ -20,21 +18,20 @@ import com.zm.shangxueyuan.utils.ImageLoadUtil;
 import com.zm.shangxueyuan.utils.ResUtil;
 import com.zm.utils.PhoneUtil;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * Creator: dengshengjin on 16/4/17 13:54
  * Email: deng.shengjin@zuimeia.com
  */
-public class GalleryAdapter extends BaseExpandableListAdapter {
-    private List<GalleryCategoryModel> mCategoryList;
-    private List<GalleryTopicModel> mTopicList;
+public class GalleryAdapter extends BaseAdapter {
+    private List<GalleryTopicModel> mGalleryList;
     private Context mContext;
 
     private ImageLoader mImageLoader;
     private DisplayImageOptions mOptions;
     private int mDisplayWidth;
+
 
     public GalleryAdapter(Context context) {
         mContext = context;
@@ -50,128 +47,57 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
         mOptions = CommonUtils.getDisplayImageOptionsBuilder(R.drawable.common_default).build();
     }
 
-
-    static class ChildViewHolder {
-        View view[] = new View[2];
-        ImageView picture[] = new ImageView[2];
-        TextView title[] = new TextView[2];
-        TextView subTitle[] = new TextView[2];
-    }
-
-    static class GroupViewHolder {
-        TextView titleText;
-        LinearLayout moreBox;
-    }
-
-    public void clear() {
-        mImageLoader.stop();
-        mImageLoader.clearMemoryCache();
-        System.gc();
-        System.runFinalization();
-    }
-
     @Override
-    public int getGroupCount() {
-        if (mCategoryList == null) {
+    public int getCount() {
+        if (mGalleryList == null) {
             return 0;
         }
-        return mCategoryList.size();
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        if (mCategoryList == null || mCategoryList.size() < groupPosition) {
-            return 0;
-        }
-        GalleryCategoryModel galleryCategoryModel = mCategoryList.get(groupPosition);
-        List<GalleryTopicModel> galleryTopicList = findTopics(galleryCategoryModel.getCategoryId());
-        if (galleryTopicList == null) {
-            return 0;
-        }
-        int size = galleryTopicList.size();
+        int size = mGalleryList.size();
         return (int) Math.ceil(size / 2.0f);
     }
 
     @Override
-    public GalleryCategoryModel getGroup(int groupPosition) {
-        return mCategoryList.get(groupPosition);
+    public Object getItem(int position) {
+        return mGalleryList.get(position);
     }
 
     @Override
-    public GalleryTopicModel getChild(int groupPosition, int childPosition) {
-        GalleryCategoryModel galleryCategoryModel = mCategoryList.get(groupPosition);
-        return findTopics(galleryCategoryModel.getCategoryId()).get(childPosition);
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-        GroupViewHolder holder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
         if (convertView == null) {
-            holder = new GroupViewHolder();
-            convertView = View.inflate(mContext, R.layout.fragment_home_gallery_group, null);
-
-            holder.titleText = (TextView) convertView.findViewById(R.id.title);
-            holder.moreBox = (LinearLayout) convertView.findViewById(R.id.more_box);
-            convertView.setTag(holder);
-        } else {
-            holder = (GroupViewHolder) convertView.getTag();
-        }
-        final GalleryCategoryModel categoryModel = mCategoryList.get(groupPosition);
-        holder.titleText.setText(categoryModel.getTitle());
-        holder.moreBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mGalleryCategoryOnItemClickListener != null) {
-                    mGalleryCategoryOnItemClickListener.onItemClick(v, categoryModel, groupPosition);
-                }
-            }
-        });
-        return convertView;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        final ChildViewHolder holder;
-        if (convertView == null) {
-            holder = new ChildViewHolder();
-            convertView = View.inflate(mContext, R.layout.fragment_home_gallery_child, null);
+            holder = new ViewHolder();
+            convertView = View.inflate(mContext, R.layout.fragment_home_video_item, null);
 
             int layoutW = (int) Math.ceil(mDisplayWidth / 2.0f);
+
             for (int i = 0; i < 2; i++) {
                 holder.view[i] = convertView.findViewById(ResUtil.getInstance(mContext).viewId("view" + i));
                 holder.picture[i] = (ImageView) holder.view[i].findViewById(R.id.image);
                 holder.title[i] = (TextView) holder.view[i].findViewById(R.id.title);
                 holder.subTitle[i] = (TextView) holder.view[i].findViewById(R.id.sub_title);
+                holder.flag[i] = (TextView) holder.view[i].findViewById(R.id.flag_text);
+                holder.delete[i] = (ImageView) holder.view[i].findViewById(R.id.delete_image);
+                holder.downloadType[i] = (TextView) holder.view[i].findViewById(R.id.download_type_text);
                 ViewGroup.LayoutParams layoutParamsLeft = holder.view[i].getLayoutParams();
                 layoutParamsLeft.width = layoutW;
             }
 
             convertView.setTag(holder);
         } else {
-            holder = (ChildViewHolder) convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
-        GalleryCategoryModel categoryModel = mCategoryList.get(groupPosition);
-        List<GalleryTopicModel> galleryTopicList = findTopics(categoryModel.getCategoryId());
-        int start = childPosition * 2;
+
+        int start = position * 2;
         int end = start + 2;
+
         for (int i = start; i < end; i++) {
             final int pos = i % 2;
-            if (i >= galleryTopicList.size()) {
+            if (i >= mGalleryList.size()) {
                 holder.view[pos].setVisibility(View.INVISIBLE);
                 holder.view[pos].setOnClickListener(null);
             } else {
@@ -179,17 +105,18 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
                     holder.view[pos].setVisibility(View.VISIBLE);
                 }
 
-                final GalleryTopicModel videoModel = galleryTopicList.get(i);
-                holder.title[pos].setText(videoModel.getTitle());
-                holder.subTitle[pos].setText(videoModel.getSubTitle());
-                mImageLoader.displayImage(StorageHelper.getImageUrl(videoModel.getImage()), holder.picture[pos], mOptions);
+                final GalleryTopicModel galleryTopicModel = mGalleryList.get(i);
+                holder.title[pos].setText(galleryTopicModel.getTitle());
+                holder.subTitle[pos].setText(galleryTopicModel.getSubTitle());
+                mImageLoader.displayImage(StorageHelper.getImageUrl(galleryTopicModel.getImage()), holder.picture[pos], mOptions);
 
                 holder.view[pos].setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        if (mGalleryTopicModelOnItemClickListener != null) {
-                            mGalleryTopicModelOnItemClickListener.onItemClick(v, videoModel, 0);
+
+                        if (mOnItemClickListener != null) {
+                            mOnItemClickListener.onItemClick(v, galleryTopicModel, pos);
                         }
 
                     }
@@ -200,49 +127,31 @@ public class GalleryAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
+    public void setGalleryList(List<GalleryTopicModel> galleryList) {
+        mGalleryList = galleryList;
     }
 
-    public void setCategoryList(List<GalleryCategoryModel> categoryList) {
-        mCategoryList = categoryList;
+    static class ViewHolder {
+        View view[] = new View[2];
+        ImageView picture[] = new ImageView[2];
+        TextView title[] = new TextView[2];
+        TextView subTitle[] = new TextView[2];
+        TextView flag[] = new TextView[2];
+        ImageView delete[] = new ImageView[2];
+        TextView downloadType[] = new TextView[2];
     }
 
-    public void setTopicList(List<GalleryTopicModel> topicList) {
-        mTopicList = topicList;
+    public void clear() {
+        mImageLoader.stop();
+        mImageLoader.clearMemoryCache();
+        System.gc();
+        System.runFinalization();
     }
 
-    public List<GalleryTopicModel> findTopics(long categoryId) {
-        if (mTopicList == null) {
-            return null;
-        }
-        List<GalleryTopicModel> topicList = new LinkedList<>();
-        for (int i = 0, size = mTopicList.size(); i < size; i++) {
-            GalleryTopicModel galleryTopicModel = mTopicList.get(i);
-            if (galleryTopicModel.getCategoryId() == categoryId) {
-                topicList.add(galleryTopicModel);
-            }
-        }
-        return topicList;
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 
-    public int getSelection(int groupPosition) {
-        int totalPosition = 0;
-        for (int i = 0; i < groupPosition; i++) {
-            totalPosition += getChildrenCount(i) + 1;
-        }
-        return totalPosition;
-    }
-
-    private OnItemClickListener<GalleryCategoryModel> mGalleryCategoryOnItemClickListener;
-    private OnItemClickListener<GalleryTopicModel> mGalleryTopicModelOnItemClickListener;
-
-    public void setGalleryCategoryOnItemClickListener(OnItemClickListener<GalleryCategoryModel> galleryCategoryOnItemClickListener) {
-        mGalleryCategoryOnItemClickListener = galleryCategoryOnItemClickListener;
-    }
-
-    public void setGalleryTopicModelOnItemClickListener(OnItemClickListener<GalleryTopicModel> galleryTopicModelOnItemClickListener) {
-        mGalleryTopicModelOnItemClickListener = galleryTopicModelOnItemClickListener;
-    }
 }

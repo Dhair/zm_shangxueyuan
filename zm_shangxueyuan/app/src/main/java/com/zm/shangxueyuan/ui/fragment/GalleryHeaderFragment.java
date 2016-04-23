@@ -11,7 +11,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
-import com.zm.shangxueyuan.ui.activity.GalleryActivity;
+import com.zm.shangxueyuan.ui.activity.GalleryListActivity;
 import com.zm.shangxueyuan.utils.CommonUtils;
 import com.zm.shangxueyuan.utils.ImageLoadUtil;
 
@@ -54,7 +54,7 @@ public class GalleryHeaderFragment extends BaseFragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(GalleryActivity.getIntent(getApplicationContext(), mGalleryTopicModel));
+                startActivity(GalleryListActivity.getIntent(getApplicationContext(), mGalleryTopicModel));
             }
         });
         return view;

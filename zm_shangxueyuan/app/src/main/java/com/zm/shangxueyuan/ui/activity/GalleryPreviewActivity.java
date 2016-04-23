@@ -122,8 +122,10 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case EXTERNAL_REQUEST_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     onDownloadEvent();
+                } else {
+                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_permission_fail);
                 }
                 break;
             default:

@@ -5,116 +5,88 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.widget.GridView;
+import android.widget.ListView;
 
-import com.alibaba.sdk.android.oss.ClientConfiguration;
-import com.alibaba.sdk.android.oss.ClientException;
-import com.alibaba.sdk.android.oss.OSS;
-import com.alibaba.sdk.android.oss.OSSClient;
-import com.alibaba.sdk.android.oss.ServiceException;
-import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
-import com.alibaba.sdk.android.oss.common.OSSLog;
-import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
-import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
-import com.alibaba.sdk.android.oss.internal.OSSAsyncTask;
-import com.alibaba.sdk.android.oss.model.ListObjectsRequest;
-import com.alibaba.sdk.android.oss.model.ListObjectsResult;
 import com.zm.shangxueyuan.R;
-import com.zm.shangxueyuan.constant.CommonConstant;
-import com.zm.shangxueyuan.model.GalleryModel;
+import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
-import com.zm.shangxueyuan.ui.adapter.GalleryListAdapter;
+import com.zm.shangxueyuan.restful.ReqRestAdapter;
+import com.zm.shangxueyuan.restful.RestfulRequest;
+import com.zm.shangxueyuan.ui.adapter.GalleryAdapter;
 import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.ui.widget.LoadingEmptyView;
-import com.zm.utils.PhoneUtil;
 
-import java.util.LinkedList;
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import butterknife.Bind;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
- * Creator: dengshengjin on 16/4/20 08:48
+ * Creator: dengshengjin on 16/4/21 22:34
  * Email: deng.shengjin@zuimeia.com
+ * <p/>
+ * 具体某分类下下的图片信息
  */
 public class GalleryActivity extends AbsLoadingEmptyActivity {
-    private GalleryTopicModel mModel;
+    private GalleryCategoryModel mModel;
     private static final String MODEL = "model";
-    private OSS mOss;
+    private ListView mListView;
     private Executor mExecutor = Executors.newCachedThreadPool();
     private Handler mHandler = new Handler(Looper.getMainLooper());
-    @Bind(R.id.gallery_grid)
-    GridView mGridView;
-    private GalleryListAdapter mAdapter;
-    private int mWidth;
+    private GalleryAdapter mAdapter;
+    private RestfulRequest mRequest;
 
-    public static Intent getIntent(Context context, GalleryTopicModel model) {
+    public static Intent getIntent(Context context, GalleryCategoryModel galleryCategoryModel) {
         Intent intent = new Intent(context, GalleryActivity.class);
-        intent.putExtra(MODEL, model);
+        intent.putExtra(MODEL, galleryCategoryModel);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 
     @Override
     protected void initData() {
-        mWidth = PhoneUtil.getDisplayWidth(getContext());
-        mWidth = (int) (mWidth / 4.0f);
-        mAdapter = new GalleryListAdapter(getApplicationContext(), mWidth);
+        mRequest = ReqRestAdapter.getInstance(getContext()).create(RestfulRequest.class);
+        mAdapter = new GalleryAdapter(getApplicationContext());
         Object object = getIntent().getSerializableExtra(MODEL);
         if (object != null) {
-            mModel = (GalleryTopicModel) object;
+            mModel = (GalleryCategoryModel) object;
         }
-        OSSCredentialProvider credentialProvider = new OSSPlainTextAKSKCredentialProvider(CommonConstant.accessKeyId, CommonConstant.accessKeySecret);
-
-        ClientConfiguration conf = new ClientConfiguration();
-        conf.setConnectionTimeout(15 * 1000); // 连接超时，默认15秒
-        conf.setSocketTimeout(15 * 1000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求书，默认5个
-        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-        OSSLog.enableLog();
-        mOss = new OSSClient(getApplicationContext(), CommonConstant.endpoint, credentialProvider, conf);
     }
 
     @Override
     protected void initWidgets() {
         setActionTitle(mModel.getTitle());
-        mGridView.setAdapter(mAdapter);
+        mListView = (ListView) findViewById(R.id.list_view);
+        mListView.setAdapter(mAdapter);
     }
 
     @Override
     protected void initWidgetsActions() {
-        mAdapter.setOnItemClickListener(new OnItemClickListener<LinkedList<GalleryModel>>() {
+        mAdapter.setOnItemClickListener(new OnItemClickListener<GalleryTopicModel>() {
+
             @Override
-            public void onItemClick(View v, LinkedList<GalleryModel> galleryList, int position) {
-                startActivity(GalleryPreviewActivity.getIntent(getApplicationContext(), position, galleryList));
+            public void onItemClick(View v, GalleryTopicModel galleryTopicModel, int position) {
+                startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
             }
         });
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                syncListObjects();
-            }
-        });
+        onLoadData();
     }
 
-    @Override
-    protected int getContentView() {
-        return R.layout.activity_gallery;
-    }
-
-    public void syncListObjects() {
+    private void onLoadData() {
         showLoading();
-        mExecutor.execute(new Runnable() {
+        mRequest.queryGalleryTopics(mModel.getCategoryId(), "", new Callback<JSONObject>() {
             @Override
-            public void run() {
-                String prefix = String.format("gallery/topic/%s/", mModel.getUploadTitle());
-                ListObjectsRequest listObjects = new ListObjectsRequest(CommonConstant.bucketName, prefix, null, null, null);
-                OSSAsyncTask task = mOss.asyncListObjects(listObjects, new OSSCompletedCallback<ListObjectsRequest, ListObjectsResult>() {
+            public void success(final JSONObject jsonObject, Response response) {
+                mExecutor.execute(new Runnable() {
                     @Override
-                    public void onSuccess(ListObjectsRequest request, ListObjectsResult result) {
-                        if (result == null || result.getObjectSummaries() == null || result.getObjectSummaries().isEmpty()) {
+                    public void run() {
+                        final List<GalleryTopicModel> topicModels = GalleryTopicModel.parseGalleryTopics(jsonObject);
+                        if (topicModels == null || topicModels.isEmpty()) {
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -123,48 +95,33 @@ public class GalleryActivity extends AbsLoadingEmptyActivity {
                             });
                             return;
                         }
-                        final List<GalleryModel> galleryModels = GalleryModel.parseGalleryList(getApplicationContext(), result, mModel.getUploadTitle());
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
                                 hideLoading();
-                                mAdapter.setGalleryList(galleryModels);
+                                mAdapter.setGalleryList(topicModels);
                                 mAdapter.notifyDataSetChanged();
                             }
                         });
-                    }
 
-                    @Override
-                    public void onFailure(ListObjectsRequest request, ClientException clientExcepion, ServiceException serviceException) {
-                        // 请求异常
-                        if (clientExcepion != null) {
-                            // 本地异常如网络异常等
-                            clientExcepion.printStackTrace();
-                        }
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                showLoadFail(new LoadingEmptyView.LoadViewCallback() {
-                                    @Override
-                                    public void callback() {
-                                        syncListObjects();
-                                    }
-                                });
-                            }
-                        });
                     }
                 });
-                task.waitUntilFinished();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                showLoadFail(new LoadingEmptyView.LoadViewCallback() {
+                    @Override
+                    public void callback() {
+                        onLoadData();
+                    }
+                });
             }
         });
-
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mAdapter != null) {
-            mAdapter.clear();
-        }
+    protected int getContentView() {
+        return R.layout.activity_gallery_more;
     }
 }
