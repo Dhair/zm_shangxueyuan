@@ -11,7 +11,7 @@ import java.util.List;
  * Creator: dengshengjin on 16/4/16 21:22
  * Email: deng.shengjin@zuimeia.com
  */
-public class HotWordsModel extends BaseModel implements Serializable {
+public class KeywordModel extends BaseModel implements Serializable {
     private String mWord;
     private long mId;
 
@@ -45,17 +45,17 @@ public class HotWordsModel extends BaseModel implements Serializable {
         return null;
     }
 
-    public static List<HotWordsModel> parseHotWords(String jsonStr) {
+    public static List<KeywordModel> parseHotWords(String jsonStr) {
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray hotWordsArr = jsonObject.optJSONArray("hot_words");
             if (hotWordsArr == null || hotWordsArr.length() == 0) {
                 return null;
             }
-            List<HotWordsModel> hotList = new LinkedList<>();
+            List<KeywordModel> hotList = new LinkedList<>();
             for (int i = 0, len = hotWordsArr.length(); i < len; i++) {
                 JSONObject hotObj = hotWordsArr.optJSONObject(i);
-                HotWordsModel navModel = new HotWordsModel();
+                KeywordModel navModel = new KeywordModel();
                 navModel.setWord(hotObj.optString("word"));
                 navModel.setId(hotObj.optLong("id"));
                 hotList.add(navModel);

@@ -3,6 +3,10 @@ package com.zm.shangxueyuan.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -11,7 +15,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.db.SettingDBUtil;
+import com.zm.shangxueyuan.db.VideoDBUtil;
+import com.zm.shangxueyuan.model.KeywordModel;
+import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.ui.adapter.GalleryAdapter;
+import com.zm.shangxueyuan.ui.adapter.SearchKeywordAdapter;
+import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
+import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.utils.KeyBoardUtil;
+import com.zm.utils.PhoneUtil;
+
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 
@@ -35,7 +52,16 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
     @Bind(R.id.list_view)
     ListView mListView;
 
-    private Handler mHandler = new Handler();
+    private List<KeywordModel> mKeywordList;
+
+    private static final int SEARCH_VIDEO = 1 << 2;
+    private static final int SEARCH_GALLERY = 1 << 3;
+
+    private SearchKeywordAdapter mSearchKeywordAdapter;
+    private VideoAdapter mVideoAdapter;
+    private GalleryAdapter mGalleryAdapter;
+    private Executor mExecutor = Executors.newCachedThreadPool();
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, SearchActivity.class);
@@ -45,7 +71,11 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
 
     @Override
     protected void initData() {
-
+        mSearchKeywordAdapter = new SearchKeywordAdapter(getApplicationContext());
+        mVideoAdapter = new VideoAdapter(getApplicationContext(), true);
+        int itemWidth = (int) (PhoneUtil.getDisplayWidth(getContext()) / 2.0f);
+        mVideoAdapter.setItemWidth(itemWidth);
+        mGalleryAdapter = new GalleryAdapter(getApplicationContext());
     }
 
     @Override
@@ -59,7 +89,7 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
                 }
             }
         });
-
+        mListView.setAdapter(mSearchKeywordAdapter);
     }
 
     private boolean isOpenSoftKeyboard() {
@@ -74,12 +104,56 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
         mSearchVideoText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String keyword = mKeywordText.getText().toString();
+                if (TextUtils.isEmpty(keyword) || isLoading()) {
+                    return;
+                }
+                onKeywordEvent(SEARCH_VIDEO, keyword);
             }
         });
         mSearchGalleryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String keyword = mKeywordText.getText().toString();
+                if (TextUtils.isEmpty(keyword) || isLoading()) {
+                    return;
+                }
+                onKeywordEvent(SEARCH_GALLERY, keyword);
+            }
+        });
+        mSearchKeywordAdapter.setOnItemClickListener(new OnItemClickListener<KeywordModel>() {
+            @Override
+            public void onItemClick(View v, KeywordModel keywordModel, int position) {
+                String keyword = keywordModel.getWord();
+                if (TextUtils.isEmpty(keyword) || isLoading()) {
+                    return;
+                }
+                onKeywordEvent(SEARCH_VIDEO, keyword);
+                mKeywordText.setText(keyword);
+                mKeywordText.setSelection(keyword.length());
+                KeyBoardUtil.hideSoftKeyboard(SearchActivity.this);
+            }
+        });
+        mKeywordText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String text = mKeywordText.getText().toString().trim();
+                if (TextUtils.isEmpty(text) && !isLoading()) {
+                    mListView.setAdapter(mSearchKeywordAdapter);
+                    mSearchKeywordAdapter.setKeywordList(mKeywordList);
+                    mSearchKeywordAdapter.notifyDataSetChanged();
+                    hideLoading();
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
 
             }
         });
@@ -88,11 +162,30 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO) {
-                    KeyBoardUtil.hideSoftKeyboard(SearchActivity.this);
-
+                    String keyword = mKeywordText.getText().toString();
+                    if (!TextUtils.isEmpty(keyword) && !isLoading()) {
+                        onKeywordEvent(SEARCH_VIDEO, keyword);
+                    }
                     return true;
                 }
                 return false;
+
+            }
+        });
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mKeywordList = KeywordModel.parseHotWords(SettingDBUtil.getInstance(getApplicationContext()).getConfigServer());
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isFinishing()) {
+                            return;
+                        }
+                        mSearchKeywordAdapter.setKeywordList(mKeywordList);
+                        mSearchKeywordAdapter.notifyDataSetChanged();
+                    }
+                }, 100);
 
             }
         });
@@ -104,6 +197,42 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
             }
         }, 300);
     }
+
+    private void onKeywordEvent(int type, final String keyword) {
+        if (type == SEARCH_VIDEO) {
+            mTipsTitleText.setText(getString(R.string.search_video_result));
+            showLoading();
+            mExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    final List<VideoModel> videoList = VideoDBUtil.queryVideosByKeyword(keyword);
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isFinishing()) {
+                                return;
+                            }
+                            if (videoList == null || videoList.isEmpty()) {
+                                showEmptyWidthWarn(getString(R.string.search_no_result));
+                                return;
+                            }
+                            hideLoading();
+                            mListView.setAdapter(mVideoAdapter);
+                            mVideoAdapter.setVideoList(videoList);
+                            mVideoAdapter.notifyDataSetChanged();
+                        }
+                    }, 5000);
+
+                }
+            });
+        } else {
+            mTipsTitleText.setText(getString(R.string.search_gallery_result));
+            showLoading();
+
+
+        }
+    }
+
 
     @Override
     protected int getContentView() {

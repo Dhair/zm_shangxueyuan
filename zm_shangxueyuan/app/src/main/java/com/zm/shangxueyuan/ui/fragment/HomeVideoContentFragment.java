@@ -18,7 +18,7 @@ import com.viewpagerindicator.CirclePageIndicator;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.db.VideoDBUtil;
-import com.zm.shangxueyuan.model.HotWordsModel;
+import com.zm.shangxueyuan.model.KeywordModel;
 import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
@@ -91,7 +91,7 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
             public void run() {
                 final List<VideoModel> videoList = VideoDBUtil.queryVideoWithNav(mNavModel.getNavId());
                 final List<VideoModel> topVideoList = queryTopVideos(videoList);
-                final String[] newsArr = HotWordsModel.parseNews(SettingDBUtil.getInstance(getApplicationContext()).getConfigServer());
+                final String[] newsArr = KeywordModel.parseNews(SettingDBUtil.getInstance(getApplicationContext()).getConfigServer());
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

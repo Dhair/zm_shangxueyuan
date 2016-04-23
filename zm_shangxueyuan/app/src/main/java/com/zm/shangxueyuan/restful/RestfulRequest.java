@@ -28,4 +28,8 @@ public interface RestfulRequest {
     @FormUrlEncoded
     @POST("/gallery/category/{id}/topics/")
     void queryGalleryTopics(@Path("id") long topicId, @Field("tmp") String tmp, Callback<JSONObject> callback);
+
+    @FormUrlEncoded
+    @POST("/gallery/search/")
+    void search(@Field("keyword") String keyword, Callback<JSONObject> callback);
 }

@@ -152,4 +152,9 @@ public class VideoDBUtil {
             ActiveAndroid.endTransaction();
         }
     }
+
+    public static List<VideoModel> queryVideosByKeyword(String keyWord) {
+        return new Select().from(VideoModel.class).where("valid=1 and (title like '%" + keyWord + "%' or content like '%" + keyWord + "%' or sub_title like '%" + keyWord + "%')")
+                .orderBy("videoId DESC").limit("25").execute();
+    }
 }

@@ -50,4 +50,15 @@ public abstract class AbsLoadingEmptyActivity extends AbsActionBarActivity {
             mLoadingEmptyView.updateEmptyView();
         }
     }
+
+    protected void showEmptyWidthWarn(String warn) {
+        initLoadingEmptyView();
+        if (mLoadingEmptyView != null) {
+            mLoadingEmptyView.updateEmptyView(warn, null);
+        }
+    }
+
+    protected boolean isLoading() {
+        return mLoadingEmptyView != null && mLoadingEmptyView.isLoading();
+    }
 }

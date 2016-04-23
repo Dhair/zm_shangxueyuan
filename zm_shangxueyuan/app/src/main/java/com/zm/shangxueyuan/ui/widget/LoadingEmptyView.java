@@ -29,15 +29,15 @@ public class LoadingEmptyView extends FrameLayout {
         initViews(context);
     }
 
-    private ProgressBar pro;
-    private TextView loadText, noDataText;
+    private ProgressBar mProgressBar;
+    private TextView mLoadingText, mEmptyText;
 
     private void initViews(Context context) {
         this.context = context;
         View view = LayoutInflater.from(getContext()).inflate(R.layout.view_loading_empty, this, true);
-        pro = (ProgressBar) view.findViewById(R.id.loading_pro);
-        loadText = (TextView) view.findViewById(R.id.loading_text);
-        noDataText = (TextView) view.findViewById(R.id.loading_no_data_text);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.loading_pro);
+        mLoadingText = (TextView) view.findViewById(R.id.loading_text);
+        mEmptyText = (TextView) view.findViewById(R.id.loading_no_data_text);
     }
 
     public void updateEmptyView() {
@@ -53,15 +53,15 @@ public class LoadingEmptyView extends FrameLayout {
     }
 
     public void updateLoadView(String str) {
-        if (noDataText != null) {
-            noDataText.setVisibility(View.GONE);
+        if (mEmptyText != null) {
+            mEmptyText.setVisibility(View.GONE);
         }
-        if (pro != null) {
-            pro.setVisibility(View.VISIBLE);
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.VISIBLE);
         }
-        if (loadText != null) {
-            loadText.setText(str);
-            loadText.setVisibility(View.VISIBLE);
+        if (mLoadingText != null) {
+            mLoadingText.setText(str);
+            mLoadingText.setVisibility(View.VISIBLE);
         }
         setClickable(false);
         setOnClickListener(new OnClickListener() {
@@ -74,15 +74,15 @@ public class LoadingEmptyView extends FrameLayout {
     }
 
     public void updateEmptyView(String str, final LoadViewCallback myCallback) {
-        if (noDataText != null) {
-            noDataText.setText(str);
-            noDataText.setVisibility(View.VISIBLE);
+        if (mEmptyText != null) {
+            mEmptyText.setText(str);
+            mEmptyText.setVisibility(View.VISIBLE);
         }
-        if (pro != null) {
-            pro.setVisibility(View.GONE);
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
         }
-        if (loadText != null) {
-            loadText.setVisibility(View.GONE);
+        if (mLoadingText != null) {
+            mLoadingText.setVisibility(View.GONE);
         }
         if (myCallback == null) {
             setClickable(false);
@@ -109,4 +109,7 @@ public class LoadingEmptyView extends FrameLayout {
         void callback();
     }
 
+    public boolean isLoading() {
+        return mProgressBar != null && mProgressBar.getVisibility() == View.VISIBLE;
+    }
 }

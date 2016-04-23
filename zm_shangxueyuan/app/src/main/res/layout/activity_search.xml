@@ -10,15 +10,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/activity_header_height"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp">
+        android:layout_marginTop="@dimen/activity_header_height">
 
         <RelativeLayout
             android:id="@+id/search_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:paddingLeft="@dimen/search_horizontal_margin"
+            android:paddingRight="@dimen/search_horizontal_margin">
 
             <EditText
                 android:id="@+id/search_edit"
@@ -51,7 +51,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/search_box"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/search_horizontal_margin"
+            android:paddingRight="@dimen/search_horizontal_margin">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -98,7 +100,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tools_box"
             android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/search_horizontal_margin"
+            android:paddingRight="@dimen/search_horizontal_margin">
 
             <View
                 android:layout_width="0dp"
@@ -133,7 +137,8 @@
             android:id="@+id/content_box"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/tips_title_box">
+            android:layout_below="@+id/tips_title_box"
+            android:layout_marginTop="15dp">
 
             <com.zm.shangxueyuan.ui.widget.CustomListView
                 android:id="@+id/list_view"
@@ -141,7 +146,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
-                android:paddingBottom="10dp"
                 android:scrollbarStyle="outsideOverlay"/>
 
             <ViewStub

@@ -87,7 +87,7 @@ public class VideoAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = View.inflate(mContext, R.layout.fragment_home_video_item, null);
 
-            int layoutW = (int) Math.ceil(mDisplayWidth / 2.0f);
+            int layoutW = (mItemWidth > 0 ? mItemWidth : (int) Math.ceil(mDisplayWidth / 2.0f));
 
             for (int i = 0; i < 2; i++) {
                 holder.view[i] = convertView.findViewById(ResUtil.getInstance(mContext).viewId("view" + i));
@@ -199,5 +199,11 @@ public class VideoAdapter extends BaseAdapter {
     public void removeVideoModel(VideoModel videoModel) {
         mVideoList.remove(videoModel);
         notifyDataSetChanged();
+    }
+
+    private int mItemWidth;
+
+    public void setItemWidth(int itemWidth) {
+        mItemWidth = itemWidth;
     }
 }

@@ -97,7 +97,7 @@
             android:name=".ui.activity.SearchActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified|stateAlwaysHidden"/>
+            android:windowSoftInputMode="adjustUnspecified|stateAlwaysHidden|adjustPan"/>
         <activity
             android:name=".ui.activity.GalleryListActivity"
             android:configChanges="orientation|keyboardHidden"
