@@ -55,7 +55,6 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
     protected View initViews(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_gallery, container, false);
         mListView = (ExpandableListView) view.findViewById(R.id.list_view);
-        mListView.setAdapter(mGalleryAdapter);
         showLoading(view);
 
         return view;
@@ -95,6 +94,7 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
                             initHeaderViews(headerView, topTopicList);
                             mListView.addHeaderView(headerView);
                         }
+                        mListView.setAdapter(mGalleryAdapter);
                         mGalleryAdapter.setCategoryList(galleryCategoryList);
                         mGalleryAdapter.setTopicList(galleryTopicList);
                         mGalleryAdapter.notifyDataSetChanged();
