@@ -10,10 +10,10 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.helper.DialogUIHelper;
 import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.UserModel;
 import com.zm.shangxueyuan.model.VideoModel;
-import com.zm.shangxueyuan.ui.activity.UserLoginActivity;
 import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
 import com.zm.shangxueyuan.ui.activity.VideoTopicActivity;
 import com.zm.shangxueyuan.utils.CommonUtils;
@@ -76,7 +76,7 @@ public class VideoHeaderFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 if (mVideoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
-                    getActivity().startActivity(UserLoginActivity.getIntent(getActivity()));
+                    DialogUIHelper.showLoginTips(getActivity());
                 } else {
                     if (VideoModel.isTopicVideo(mVideoModel)) {
                         getActivity().startActivity(VideoTopicActivity.getIntent(getApplicationContext(), mVideoModel.getVideoId(), mVideoModel.getTitle()));

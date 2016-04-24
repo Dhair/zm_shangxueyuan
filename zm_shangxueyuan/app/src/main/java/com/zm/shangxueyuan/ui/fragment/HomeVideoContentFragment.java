@@ -18,11 +18,11 @@ import com.viewpagerindicator.CirclePageIndicator;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.db.VideoDBUtil;
+import com.zm.shangxueyuan.helper.DialogUIHelper;
 import com.zm.shangxueyuan.model.KeywordModel;
 import com.zm.shangxueyuan.model.NavModel;
 import com.zm.shangxueyuan.model.UserModel;
 import com.zm.shangxueyuan.model.VideoModel;
-import com.zm.shangxueyuan.ui.activity.UserLoginActivity;
 import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
 import com.zm.shangxueyuan.ui.activity.VideoTopicActivity;
 import com.zm.shangxueyuan.ui.activity.WebViewActivity;
@@ -81,7 +81,7 @@ public class HomeVideoContentFragment extends AbsLoadingEmptyFragment {
             @Override
             public void onItemClick(View v, VideoModel videoModel, int position) {
                 if (videoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
-                    startActivity(UserLoginActivity.getIntent(getActivity()));
+                    DialogUIHelper.showLoginTips((getActivity()));
                 } else {
                     if (VideoModel.isTopicVideo(videoModel)) {
                         getActivity().startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));

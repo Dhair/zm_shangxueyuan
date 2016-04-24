@@ -114,4 +114,5 @@
     <string name="logout">退出登录</string>
     <string name="login_success">登录成功</string>
     <string name="login_fail">登录失败</string>
+    <string name="login_tips">该视频需要登录才能观看，是否进入登录页面？</string>
 </resources>

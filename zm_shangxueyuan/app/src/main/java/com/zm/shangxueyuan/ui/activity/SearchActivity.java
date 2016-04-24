@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.db.VideoDBUtil;
+import com.zm.shangxueyuan.helper.DialogUIHelper;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
 import com.zm.shangxueyuan.model.KeywordModel;
 import com.zm.shangxueyuan.model.UserModel;
@@ -173,7 +174,7 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
             @Override
             public void onItemClick(View v, VideoModel videoModel, int position) {
                 if (videoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
-                    startActivity(UserLoginActivity.getIntent(SearchActivity.this));
+                    DialogUIHelper.showLoginTips(SearchActivity.this);
                 } else {
                     if (VideoModel.isTopicVideo(videoModel)) {
                         startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
