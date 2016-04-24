@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import com.umeng.analytics.MobclickAgent;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.ActivityFinishHelper;
+import com.zm.shangxueyuan.helper.AppUpgradeHelper;
 import com.zm.utils.PhoneUtil;
 
 import butterknife.ButterKnife;
@@ -30,6 +31,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
     private Context mContext;
     private Handler mHandler;
     private ActivityFinishHelper mActivityFinishHelper;
+    private AppUpgradeHelper mAppUpgradeHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
     private void initAbsData() {
         mActivityFinishHelper = new ActivityFinishHelper(AbsActivity.this);
         mActivityFinishHelper.registerReceiver();
+        mAppUpgradeHelper = new AppUpgradeHelper(AbsActivity.this);
     }
 
     private void initAbsWidgets() {
@@ -170,6 +173,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
         super.onResume();
         MobclickAgent.onPageStart(getClass().getSimpleName());
         MobclickAgent.onResume(this);
+
     }
 
     @Override
@@ -177,6 +181,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
         super.onPause();
         MobclickAgent.onPageEnd(getClass().getSimpleName());
         MobclickAgent.onPause(this);
+        mAppUpgradeHelper.registerReceiver();
     }
 
     @Override
@@ -185,6 +190,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
         ButterKnife.unbind(this);
         if (mActivityFinishHelper != null) {
             mActivityFinishHelper.unregisterReceiver();
+            mAppUpgradeHelper.unregisterReceiver();
         }
     }
 

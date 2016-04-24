@@ -14,6 +14,7 @@ import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.helper.ActivityFinishHelper;
+import com.zm.shangxueyuan.helper.AppUpgradeHelper;
 import com.zm.shangxueyuan.helper.MenuNavHelper;
 import com.zm.shangxueyuan.ui.fragment.HomeContentFragment;
 import com.zm.shangxueyuan.ui.fragment.HomeMenuFragment;
@@ -30,6 +31,7 @@ public class HomeActivity extends AbsSlidingActivity {
     private Fragment mMenuFragment, contentFragment;
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private ActivityFinishHelper mActivityFinishHelper;
+    private AppUpgradeHelper mAppUpgradeHelper;
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -62,6 +64,7 @@ public class HomeActivity extends AbsSlidingActivity {
         initContentViews();
         mActivityFinishHelper = new ActivityFinishHelper(HomeActivity.this);
         mActivityFinishHelper.registerReceiver();
+        mAppUpgradeHelper = new AppUpgradeHelper(HomeActivity.this);
     }
 
     private void initMenuViews(Bundle savedInstanceState) {
@@ -110,6 +113,7 @@ public class HomeActivity extends AbsSlidingActivity {
         super.onResume();
         // Register ourselves so that we can provide the initial value.
         BusProvider.getInstance().register(this);
+        mAppUpgradeHelper.registerReceiver();
     }
 
     @Override
@@ -117,6 +121,7 @@ public class HomeActivity extends AbsSlidingActivity {
         super.onPause();
         // Always unregister when an object no longer should be on the bus.
         BusProvider.getInstance().unregister(this);
+        mAppUpgradeHelper.unregisterReceiver();
     }
 
     private long mExitTimeMills = 0;
@@ -125,10 +130,6 @@ public class HomeActivity extends AbsSlidingActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                if (!getSlidingMenu().isMenuShowing()) {
-//                    getSlidingMenu().showMenu();
-//                    return true;
-//                }
                 if (System.currentTimeMillis() - mExitTimeMills > 2000) {// 如果两次按键时间间隔大于800毫秒，则不退出
                     ToastUtil.showToast(getApplicationContext(), getString(R.string.exit_warn));
                     mExitTimeMills = System.currentTimeMillis();// 更新firstTime

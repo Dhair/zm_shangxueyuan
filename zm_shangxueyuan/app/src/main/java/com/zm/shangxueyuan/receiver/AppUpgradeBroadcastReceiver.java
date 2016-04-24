@@ -8,6 +8,10 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Html;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.UpdateConstant;
@@ -27,7 +31,11 @@ public class AppUpgradeBroadcastReceiver extends BroadcastReceiver {
         if (context instanceof SplashScreenActivity) {
             return;
         }
-        Dialog alertDialog = new AlertDialog.Builder(context).setMessage(message).setTitle(R.string.tips)
+        message = message.replaceAll("\n", "<br/>");
+        View upgradeView = LayoutInflater.from(context).inflate(R.layout.layout_upgrade, null);
+        TextView upgradeText = (TextView) upgradeView.findViewById(R.id.upgrade_text);
+        upgradeText.setText(Html.fromHtml(message));
+        Dialog alertDialog = new AlertDialog.Builder(context).setView(upgradeView).setTitle(R.string.tips)
                 .setNegativeButton(R.string.next_time, new OnClickListener() {
 
                     @Override

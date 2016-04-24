@@ -307,6 +307,7 @@ public class SplashScreenActivity extends AbsActivity {
                 Intent intent = new Intent(UpdateConstant.RECEIVER_NAME + getPackageName());
                 intent.putExtra(UpdateConstant.APK_URL, apkUrl);
                 intent.putExtra(UpdateConstant.UPDATE_DESC, updateDesc);
+                intent.setPackage(getPackageName());
 
                 sendBroadcast(intent);
             }
@@ -324,6 +325,7 @@ public class SplashScreenActivity extends AbsActivity {
                 Intent intent = new Intent(UpdateConstant.RECEIVER_NAME + getPackageName());
                 intent.putExtra(UpdateConstant.APK_URL, apkUrl);
                 intent.putExtra(UpdateConstant.UPDATE_DESC, updateDesc);
+                intent.setPackage(getPackageName());
                 sendBroadcast(intent);
             }
         }
