@@ -11,8 +11,6 @@ import android.util.Log;
 import com.sdk.download.providers.DownloadManager;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
-import com.zm.shangxueyuan.db.VideoDBUtil;
-import com.zm.shangxueyuan.model.VideoStatusModel;
 import com.zm.shangxueyuan.utils.ToastUtil;
 import com.zm.utils.IOUtil;
 
@@ -97,10 +95,6 @@ public class DownloadManagerHelper {
                 localUri = getFilePath(localUri);
                 if (videoId == serverVideoId && serverVideoType == downloadType) {
                     hasDownloadRecord = true;
-                    VideoStatusModel videoStatusModel = VideoDBUtil.queryVideoStatus(videoId);
-                    if (videoStatusModel == null) {
-                        continue;
-                    }
                     switch (status) {
                         case DownloadManager.STATUS_PAUSED:
                         case DownloadManager.STATUS_PENDING:
@@ -139,6 +133,7 @@ public class DownloadManagerHelper {
                 continueDownloadVideo = true;
             }
         } catch (Throwable t) {
+            t.printStackTrace();
         } finally {
             if (cursor != null) {
                 cursor.close();

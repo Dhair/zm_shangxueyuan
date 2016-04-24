@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -390,7 +389,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
                 return;
             }
             mDownloadBtn.setSelected(true);
-            Log.e("", "url= download begin " + videoUrl);
+
 
             startDownloadListen();
             ToastUtil.showToast(getApplicationContext(), String.format(getString(R.string.video_download_prepare), mVideoModel.getTitleUpload()));
