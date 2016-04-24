@@ -3,6 +3,7 @@ package com.zm.shangxueyuan.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,6 +46,11 @@ public class PersonalActivity extends AbsActionBarActivity {
     @Bind(R.id.logout)
     TextView mLogout;
 
+    @Bind(R.id.user_arrow)
+    ImageView mArrow;
+
+    private boolean mIsLogin;
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PersonalActivity.class);
         return intent;
@@ -73,15 +79,19 @@ public class PersonalActivity extends AbsActionBarActivity {
     }
 
     private void onLoginEvent(UserModel userModel) {
+        mIsLogin = true;
         mPersonalTips1.setText(userModel.true_name);
         mPersonalTips2.setText(UserModel.getUserAccount(getApplicationContext()));
         mLogout.setVisibility(View.VISIBLE);
+        mArrow.setVisibility(View.GONE);
     }
 
     private void onLogoutEvent() {
+        mIsLogin = false;
         mPersonalTips1.setText(getString(R.string.user_login_title));
         mPersonalTips2.setText(getString(R.string.user_login_tips));
         mLogout.setVisibility(View.GONE);
+        mArrow.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -89,7 +99,9 @@ public class PersonalActivity extends AbsActionBarActivity {
         mUserLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(UserLoginActivity.getIntent(PersonalActivity.this));
+                if (!mIsLogin) {
+                    startActivity(UserLoginActivity.getIntent(PersonalActivity.this));
+                }
             }
         });
         mDownload.setOnClickListener(new View.OnClickListener() {
