@@ -242,7 +242,7 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
         GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
         String imageUrl = mPagerAdapter.getDetailUrl(mViewPager.getCurrentItem());
         oks.setImagePath(ImageLoader.getInstance().getDiscCache().get(imageUrl).getAbsolutePath());
-        oks.setTitle(getString(R.string.share));
+        oks.setTitle(galleryModel.getTitleUpload());
         String pictureUrl = galleryModel.getImageRealUrl();
         oks.setTitleUrl(pictureUrl);
         oks.setComment("");
