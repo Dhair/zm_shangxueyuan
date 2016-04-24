@@ -283,7 +283,7 @@
                     android:id="@+id/logout"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/btn_search_selector"
                     android:gravity="center"
                     android:paddingBottom="10dp"
