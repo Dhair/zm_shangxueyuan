@@ -18,6 +18,10 @@ public class SettingDBUtil {
     private final static String LOAD_DATA = "load_data";
     private final static String AA_DB_VERSION = "AA_DB_VERSION";
     private final static String CONFIG_SERVER = "configServer";
+    private final static String USER_SERVER = "userServer";
+    private final static String USER_ACCOUNT = "userAccount";
+    private final static String USER_TOKEN_ID = "userTokenId";
+    private final static String USER_ACCOUNTS_ID = "userAccountsId";
 
     private SettingDBUtil(Context context) {
         this.context = context;
@@ -45,6 +49,46 @@ public class SettingDBUtil {
 
     public void setConfigServer(String config) {
         SharePrefHelper.getInstance(context).setPref(CONFIG_SERVER, config);
+    }
+
+    public String getUserServer() {
+        return SharePrefHelper.getInstance(context).getPref(USER_SERVER, "");
+    }
+
+    public void setUserServer(String config) {
+        SharePrefHelper.getInstance(context).setPref(USER_SERVER, config);
+    }
+
+    public String getUserAccount() {
+        return SharePrefHelper.getInstance(context).getPref(USER_ACCOUNT, "");
+    }
+
+    public void setUserAccount(String account) {
+        SharePrefHelper.getInstance(context).setPref(USER_ACCOUNT, account);
+    }
+
+    public String getUserTokenId() {
+        return SharePrefHelper.getInstance(context).getPref(USER_TOKEN_ID, "");
+    }
+
+    public void setUserTokenId(String userTokenId) {
+        SharePrefHelper.getInstance(context).setPref(USER_TOKEN_ID, userTokenId);
+    }
+
+    public String getUserAccountsId() {
+        return SharePrefHelper.getInstance(context).getPref(USER_ACCOUNTS_ID, "");
+    }
+
+    public void setUserAccountsId(String accountsId) {
+        SharePrefHelper.getInstance(context).setPref(USER_ACCOUNTS_ID, accountsId);
+    }
+
+    public void removeUser() {
+        SharePrefHelper.getInstance(context).removePref(USER_SERVER);
+        SharePrefHelper.getInstance(context).removePref(USER_ACCOUNT);
+        SharePrefHelper.getInstance(context).removePref(USER_TOKEN_ID);
+        SharePrefHelper.getInstance(context).removePref(USER_ACCOUNTS_ID);
+
     }
 
     private int getAADBMetaVersion() {

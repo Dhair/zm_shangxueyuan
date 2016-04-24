@@ -32,4 +32,8 @@ public interface RestfulRequest {
     @FormUrlEncoded
     @POST("/gallery/search/")
     void search(@Field("keyword") String keyword, Callback<JSONObject> callback);
+
+    @FormUrlEncoded
+    @POST("/api/apiLogin.json")
+    void login(@Field("accounts") String accounts, @Field("password") String password, @Field("client_type") int client_type, Callback<JSONObject> callback);
 }

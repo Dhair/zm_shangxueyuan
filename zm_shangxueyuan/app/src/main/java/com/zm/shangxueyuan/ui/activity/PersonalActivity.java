@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.db.SettingDBUtil;
+import com.zm.shangxueyuan.model.UserModel;
 
 import butterknife.Bind;
 
@@ -33,6 +36,15 @@ public class PersonalActivity extends AbsActionBarActivity {
     @Bind(R.id.mine_about)
     LinearLayout mAbout;
 
+    @Bind(R.id.personal_tips1)
+    TextView mPersonalTips1;
+
+    @Bind(R.id.personal_tips2)
+    TextView mPersonalTips2;
+
+    @Bind(R.id.logout)
+    TextView mLogout;
+
     public static Intent getIntent(Context context) {
         Intent intent = new Intent(context, PersonalActivity.class);
         return intent;
@@ -50,11 +62,34 @@ public class PersonalActivity extends AbsActionBarActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        UserModel userModel = UserModel.parse(getApplicationContext());
+        if (userModel != null) {
+            onLoginEvent(userModel);
+        } else {
+            onLogoutEvent();
+        }
+    }
+
+    private void onLoginEvent(UserModel userModel) {
+        mPersonalTips1.setText(userModel.true_name);
+        mPersonalTips2.setText(UserModel.getUserAccount(getApplicationContext()));
+        mLogout.setVisibility(View.VISIBLE);
+    }
+
+    private void onLogoutEvent() {
+        mPersonalTips1.setText(getString(R.string.user_login_title));
+        mPersonalTips2.setText(getString(R.string.user_login_tips));
+        mLogout.setVisibility(View.GONE);
+    }
+
+    @Override
     protected void initWidgetsActions() {
         mUserLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(WebViewActivity.getIntent(PersonalActivity.this, "http://www.shzhibo.net/wx_edu/#user-login", getString(R.string.user)));
+                startActivity(UserLoginActivity.getIntent(PersonalActivity.this));
             }
         });
         mDownload.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +120,13 @@ public class PersonalActivity extends AbsActionBarActivity {
             @Override
             public void onClick(View v) {
                 startActivity(AboutActivity.getIntent(PersonalActivity.this));
+            }
+        });
+        mLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLogoutEvent();
+                SettingDBUtil.getInstance(getApplicationContext()).removeUser();
             }
         });
     }

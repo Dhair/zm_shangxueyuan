@@ -7,6 +7,9 @@ package com.zm.shangxueyuan.constant;
  */
 public interface CommonConstant {
     String REQUEST_RES_URL = "http://114.55.53.247/api/v1";// 请求图片URL(正式)
+    String LOGIN_RES_URL = "http://58.64.198.60:8081/dhsxyapi";// 请求图片URL(正式)
+    String LOGIN_WEB_URl = "http://www.shzhibo.net/wx_edu/red/index.html?plg_nld=1&plg_uin=1&plg_auth=1&plg_nld=1&plg_usr=1&plg_vkey=1&plg_dev=1#user-login";
+    int LOGIN_CLIENT_TYPE = 3;
     String VIDEO_RES_URL = "http://zmstatic.zuimeia.com/video/%s/%s.mp4";
     String PIC_RES_URL = "http://zmstatic.zuimeia.com/%s";
     String APP_BASE_DIR_NAME = "zhongmai/shangxueyuan";

@@ -82,7 +82,7 @@ public class FeedbackActivity extends AbsActionBarActivity {
         mRequest.feedback(content, phone, new Callback<JSONObject>() {
             @Override
             public void success(JSONObject jsonObject, Response response) {
-                ToastUtil.showToast(getApplicationContext(), R.string.feedback_succ);
+                ToastUtil.showToast(getApplicationContext(), R.string.feedback_success);
                 if (isFinishing()) {
                     return;
                 }

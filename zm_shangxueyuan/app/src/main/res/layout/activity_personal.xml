@@ -46,6 +46,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/personal_tips1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/user_login_title"
@@ -53,6 +54,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
+                    android:id="@+id/personal_tips2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/user_login_tips"
@@ -273,8 +275,23 @@
                         android:layout_height="0.4dp"
                         android:background="@color/black_30_alpha"/>
 
+
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/logout"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/btn_search_selector"
+                    android:gravity="center"
+                    android:paddingBottom="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingTop="10dp"
+                    android:singleLine="true"
+                    android:text="@string/logout"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
 
             </LinearLayout>
         </ScrollView>

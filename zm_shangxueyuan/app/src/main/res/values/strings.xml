@@ -59,7 +59,7 @@
     <string name="app_upgrade_download_fail">新版本下载失败，请稍后再试.</string>
 
 
-    <string name="feedback_succ">发送成功</string>
+    <string name="feedback_success">发送成功</string>
     <string name="feedback_fail">发送失败</string>
     <string name="more">更多</string>
     <string name="menu_video">视频</string>
@@ -105,4 +105,12 @@
     <string name="video_download_status_pending">等待中</string>
     <string name="video_download_status_paused">暂停中</string>
     <string name="video_download_status_running"></string>
+
+    <string name="user_login_num">请输入学员号</string>
+    <string name="user_login_password">请输入密码</string>
+    <string name="user_login">登录</string>
+    <string name="login_no_account">还没有账号？</string>
+    <string name="logout">退出登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_fail">登录失败</string>
 </resources>

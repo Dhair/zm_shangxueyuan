@@ -50,7 +50,6 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
-import com.download_sdk.download.provider.R;
 import com.sdk.download.providers.DownloadManager;
 import com.sdk.download.providers.downloads.ui.DownloadItem.DownloadSelectListener;
 import com.sdk.download.utils.AppIOUtil;
@@ -63,7 +62,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
+import com.download_sdk.download.provider.R;
 /**
  * View showing a list of all downloads the Download Manager knows about.
  */
