@@ -128,7 +128,7 @@ public class VideoDownloadAdapter extends BaseAdapter {
                     holder.flag[pos].setVisibility(View.VISIBLE);
                 } else {
                     holder.vipTexts[pos].setVisibility(View.GONE);
-                    if (videoModel.mIsLoginValid) {
+                    if (videoModel.mIsLoginValid && !mNeedShowDelete) {
                         holder.vipTexts[pos].setVisibility(View.VISIBLE);
                     }
                 }
