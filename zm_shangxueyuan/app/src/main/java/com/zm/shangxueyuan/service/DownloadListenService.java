@@ -120,45 +120,49 @@ public class DownloadListenService extends Service {
         try {
             cursor = mDownloadManager.query(query);
             while (cursor.moveToNext()) {
-                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
-                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                long videoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
-                String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                 try {
-                    localUri = URLDecoder.decode(localUri, "UTF-8");
+                    String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                    int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    long videoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                    String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    try {
+                        localUri = URLDecoder.decode(localUri, "UTF-8");
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                    localUri = DownloadManagerHelper.getFilePath(localUri);
+                    final VideoModel videoModel = VideoDBUtil.queryVideo(videoId);
+                    if (videoModel == null) {
+                        continue;
+                    }
+                    switch (status) {
+                        case DownloadManager.STATUS_PAUSED:
+                        case DownloadManager.STATUS_PENDING:
+                        case DownloadManager.STATUS_RUNNING:
+                            break;
+                        case DownloadManager.STATUS_SUCCESSFUL:
+                            Log.e("", "url= download success");
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_completed), videoModel.getTitleUpload()));
+                                }
+                            });
+                            break;
+                        case DownloadManager.STATUS_FAILED:
+                            Log.e("", "url= download fail");
+                            mDownloadManager.remove(downloadId);
+                            new File(localUri).delete();
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_fail), videoModel.getTitleUpload()));
+                                }
+                            });
+                            break;
+                    }
                 } catch (Throwable t) {
                     t.printStackTrace();
-                }
-                localUri = DownloadManagerHelper.getFilePath(localUri);
-                final VideoModel videoModel = VideoDBUtil.queryVideo(videoId);
-                if (videoModel == null) {
-                    continue;
-                }
-                switch (status) {
-                    case DownloadManager.STATUS_PAUSED:
-                    case DownloadManager.STATUS_PENDING:
-                    case DownloadManager.STATUS_RUNNING:
-                        break;
-                    case DownloadManager.STATUS_SUCCESSFUL:
-                        Log.e("", "url= download success");
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_completed), videoModel.getTitleUpload()));
-                            }
-                        });
-                        break;
-                    case DownloadManager.STATUS_FAILED:
-                        Log.e("", "url= download fail");
-                        mDownloadManager.remove(downloadId);
-                        new File(localUri).delete();
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_fail), videoModel.getTitleUpload()));
-                            }
-                        });
-                        break;
                 }
 
             }

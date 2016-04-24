@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Formatter;
-import android.util.Log;
 
 import com.sdk.download.providers.DownloadManager;
 import com.sdk.download.providers.downloads.Downloads;
@@ -122,7 +121,6 @@ public final class DownloadFragment extends AbsDownloadFragment {
                             localUri = DownloadManagerHelper.getFilePath(localUri);
                             long currentBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
                             long totalBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-                            Log.e("", "DownloadChangeObserver " + videoId + "," + videoType + "," + cursor.getCount());
                             switch (status) {
                                 case DownloadManager.STATUS_PAUSED:
                                 case DownloadManager.STATUS_PENDING:

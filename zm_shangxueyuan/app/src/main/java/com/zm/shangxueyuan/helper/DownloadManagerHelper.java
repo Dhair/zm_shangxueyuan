@@ -82,51 +82,54 @@ public class DownloadManagerHelper {
         try {
             cursor = mDownloadManager.query(query);
             while (cursor.moveToNext()) {
-                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
-                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
-                int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
-                String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                 try {
-                    localUri = URLDecoder.decode(localUri, "UTF-8");
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-                localUri = getFilePath(localUri);
-                if (videoId == serverVideoId && serverVideoType == downloadType) {
-                    hasDownloadRecord = true;
-                    switch (status) {
-                        case DownloadManager.STATUS_PAUSED:
-                        case DownloadManager.STATUS_PENDING:
-                        case DownloadManager.STATUS_RUNNING:
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ToastUtil.showToast(context, String.format(context.getString(R.string.video_downloading), titleUpload));
-                                }
-                            });
-                            continueDownloadVideo = false;
-                            break;
-                        case DownloadManager.STATUS_SUCCESSFUL:
-                            if (IOUtil.isFileExist(localUri)) {
+                    String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                    int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                    int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                    String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    try {
+                        localUri = URLDecoder.decode(localUri, "UTF-8");
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                    localUri = getFilePath(localUri);
+                    if (videoId == serverVideoId && serverVideoType == downloadType) {
+                        hasDownloadRecord = true;
+                        switch (status) {
+                            case DownloadManager.STATUS_PAUSED:
+                            case DownloadManager.STATUS_PENDING:
+                            case DownloadManager.STATUS_RUNNING:
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_finish), titleUpload));
+                                        ToastUtil.showToast(context, String.format(context.getString(R.string.video_downloading), titleUpload));
                                     }
                                 });
                                 continueDownloadVideo = false;
-                            } else {
+                                break;
+                            case DownloadManager.STATUS_SUCCESSFUL:
+                                if (IOUtil.isFileExist(localUri)) {
+                                    mHandler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_finish), titleUpload));
+                                        }
+                                    });
+                                    continueDownloadVideo = false;
+                                } else {
+                                    continueDownloadVideo = true;
+                                }
+                                break;
+                            case DownloadManager.STATUS_FAILED:
+                                new File(localUri).delete();//下载失败则删除临文件
                                 continueDownloadVideo = true;
-                            }
-                            break;
-                        case DownloadManager.STATUS_FAILED:
-                            new File(localUri).delete();//下载失败则删除临文件
-                            continueDownloadVideo = true;
-                            break;
+                                break;
+                        }
                     }
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
-
             }
             if (!hasDownloadRecord) {
                 new File(StorageHelper.getNativeVideoPath(context, titleUpload, downloadType)).delete();//没有任何下载记录则删除临时文件
@@ -151,19 +154,24 @@ public class DownloadManagerHelper {
         try {
             cursor = mDownloadManager.query(query);
             while (cursor.moveToNext()) {
-                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
-                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
-                int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
-                String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                localUri = URLDecoder.decode(localUri, "UTF-8");
-                Log.i("", "native url=(" + serverVideoId + videoId + "),(" + serverVideoType + videoType + ")," + status + "," + localUri);
-                if (videoId == serverVideoId && serverVideoType == videoType && status == DownloadManager.STATUS_SUCCESSFUL) {
-                    localUri = getFilePath(localUri);
-                    if (IOUtil.isFileExist(localUri)) {
-                        downloadedVideo = localUri;
+                try {
+                    String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                    int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                    long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                    int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                    String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                    localUri = URLDecoder.decode(localUri, "UTF-8");
+                    Log.i("", "native url=(" + serverVideoId + videoId + "),(" + serverVideoType + videoType + ")," + status + "," + localUri);
+                    if (videoId == serverVideoId && serverVideoType == videoType && status == DownloadManager.STATUS_SUCCESSFUL) {
+                        localUri = getFilePath(localUri);
+                        if (IOUtil.isFileExist(localUri)) {
+                            downloadedVideo = localUri;
+                        }
                     }
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
+
 
             }
         } catch (Throwable t) {
@@ -185,10 +193,14 @@ public class DownloadManagerHelper {
         try {
             cursor = mDownloadManager.query(query);
             while (cursor.moveToNext()) {
-                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
-                long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
-                if (videoId == serverVideoId) {
-                    hasDownloadRecord = true;
+                try {
+                    String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                    long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                    if (videoId == serverVideoId) {
+                        hasDownloadRecord = true;
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
                 }
 
             }
