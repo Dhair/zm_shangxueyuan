@@ -240,12 +240,11 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
         OnekeyShare oks = new OnekeyShare();
         oks.disableSSOWhenAuthorize();
         GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+        String imageUrl = mPagerAdapter.getDetailUrl(mViewPager.getCurrentItem());
+        oks.setImagePath(ImageLoader.getInstance().getDiscCache().get(imageUrl).getAbsolutePath());
         oks.setTitle(getString(R.string.share));
         String pictureUrl = galleryModel.getImageRealUrl();
         oks.setTitleUrl(pictureUrl);
-        String shareText = String.format(getString(R.string.share_url_picture), galleryModel.getTitleUpload(), pictureUrl);
-        oks.setText(shareText);
-        oks.setUrl(pictureUrl);
         oks.setComment("");
         oks.setSite(getString(R.string.app_name));
         oks.setSiteUrl(pictureUrl);
