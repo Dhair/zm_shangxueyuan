@@ -2,12 +2,15 @@ package com.zm.shangxueyuan.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.ui.fragment.AbsDownloadFragment;
 import com.zm.shangxueyuan.ui.fragment.AbsMineFragment;
 import com.zm.shangxueyuan.ui.fragment.DownloadFragment;
 import com.zm.shangxueyuan.ui.fragment.FavorFragment;
@@ -26,7 +29,7 @@ public class MineActivity extends AbsActionBarActivity {
     public static final int MINE_TYPE_DOWNLOAD = 1 << 1;
     public static final int MINE_TYPE_COLLECT = 1 << 2;
     public static final int MINE_TYPE_RECORD_HISTORY = 1 << 3;
-    private AbsMineFragment mFragment;
+    private Fragment mFragment;
     private int mType;
 
     public static Intent getIntent(Context context, int mineType) {
@@ -91,13 +94,22 @@ public class MineActivity extends AbsActionBarActivity {
 
     private void updateRightUI() {
         if (mFragment != null) {
-            if (mFragment.isEditStatus()) {//从编辑-》完成
+            if (isEditStatus()) {//从编辑-》完成
                 setActionTools(R.string.finish, mRightClickListener);
             } else {//进入编辑状态 从完成-》编辑
                 setActionTools(R.string.edit, mRightClickListener);
             }
         }
 
+    }
+
+    private boolean isEditStatus() {
+        if (mFragment instanceof AbsMineFragment) {
+            return ((AbsMineFragment) mFragment).isEditStatus();
+        } else if (mFragment instanceof AbsDownloadFragment) {
+            return ((AbsDownloadFragment) mFragment).isEditStatus();
+        }
+        return false;
     }
 
     @Override
@@ -107,6 +119,7 @@ public class MineActivity extends AbsActionBarActivity {
 
     @Subscribe
     public void onEmptyDataEvent(EmptyDataEvent event) {
+        Log.e("", "DownloadChangeObserver onEmptyDataEvent " + "," + event.isEmpty());
         if (!event.isEmpty()) {
             updateRightUI();
         }

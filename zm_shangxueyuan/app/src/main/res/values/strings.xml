@@ -100,4 +100,8 @@
     <string name="video_downloading">视频:%s 正在下载中</string>
     <string name="video_download_finish">视频:%s 已下载</string>
     <string name="video_download_completed">视频:%s 下载完成</string>
+
+    <string name="video_download_status_pending">等待中</string>
+    <string name="video_download_status_paused">暂停中</string>
+    <string name="video_download_status_running"></string>
 </resources>

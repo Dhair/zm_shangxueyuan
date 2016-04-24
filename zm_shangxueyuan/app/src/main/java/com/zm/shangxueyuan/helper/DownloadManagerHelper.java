@@ -87,6 +87,9 @@ public class DownloadManagerHelper {
                 int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
                 long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
                 int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                localUri = URLDecoder.decode(localUri, "UTF-8");
+                localUri = getFilePath(localUri);
                 if (videoId == serverVideoId && serverVideoType == downloadType) {
                     hasDownloadRecord = true;
                     VideoStatusModel videoStatusModel = VideoDBUtil.queryVideoStatus(videoId);
@@ -106,8 +109,7 @@ public class DownloadManagerHelper {
                             continueDownloadVideo = false;
                             break;
                         case DownloadManager.STATUS_SUCCESSFUL:
-                            String videoPath = StorageHelper.getNativeVideoPath(context, titleUpload, downloadType);
-                            if (IOUtil.isFileExist(videoPath)) {
+                            if (IOUtil.isFileExist(localUri)) {
                                 mHandler.post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -120,7 +122,7 @@ public class DownloadManagerHelper {
                             }
                             break;
                         case DownloadManager.STATUS_FAILED:
-                            new File(StorageHelper.getNativeVideoPath(context, titleUpload, downloadType)).delete();//下载失败则删除临文件
+                            new File(localUri).delete();//下载失败则删除临文件
                             continueDownloadVideo = true;
                             break;
                     }
@@ -157,7 +159,7 @@ public class DownloadManagerHelper {
                 localUri = URLDecoder.decode(localUri, "UTF-8");
                 Log.i("", "native url=(" + serverVideoId + videoId + "),(" + serverVideoType + videoType + ")," + status + "," + localUri);
                 if (videoId == serverVideoId && serverVideoType == videoType && status == DownloadManager.STATUS_SUCCESSFUL) {
-                    localUri = localUri.replace("file://", "");
+                    localUri = getFilePath(localUri);
                     if (IOUtil.isFileExist(localUri)) {
                         downloadedVideo = localUri;
                     }
@@ -200,4 +202,10 @@ public class DownloadManagerHelper {
 
     }
 
+    public static String getFilePath(String filePath) {
+        if (filePath.startsWith("file://")) {
+            return filePath.replace("file://", "");
+        }
+        return filePath;
+    }
 }

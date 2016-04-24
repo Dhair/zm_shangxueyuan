@@ -18,11 +18,11 @@ import com.sdk.download.providers.downloads.Downloads;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.VideoDBUtil;
 import com.zm.shangxueyuan.helper.DownloadManagerHelper;
-import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.utils.ToastUtil;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -34,6 +34,7 @@ public class DownloadListenService extends Service {
     private DownloadBroadcastReceiver mDownloadBroadcastReceiver;
     private DownloadContentObserver mDownloadContentObserver;
     private Executor mExecutor = Executors.newCachedThreadPool();
+    private DownloadManager mDownloadManager;
 
     @Override
     public void onCreate() {
@@ -46,6 +47,8 @@ public class DownloadListenService extends Service {
             mDownloadContentObserver = new DownloadContentObserver(null);
         }
         getContentResolver().registerContentObserver(Downloads.getContentURI(getApplicationContext()), true, mDownloadContentObserver);
+        final Context context = getApplicationContext();
+        mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
     }
 
     @Nullable
@@ -108,8 +111,8 @@ public class DownloadListenService extends Service {
     }
 
     private void queryDownloadReal(long downloadId) {
+
         final Context context = getApplicationContext();
-        DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
         final DownloadManager.Query query = new DownloadManager.Query();
         query.setFilterById(downloadId);
         final Handler mHandler = new Handler(Looper.getMainLooper());
@@ -120,7 +123,9 @@ public class DownloadListenService extends Service {
                 String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
                 int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
                 long videoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
-                int videoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                localUri = URLDecoder.decode(localUri, "UTF-8");
+                localUri = DownloadManagerHelper.getFilePath(localUri);
                 final VideoModel videoModel = VideoDBUtil.queryVideo(videoId);
                 if (videoModel == null) {
                     continue;
@@ -142,7 +147,7 @@ public class DownloadListenService extends Service {
                     case DownloadManager.STATUS_FAILED:
                         Log.e("", "url= download fail");
                         mDownloadManager.remove(downloadId);
-                        new File(StorageHelper.getNativeVideoPath(context, videoModel.getTitleUpload(), videoType)).delete();
+                        new File(localUri).delete();
                         break;
                 }
 
