@@ -108,7 +108,7 @@ public class UserLoginActivity extends AbsActionBarActivity {
 
             @Override
             public void run() {
-                KeyBoardUtil.showSoftKeyboard(mPasswordText, UserLoginActivity.this);
+                KeyBoardUtil.showSoftKeyboard(mAccountText, UserLoginActivity.this);
             }
         }, 300);
     }
