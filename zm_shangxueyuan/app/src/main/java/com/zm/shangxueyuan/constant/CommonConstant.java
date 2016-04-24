@@ -14,6 +14,7 @@ public interface CommonConstant {
     int SD_MODE = 1;// 流畅
     int HD_MODE = 2;// 高清
     int UD_MODE = 3;// 超清
+    int NONE_MODE = 0;
 
     int FAV_STATUS = 1;
     int UN_FAV_STATUS = 0;

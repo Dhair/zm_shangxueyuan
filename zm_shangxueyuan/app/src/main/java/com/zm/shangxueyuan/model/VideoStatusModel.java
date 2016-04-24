@@ -19,14 +19,14 @@ public class VideoStatusModel extends Model implements Serializable {
 	@Column(name = VideoDBConstant.FAV_DATE)
 	private long favDate;// 点击收藏时间
 
-	@Column(name = VideoDBConstant.DOWNLOAD_STATUS)
-	private long downloadStatus;// －2:正在下载 －1:下载完成 0:正常
+//	@Column(name = VideoDBConstant.DOWNLOAD_STATUS)
+//	private long downloadStatus;// －2:正在下载 －1:下载完成 0:正常
 
-	@Column(name = VideoDBConstant.DOWNLOAD_TYPE)
-	private int downloadType;// 1:流畅2:高清3:超清4:音频
-
-	@Column(name = VideoDBConstant.DOWNLOAD_DATE)
-	private long downloadDate;// 下载时间
+//	@Column(name = VideoDBConstant.DOWNLOAD_TYPE)
+//	private int downloadType;// 1:流畅2:高清3:超清4:音频
+//
+//	@Column(name = VideoDBConstant.DOWNLOAD_DATE)
+//	private long downloadDate;// 下载时间
 
 	@Column(name = VideoDBConstant.PLAY_TYPE)
 	private int playType;// 1:流畅2:高清3:超清4:音频
@@ -34,8 +34,8 @@ public class VideoStatusModel extends Model implements Serializable {
 	@Column(name = VideoDBConstant.PLAY_DATE)
 	private long playDate;// 点击播放时间
 
-	@Column(name = VideoDBConstant.DOWN_ID)
-	private long downId;// 下载id
+//	@Column(name = VideoDBConstant.DOWN_ID)
+//	private long downId;// 下载id
 
 	public long getVideoId() {
 		return videoId;
@@ -61,29 +61,29 @@ public class VideoStatusModel extends Model implements Serializable {
 		this.favDate = favDate;
 	}
 
-	public long getDownloadStatus() {
-		return downloadStatus;
-	}
+//	public long getDownloadStatus() {
+//		return downloadStatus;
+//	}
+//
+//	public void setDownloadStatus(long downloadStatus) {
+//		this.downloadStatus = downloadStatus;
+//	}
 
-	public void setDownloadStatus(long downloadStatus) {
-		this.downloadStatus = downloadStatus;
-	}
-
-	public int getDownloadType() {
-		return downloadType;
-	}
-
-	public void setDownloadType(int downloadType) {
-		this.downloadType = downloadType;
-	}
-
-	public long getDownloadDate() {
-		return downloadDate;
-	}
-
-	public void setDownloadDate(long downloadDate) {
-		this.downloadDate = downloadDate;
-	}
+//	public int getDownloadType() {
+//		return downloadType;
+//	}
+//
+//	public void setDownloadType(int downloadType) {
+//		this.downloadType = downloadType;
+//	}
+//
+//	public long getDownloadDate() {
+//		return downloadDate;
+//	}
+//
+//	public void setDownloadDate(long downloadDate) {
+//		this.downloadDate = downloadDate;
+//	}
 
 	public int getPlayType() {
 		return playType;
@@ -101,18 +101,18 @@ public class VideoStatusModel extends Model implements Serializable {
 		this.playDate = playDate;
 	}
 
-	public long getDownId() {
-		return downId;
-	}
-
-	public void setDownId(long downId) {
-		this.downId = downId;
-	}
+//	public long getDownId() {
+//		return downId;
+//	}
+//
+//	public void setDownId(long downId) {
+//		this.downId = downId;
+//	}
 
 	@Override
 	public String toString() {
-		return "VideoStatusModel [videoId=" + videoId + ", favStatus=" + favStatus + ", favDate=" + favDate + ", downloadStatus=" + downloadStatus
-				+ ", downloadType=" + downloadType + ", downloadDate=" + downloadDate + ", playType=" + playType + ", playDate=" + playDate + "]";
+		return "VideoStatusModel [videoId=" + videoId + ", favStatus=" + favStatus + ", favDate=" + favDate
+				 + ", playType=" + playType + ", playDate=" + playDate + "]";
 	}
 
 }

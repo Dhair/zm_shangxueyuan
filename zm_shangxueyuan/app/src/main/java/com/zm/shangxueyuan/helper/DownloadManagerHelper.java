@@ -3,16 +3,20 @@ package com.zm.shangxueyuan.helper;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.text.TextUtils;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.sdk.download.providers.DownloadManager;
+import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
-import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.db.VideoDBUtil;
 import com.zm.shangxueyuan.model.VideoStatusModel;
+import com.zm.shangxueyuan.utils.ToastUtil;
 import com.zm.utils.IOUtil;
 
 import java.io.File;
+import java.net.URLDecoder;
 
 /**
  * Creator: dengshengjin on 16/4/23 18:15
@@ -20,6 +24,7 @@ import java.io.File;
  */
 public class DownloadManagerHelper {
     public static final String VIDEO_ID = "video_remark_id";
+    public static final String VIDEO_DOWNLOAD_TYPE = "video_download_type";
     private static final String SEPARATOR = File.separator;
 
     public static long getVideoIdByUrl(String url) {
@@ -27,6 +32,16 @@ public class DownloadManagerHelper {
         String id = uri.getQueryParameter(VIDEO_ID);
         try {
             return Long.parseLong(id);
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public static int getVideoTypeByUrl(String url) {
+        Uri uri = Uri.parse(url);
+        String id = uri.getQueryParameter(VIDEO_DOWNLOAD_TYPE);
+        try {
+            return Integer.parseInt(id);
         } catch (Exception e) {
             return 0;
         }
@@ -47,81 +62,142 @@ public class DownloadManagerHelper {
         stringBuilder.append(VIDEO_ID);
         stringBuilder.append("=");
         stringBuilder.append(videoId);
+        stringBuilder.append("&");
+        stringBuilder.append(VIDEO_DOWNLOAD_TYPE);
+        stringBuilder.append("=");
+        stringBuilder.append(videoType);
         return stringBuilder.toString();
     }
 
-    public static String getVideoFilePath(Context context, VideoModel videoModel, VideoStatusModel statusModel) {
+    public static String getVideoFilePath(Context context, long videoId, int playType) {
+        return downloadedVideo(context, videoId, playType);
+    }
+
+    public static boolean continueDownloadVideo(final Context context, long videoId, final String titleUpload, int downloadType) {
         DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
-        Log.e("", "url=success getVideoFilePath"+statusModel.getDownloadStatus());
-        if (statusModel.getDownloadStatus() == CommonConstant.DOWN_FINISH) {
-            String nativeVideoPath = StorageHelper.getNativeVideoPath(context, videoModel.getTitleUpload());// 存在
-            Log.e("", "url=success getVideoFilePath"+nativeVideoPath+","+statusModel.getDownloadType()+","+ statusModel.getPlayType());
-            if (!IOUtil.isFileExist(nativeVideoPath)) {
-                mDownloadManager.remove(statusModel.getDownId());
-                return null;
-            }
-            if (statusModel.getDownloadType() == statusModel.getPlayType()) {
-                return nativeVideoPath;
-            }
-        }
-        return null;
-    }
-
-    public static boolean isDownloaded(Context context, String titleUpload) {
-        String downloadDir = StorageHelper.getVideoDir(context);
-        if (IOUtil.isFileExist(downloadDir + SEPARATOR + StorageHelper.getLocalVideoFileName(titleUpload))) {
-            return true;
-        }
-        return false;
-    }
-
-    public static boolean isDownloaded(Context context, VideoModel videoModel, VideoStatusModel statusModel, DownloadCallback callback) {
-        return isDownloaded(context, statusModel.getDownloadStatus(), statusModel.getDownId(), videoModel.getTitleUpload(), callback);
-    }
-
-    private static boolean isDownloaded(Context context, long downStatus, long downId, String titleUpload, DownloadCallback callback) {
-        DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
-        if (downStatus == CommonConstant.DOWN_FINISH) {
-            String nativeVideoPath = StorageHelper.getNativeVideoPath(context, titleUpload);
-            if (TextUtils.isEmpty(nativeVideoPath)) {
-                mDownloadManager.remove(downId);
-                if (callback != null) {
-                    callback.callBack();
-                }
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean hasRecordDownloadProvider(Context context, long downloadId) {
-        if (downloadId <= 0) {
-            return false;
-        }
-        DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
+        final Handler mHandler = new Handler(Looper.getMainLooper());
         DownloadManager.Query query = new DownloadManager.Query();
-        query.setFilterById(downloadId);
-        Cursor c = null;
-        boolean hasRecordDownloadProvider = false;
+        Cursor cursor = null;
+        boolean continueDownloadVideo = false;
+        boolean hasDownloadRecord = false;
         try {
-            c = mDownloadManager.query(query);
-            if (c != null && c.moveToFirst()) {
-                hasRecordDownloadProvider = true;
+            cursor = mDownloadManager.query(query);
+            while (cursor.moveToNext()) {
+                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                if (videoId == serverVideoId && serverVideoType == downloadType) {
+                    hasDownloadRecord = true;
+                    VideoStatusModel videoStatusModel = VideoDBUtil.queryVideoStatus(videoId);
+                    if (videoStatusModel == null) {
+                        continue;
+                    }
+                    switch (status) {
+                        case DownloadManager.STATUS_PAUSED:
+                        case DownloadManager.STATUS_PENDING:
+                        case DownloadManager.STATUS_RUNNING:
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ToastUtil.showToast(context, String.format(context.getString(R.string.video_downloading), titleUpload));
+                                }
+                            });
+                            continueDownloadVideo = false;
+                            break;
+                        case DownloadManager.STATUS_SUCCESSFUL:
+                            String videoPath = StorageHelper.getNativeVideoPath(context, titleUpload, downloadType);
+                            if (IOUtil.isFileExist(videoPath)) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_finish), titleUpload));
+                                    }
+                                });
+                                continueDownloadVideo = false;
+                            } else {
+                                continueDownloadVideo = true;
+                            }
+                            break;
+                        case DownloadManager.STATUS_FAILED:
+                            new File(StorageHelper.getNativeVideoPath(context, titleUpload, downloadType)).delete();//下载失败则删除临文件
+                            continueDownloadVideo = true;
+                            break;
+                    }
+                }
+
+            }
+            if (!hasDownloadRecord) {
+                new File(StorageHelper.getNativeVideoPath(context, titleUpload, downloadType)).delete();//没有任何下载记录则删除临时文件
+                continueDownloadVideo = true;
             }
         } catch (Throwable t) {
         } finally {
-            if (c != null) {
-                c.close();
+            if (cursor != null) {
+                cursor.close();
             }
         }
+        return continueDownloadVideo;
 
-        return hasRecordDownloadProvider;
     }
 
+    public static String downloadedVideo(final Context context, long videoId, int videoType) {
+        DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
+        DownloadManager.Query query = new DownloadManager.Query();
+        Cursor cursor = null;
+        String downloadedVideo = "";
+        try {
+            cursor = mDownloadManager.query(query);
+            while (cursor.moveToNext()) {
+                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                localUri = URLDecoder.decode(localUri, "UTF-8");
+                Log.i("", "native url=(" + serverVideoId + videoId + "),(" + serverVideoType + videoType + ")," + status + "," + localUri);
+                if (videoId == serverVideoId && serverVideoType == videoType && status == DownloadManager.STATUS_SUCCESSFUL) {
+                    localUri = localUri.replace("file://", "");
+                    if (IOUtil.isFileExist(localUri)) {
+                        downloadedVideo = localUri;
+                    }
+                }
 
-    public interface DownloadCallback {
-        void callBack();
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return downloadedVideo;
+
     }
+
+    public static boolean hasDownloadRecord(final Context context, long videoId) {
+        DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
+        DownloadManager.Query query = new DownloadManager.Query();
+        Cursor cursor = null;
+        boolean hasDownloadRecord = false;
+        try {
+            cursor = mDownloadManager.query(query);
+            while (cursor.moveToNext()) {
+                String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                if (videoId == serverVideoId) {
+                    hasDownloadRecord = true;
+                }
+
+            }
+        } catch (Throwable t) {
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return hasDownloadRecord;
+
+    }
+
 }

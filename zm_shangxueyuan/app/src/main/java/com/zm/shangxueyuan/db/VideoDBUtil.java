@@ -9,6 +9,7 @@ import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.model.VideoStatusModel;
 
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,21 +38,6 @@ public class VideoDBUtil {
 
     public static VideoModel queryVideo(long videoId) {
         return new Select().from(VideoModel.class).where("videoId = ?", videoId).orderBy("RANDOM()").executeSingle();
-    }
-
-    public static List<VideoModel> queryDownloadedVideos() {
-        List<VideoStatusModel> statusList = new Select().from(VideoStatusModel.class).where("downloadType > ?", CommonConstant.DOWN_NONE).orderBy("downloadDate desc").execute();
-        List<VideoModel> videoList = new LinkedList<>();
-        if (statusList != null) {
-            for (VideoStatusModel statusModel : statusList) {
-                VideoModel videoModel = queryVideo(statusModel.getVideoId());
-                if (videoModel != null && videoModel.isValid()) {
-                    videoModel.setDownloadType(statusModel.getDownloadType());
-                    videoList.add(videoModel);
-                }
-            }
-        }
-        return videoList;
     }
 
     public static List<VideoModel> queryHistoryVideos() {
@@ -90,7 +76,7 @@ public class VideoDBUtil {
         return new Select().from(VideoModel.class).where("cid = ? and valid=1", cId).orderBy("corder DESC").execute();
     }
 
-    public static VideoStatusModel queryVideoStatus(long videoId){
+    public static VideoStatusModel queryVideoStatus(long videoId) {
         return new Select().from(VideoStatusModel.class).where("videoId = ?", videoId).orderBy("RANDOM()").executeSingle();
     }
 
@@ -119,6 +105,35 @@ public class VideoDBUtil {
         }
     }
 
+    public static void modifyPlay(VideoModel videoModel, int playType) {
+        VideoStatusModel mStatusModel = queryVideoStatus(videoModel);
+        if (mStatusModel != null) {
+            mStatusModel.setPlayType(playType);
+        }
+        mStatusModel.save();
+    }
+
+    public static void modifyPlayed(VideoModel videoModel) {
+        VideoStatusModel mStatusModel = queryVideoStatus(videoModel);
+        if (mStatusModel != null) {
+            mStatusModel.setPlayDate(Calendar.getInstance().getTimeInMillis());
+        }
+        mStatusModel.save();
+    }
+
+    public static void modifyCollect(VideoModel videoModel, int favType) {
+        VideoStatusModel mStatusModel = queryVideoStatus(videoModel);
+        if (mStatusModel != null) {
+            mStatusModel.setFavStatus(favType);
+            mStatusModel.setFavDate(Calendar.getInstance().getTimeInMillis());
+        }
+        mStatusModel.save();
+    }
+
+    public static void modifyDownload(VideoModel videoModel, int downloadType) {
+
+    }
+
     public static void collectDelete(Set<Long> videoIds) {
         ActiveAndroid.beginTransaction();
         try {
@@ -138,22 +153,9 @@ public class VideoDBUtil {
 
     public static void downloadDelete(Context context, Set<Long> videoIds) {
         DownloadManager mDownloadManager = new DownloadManager(context, context.getContentResolver(), context.getPackageName());
-        ActiveAndroid.beginTransaction();
-        try {
-            for (Iterator<Long> it = videoIds.iterator(); it.hasNext(); ) {
-                long videoId = it.next();
-                VideoStatusModel videoStatusModel = VideoDBUtil.getStatus(videoId);
-                if (videoStatusModel != null) {
-                    mDownloadManager.remove(videoStatusModel.getDownId());
-                    videoStatusModel.setDownId(0l);
-                    videoStatusModel.setDownloadDate(0l);
-                    videoStatusModel.setDownloadStatus(CommonConstant.DOWN_NONE);
-                    videoStatusModel.save();
-                }
-            }
-            ActiveAndroid.setTransactionSuccessful();
-        } finally {
-            ActiveAndroid.endTransaction();
+        for (Iterator<Long> it = videoIds.iterator(); it.hasNext(); ) {
+            long videoId = it.next();
+            mDownloadManager.remove(videoId);
         }
     }
 

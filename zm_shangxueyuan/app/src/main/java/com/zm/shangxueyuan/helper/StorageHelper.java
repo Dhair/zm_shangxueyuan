@@ -63,12 +63,12 @@ public class StorageHelper {
         return String.format(CommonConstant.PIC_RES_URL, image);
     }
 
-    public static String getLocalVideoFileName(String titleUpload) {
-        return titleUpload + ".mp4";
+    public static String getLocalVideoFileName(String titleUpload, int videoType) {
+        return titleUpload + "_" + videoType + ".mp4";
     }
 
-    public static String getNativeVideoPath(Context context, String titleUpload) {
-        return getVideoDir(context) + getLocalVideoFileName(titleUpload);
+    public static String getNativeVideoPath(Context context, String titleUpload, int videoType) {
+        return getVideoDir(context) + getLocalVideoFileName(titleUpload, videoType);
     }
 
 

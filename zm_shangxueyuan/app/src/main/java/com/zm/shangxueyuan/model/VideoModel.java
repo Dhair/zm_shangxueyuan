@@ -274,4 +274,28 @@ public class VideoModel extends Model implements Serializable {
     public static boolean isTopVideo(VideoModel videoModel) {
         return videoModel.isTop();
     }
+
+    @Override
+    public String toString() {
+        return "VideoModel{" +
+                "videoId=" + videoId +
+                ", title='" + title + '\'' +
+                ", type='" + type + '\'' +
+                ", clarity='" + clarity + '\'' +
+                ", titleUpload='" + titleUpload + '\'' +
+                ", isValid=" + isValid +
+                ", isTop=" + isTop +
+                ", content='" + content + '\'' +
+                ", tid=" + tid +
+                ", tOrder=" + tOrder +
+                ", cid=" + cid +
+                ", cOrder=" + cOrder +
+                ", subTitle='" + subTitle + '\'' +
+                ", image='" + image + '\'' +
+                ", isTopicTop=" + isTopicTop +
+                ", modifyDate=" + modifyDate +
+                ", clicked=" + clicked +
+                ", mDownloadType=" + mDownloadType +
+                '}';
+    }
 }

@@ -9,6 +9,7 @@ import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
 import com.zm.shangxueyuan.ui.provider.event.MineDataEditEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class DownloadFragment extends AbsMineFragment {
@@ -22,15 +23,7 @@ public final class DownloadFragment extends AbsMineFragment {
 
     @Override
     protected List<VideoModel> getVideoList() {
-        List<VideoModel> videoList = VideoDBUtil.queryDownloadedVideos();
-        if (videoList != null) {
-            for (int i = 0; i < videoList.size(); i++) {
-                VideoModel videoModel = videoList.get(i);
-//                if (!DownloadManagerHelper.isDownloaded(getApplicationContext(), videoModel.getTitleUpload())) {
-//                    videoList.remove(i);
-//                }
-            }
-        }
+        List<VideoModel> videoList = new ArrayList<>();
         return videoList;
     }
 

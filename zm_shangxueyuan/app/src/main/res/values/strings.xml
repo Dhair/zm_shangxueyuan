@@ -95,4 +95,9 @@
     <string name="tools_download">下载</string>
     <string name="tools_search">搜索</string>
     <string name="tools_personal">我的</string>
+
+    <string name="video_download_prepare">视频:%s 准备下载中</string>
+    <string name="video_downloading">视频:%s 正在下载中</string>
+    <string name="video_download_finish">视频:%s 已下载</string>
+    <string name="video_download_completed">视频:%s 下载完成</string>
 </resources>

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +33,6 @@ import com.zm.shangxueyuan.utils.ToastUtil;
 import com.zm.shangxueyuan.utils.network.HttpUtils;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -47,7 +47,6 @@ import cn.sharesdk.onekeyshare.OnekeyShare;
 public class VideoDetailActivity extends AbsActionBarActivity {
     public static final String VIDEO_MODEL = "model";
     private VideoModel mVideoModel;
-    private VideoStatusModel mStatusModel;
     private ImageLoader mImageLoader;
     private DisplayImageOptions mOptions;
 
@@ -78,6 +77,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
     private Executor mExecutor = Executors.newCachedThreadPool();
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private AlertDialog.Builder builder;
+
 
     public static Intent getIntent(Context context, VideoModel videoModel) {
         Intent intent = new Intent(context, VideoDetailActivity.class);
@@ -126,9 +126,12 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (mVideoModel.getClarity().equals("ld")) {
-                    if (mStatusModel != null) {
-                        mStatusModel.setPlayType(CommonConstant.SD_MODE);
-                    }
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            VideoDBUtil.modifyPlay(mVideoModel, CommonConstant.SD_MODE);
+                        }
+                    });
                     return;
                 }
                 v.showContextMenu();
@@ -149,38 +152,43 @@ public class VideoDetailActivity extends AbsActionBarActivity {
             public void onClick(View v) {
                 if (mFavBtn.isSelected()) {
                     mFavBtn.setSelected(false);
-                    if (mStatusModel != null) {
-                        mStatusModel.setFavStatus(CommonConstant.UN_FAV_STATUS);
-                        mStatusModel.setFavDate(Calendar.getInstance().getTimeInMillis());
-                    }
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            VideoDBUtil.modifyCollect(mVideoModel, CommonConstant.UN_FAV_STATUS);
+                        }
+                    });
+
                 } else {
                     mFavBtn.setSelected(true);
-                    if (mStatusModel != null) {
-                        mStatusModel.setFavStatus(CommonConstant.FAV_STATUS);
-                        mStatusModel.setFavDate(Calendar.getInstance().getTimeInMillis());
-                    }
+                    mExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            VideoDBUtil.modifyCollect(mVideoModel, CommonConstant.FAV_STATUS);
+                        }
+                    });
                 }
             }
         });
         mPlayBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(VideoPlayActivity.getIntent(VideoDetailActivity.this, mVideoModel));
-                saveVideoStatus();
+                int playType = getPlayType();
+                startActivity(VideoPlayActivity.getIntent(VideoDetailActivity.this, mVideoModel, playType));
             }
         });
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                mStatusModel = VideoDBUtil.queryVideoStatus(mVideoModel);
-                final boolean hasRecord = DownloadManagerHelper.hasRecordDownloadProvider(getApplicationContext(), mStatusModel.getDownId());
+                final VideoStatusModel mStatusModel = VideoDBUtil.queryVideoStatus(mVideoModel);
+                final boolean hasRecord = DownloadManagerHelper.hasDownloadRecord(getApplicationContext(), mVideoModel.getVideoId());
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (isFinishing()) {
                             return;
                         }
-                        onLoadDataUpdateUI(hasRecord);
+                        onLoadDataUpdateUI(mStatusModel, hasRecord);
                     }
                 });
 
@@ -188,29 +196,23 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         });
     }
 
-    private void onLoadDataUpdateUI(boolean hasRecord) {
+    private void onLoadDataUpdateUI(VideoStatusModel mStatusModel, boolean hasRecord) {
         if (mStatusModel.getFavStatus() == CommonConstant.FAV_STATUS) {
             mFavBtn.setSelected(true);
         } else {
             mFavBtn.setSelected(false);
         }
-        if (mStatusModel.getDownloadType() > CommonConstant.DOWN_NONE && mStatusModel.getDownId() > 0 && hasRecord) {
+        if (hasRecord) {
             mDownloadBtn.setSelected(true);
-        }
-        if (!hasRecord) {
-            mStatusModel.setDownloadType(CommonConstant.DOWN_NONE);
         }
         int playType = mStatusModel.getPlayType();
         if (playType <= 0) {
             if (mVideoModel.getClarity().equals("hd")) {//超清
                 mTypeBtn.setText(getString(R.string.video_hd_mode));
-                mStatusModel.setPlayType(CommonConstant.HD_MODE);
             } else if (mVideoModel.getClarity().equals("sd")) {//超清 or 高清
                 mTypeBtn.setText(getString(R.string.video_hd_mode));
-                mStatusModel.setPlayType(CommonConstant.HD_MODE);
             } else if (mVideoModel.getClarity().equals("ld")) {//标清
                 mTypeBtn.setText(getString(R.string.video_sd_mode));
-                mStatusModel.setPlayType(CommonConstant.SD_MODE);
             }
         } else {
             //TODO 判断是否下载完成
@@ -260,22 +262,31 @@ public class VideoDetailActivity extends AbsActionBarActivity {
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case 1:
-                if (mStatusModel != null) {
-                    mStatusModel.setPlayType(CommonConstant.UD_MODE);
-                }
                 mTypeBtn.setText(getString(R.string.video_ud_mode));
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        VideoDBUtil.modifyPlay(mVideoModel, CommonConstant.UD_MODE);
+                    }
+                });
                 break;
             case 2:
-                if (mStatusModel != null) {
-                    mStatusModel.setPlayType(CommonConstant.HD_MODE);
-                }
                 mTypeBtn.setText(getString(R.string.video_hd_mode));
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        VideoDBUtil.modifyPlay(mVideoModel, CommonConstant.HD_MODE);
+                    }
+                });
                 break;
             case 3:
-                if (mStatusModel != null) {
-                    mStatusModel.setPlayType(CommonConstant.SD_MODE);
-                }
                 mTypeBtn.setText(getString(R.string.video_sd_mode));
+                mExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        VideoDBUtil.modifyPlay(mVideoModel, CommonConstant.SD_MODE);
+                    }
+                });
                 break;
             case 4:
                 onDownloadEvent(CommonConstant.UD_MODE);
@@ -292,19 +303,13 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         return super.onContextItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        saveVideoStatus();
-    }
-
     private void onShareEvent() {
         ShareSDK.initSDK(this);
         OnekeyShare oks = new OnekeyShare();
         oks.disableSSOWhenAuthorize();
 
         oks.setTitle(getString(R.string.share));
-        String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), mStatusModel.getPlayType());
+        String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), getPlayType());
         oks.setTitleUrl(videoUrl);
         String shareText = String.format(getString(R.string.share_url), mVideoModel.getTitle(), videoUrl);
         oks.setText(shareText);
@@ -313,6 +318,19 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         oks.setSite(getString(R.string.app_name));
         oks.setSiteUrl(videoUrl);
         oks.show(this);
+    }
+
+    private int getPlayType() {
+        if (mTypeBtn != null) {
+            if (mTypeBtn.getText().toString().equalsIgnoreCase(getString(R.string.video_ud_mode))) {
+                return CommonConstant.UD_MODE;
+            } else if (mTypeBtn.getText().toString().equalsIgnoreCase(getString(R.string.video_hd_mode))) {
+                return CommonConstant.HD_MODE;
+            } else {
+                return CommonConstant.SD_MODE;
+            }
+        }
+        return CommonConstant.SD_MODE;
     }
 
     private boolean onPreDownloadEvent(final int downloadType) {
@@ -335,51 +353,56 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         return true;
     }
 
-    private void onDownloadEvent(int downloadType) {
+    private void onDownloadEvent(final int downloadType) {
         if (!onPreDownloadEvent(downloadType)) {
             return;
         }
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean continueDownloadVideo = DownloadManagerHelper.continueDownloadVideo(getApplicationContext(), mVideoModel.getVideoId(), mVideoModel.getTitleUpload(), downloadType);
+                if (continueDownloadVideo) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            onPostDownloadEvent(downloadType);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void onPostDownloadEvent(final int downloadType) {
         try {
             String videoUrl = DownloadManagerHelper.getVideoDownloadURL(mVideoModel.getTitleUpload(), mVideoModel.getVideoId(), downloadType);
             Uri srcUri = Uri.parse(videoUrl);
             DownloadManager.Request request = new DownloadManager.Request(srcUri);
             request.setVisibleInDownloadsUi(true);
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
-            File downloadFile = new File(StorageHelper.getNativeVideoPath(getApplicationContext(), mVideoModel.getTitleUpload()));
+            File downloadFile = new File(StorageHelper.getNativeVideoPath(getApplicationContext(), mVideoModel.getTitleUpload(), downloadType));
             request.setDestinationUri(Uri.fromFile(downloadFile));
             request.setDescription(mVideoModel.getTitle());
             request.setTitle(mVideoModel.getTitle());
-            long downloadId = mDownloadManager.enqueue(request);
+            final long downloadId = mDownloadManager.enqueue(request);
             if (downloadId < 0) {
                 ToastUtil.showToast(getApplicationContext(), R.string.download_fail);
                 return;
             }
-            if (mStatusModel != null) {
-                mStatusModel.setDownloadType(downloadType);
-                mStatusModel.setDownloadStatus(CommonConstant.DOWN_ING);
-                mStatusModel.setDownloadDate(Calendar.getInstance().getTimeInMillis());
-                mStatusModel.setDownId(downloadId);
-                mDownloadBtn.setSelected(true);
-                saveVideoStatus();
-                startDownloadListen();
-            }
-        } catch (Throwable t) {
-            t.printStackTrace();
-            ToastUtil.showToast(getApplicationContext(), R.string.download_fail);
-        }
-    }
+            mDownloadBtn.setSelected(true);
+            Log.e("", "url= download begin " + videoUrl);
 
-    //onDestroy onClickPlay onClickDownload
-    private void saveVideoStatus() {
-        if (mStatusModel != null) {
+            startDownloadListen();
+            ToastUtil.showToast(getApplicationContext(), String.format(getString(R.string.video_download_prepare), mVideoModel.getTitleUpload()));
             mExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    if (mStatusModel != null) {
-                        mStatusModel.save();
-                    }
+                    VideoDBUtil.modifyDownload(mVideoModel, downloadType);
                 }
             });
+        } catch (Throwable t) {
+            t.printStackTrace();
+            ToastUtil.showToast(getApplicationContext(), R.string.download_fail);
         }
     }
 
