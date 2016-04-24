@@ -9,6 +9,7 @@ import android.widget.ListView;
 
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.VideoDBUtil;
+import com.zm.shangxueyuan.model.UserModel;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
 import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
@@ -63,10 +64,14 @@ public class VideoTopicActivity extends AbsLoadingEmptyActivity {
 
             @Override
             public void onItemClick(View v, VideoModel videoModel, int position) {
-                if (VideoModel.isTopicVideo(videoModel)) {
-                    startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                if (videoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
+                    startActivity(UserLoginActivity.getIntent(VideoTopicActivity.this));
                 } else {
-                    startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                    if (VideoModel.isTopicVideo(videoModel)) {
+                        startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                    } else {
+                        startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                    }
                 }
             }
         });

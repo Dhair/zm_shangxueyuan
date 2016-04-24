@@ -19,6 +19,7 @@ public class VideoDownloadModel extends BaseModel {
     public String mSubTitle;
     public int mDownloadType;
     public String mType;
+    public boolean mIsLoginValid;
 
     public static VideoModel convert(long videoId) {
         return VideoDBUtil.queryVideo(videoId);

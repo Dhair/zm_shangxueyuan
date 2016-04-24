@@ -63,4 +63,9 @@ public class UserModel {
     public static String getUserAccount(Context context) {
         return SettingDBUtil.getInstance(context).getUserAccount();
     }
+
+    public static boolean isLogin(Context context){
+        String jsonStr = SettingDBUtil.getInstance(context).getUserServer();
+        return !TextUtils.isEmpty(jsonStr);
+    }
 }

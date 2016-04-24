@@ -16,7 +16,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.model.UserModel;
 import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.ui.activity.UserLoginActivity;
 import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
 import com.zm.shangxueyuan.ui.activity.VideoTopicActivity;
 import com.zm.shangxueyuan.ui.adapter.VideoAdapter;
@@ -74,10 +76,14 @@ public abstract class AbsMineFragment extends AbsLoadingEmptyFragment {
                 if (mVideoAdapter.isNeedShowDelete()) {
                     showDeleteAlert(videoModel);
                 } else {
-                    if (VideoModel.isTopicVideo(videoModel)) {
-                        startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                    if (videoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
+                        startActivity(UserLoginActivity.getIntent(getActivity()));
                     } else {
-                        startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                        if (VideoModel.isTopicVideo(videoModel)) {
+                            startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                        } else {
+                            startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                        }
                     }
                 }
             }

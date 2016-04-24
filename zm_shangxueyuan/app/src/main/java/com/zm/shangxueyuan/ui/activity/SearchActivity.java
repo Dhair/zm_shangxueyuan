@@ -19,6 +19,7 @@ import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.db.VideoDBUtil;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
 import com.zm.shangxueyuan.model.KeywordModel;
+import com.zm.shangxueyuan.model.UserModel;
 import com.zm.shangxueyuan.model.VideoModel;
 import com.zm.shangxueyuan.restful.ReqRestAdapter;
 import com.zm.shangxueyuan.restful.RestfulRequest;
@@ -171,10 +172,14 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
         mVideoAdapter.setOnItemClickListener(new OnItemClickListener<VideoModel>() {
             @Override
             public void onItemClick(View v, VideoModel videoModel, int position) {
-                if (VideoModel.isTopicVideo(videoModel)) {
-                    startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                if (videoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
+                    startActivity(UserLoginActivity.getIntent(SearchActivity.this));
                 } else {
-                    startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                    if (VideoModel.isTopicVideo(videoModel)) {
+                        startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                    } else {
+                        startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                    }
                 }
             }
         });

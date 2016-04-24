@@ -97,6 +97,7 @@ public class VideoAdapter extends BaseAdapter {
                 holder.flag[i] = (TextView) holder.view[i].findViewById(R.id.flag_text);
                 holder.delete[i] = (ImageView) holder.view[i].findViewById(R.id.delete_image);
                 holder.downloadType[i] = (TextView) holder.view[i].findViewById(R.id.download_type_text);
+                holder.vipTexts[i] = (TextView) holder.view[i].findViewById(R.id.vip_text);
                 ViewGroup.LayoutParams layoutParamsLeft = holder.view[i].getLayoutParams();
                 layoutParamsLeft.width = layoutW;
             }
@@ -125,7 +126,13 @@ public class VideoAdapter extends BaseAdapter {
                 holder.flag[pos].setVisibility(View.GONE);
                 if (mNeedShowTopicFlag && VideoModel.isTopicVideo(videoModel)) {
                     holder.flag[pos].setVisibility(View.VISIBLE);
+                } else {
+                    holder.vipTexts[pos].setVisibility(View.GONE);
+                    if (videoModel.isLoginValid()) {
+                        holder.vipTexts[pos].setVisibility(View.VISIBLE);
+                    }
                 }
+
                 holder.delete[pos].setVisibility(View.GONE);
                 if (mNeedShowDelete) {
                     holder.delete[pos].setVisibility(View.VISIBLE);
@@ -172,6 +179,7 @@ public class VideoAdapter extends BaseAdapter {
         TextView flag[] = new TextView[2];
         ImageView delete[] = new ImageView[2];
         TextView downloadType[] = new TextView[2];
+        TextView vipTexts[] = new TextView[2];
     }
 
     public void clear() {

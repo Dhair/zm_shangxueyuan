@@ -105,6 +105,9 @@ public final class DownloadFragment extends AbsDownloadFragment {
                 Cursor cursor = null;
                 try {
                     cursor = mDownloadManager.query(query);
+                    if (cursor.getCount() == 0) {
+                        getVideoAdapter().notifyDataSetChanged();
+                    }
                     while (cursor.moveToNext()) {
                         try {
                             long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
@@ -141,6 +144,7 @@ public final class DownloadFragment extends AbsDownloadFragment {
                                     downloadModel.mSubTitle = videoModel.getSubTitle();
                                     downloadModel.mImage = videoModel.getImage();
                                     downloadModel.mType = videoModel.getType();
+                                    downloadModel.mIsLoginValid = videoModel.isLoginValid();
                                     getHandler().post(new Runnable() {
                                         @Override
                                         public void run() {

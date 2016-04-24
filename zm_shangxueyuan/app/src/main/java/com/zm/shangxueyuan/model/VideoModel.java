@@ -76,10 +76,21 @@ public class VideoModel extends Model implements Serializable {
     @Column(name = VideoDBConstant.CLICKED)//是否点击过
     private boolean clicked;
 
+    @Column(name = VideoDBConstant.IS_LOGIN_VALID)//是否点击过
+    private boolean isLoginValid;
+
     private int mDownloadType;
 
     public int getDownloadType() {
         return mDownloadType;
+    }
+
+    public boolean isLoginValid() {
+        return isLoginValid;
+    }
+
+    public void setIsLoginValid(boolean isLoginValid) {
+        this.isLoginValid = isLoginValid;
     }
 
     public void setDownloadType(int downloadType) {
@@ -258,6 +269,7 @@ public class VideoModel extends Model implements Serializable {
             videoModel.setVideoId(videoObj.optLong("id"));
             videoModel.setTid(videoObj.optInt("tid"));
             videoModel.settOrder(videoObj.optInt("torder"));
+            videoModel.setIsLoginValid(videoObj.optBoolean("is_login_valid"));
             videoList.add(videoModel);
         }
         if (!videoList.isEmpty()) {

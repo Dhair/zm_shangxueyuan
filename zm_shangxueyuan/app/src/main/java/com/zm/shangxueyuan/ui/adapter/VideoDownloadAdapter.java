@@ -94,7 +94,7 @@ public class VideoDownloadAdapter extends BaseAdapter {
                 holder.flag[i] = (TextView) holder.view[i].findViewById(R.id.flag_text);
                 holder.delete[i] = (ImageView) holder.view[i].findViewById(R.id.delete_image);
                 holder.downloadType[i] = (TextView) holder.view[i].findViewById(R.id.download_type_text);
-
+                holder.vipTexts[i] = (TextView) holder.view[i].findViewById(R.id.vip_text);
                 holder.downloadProgressBar[i] = (ProgressBar) holder.view[i].findViewById(R.id.download_progress_bar);
                 holder.downloadBox[i] = (RelativeLayout) holder.view[i].findViewById(R.id.download_box);
                 holder.downloadTips[i] = (TextView) holder.view[i].findViewById(R.id.download_tips_text);
@@ -126,6 +126,11 @@ public class VideoDownloadAdapter extends BaseAdapter {
                 holder.flag[pos].setVisibility(View.GONE);
                 if (mNeedShowTopicFlag && VideoModel.isTopicVideo(videoModel.mType)) {
                     holder.flag[pos].setVisibility(View.VISIBLE);
+                } else {
+                    holder.vipTexts[pos].setVisibility(View.GONE);
+                    if (videoModel.mIsLoginValid) {
+                        holder.vipTexts[pos].setVisibility(View.VISIBLE);
+                    }
                 }
                 holder.delete[pos].setVisibility(View.GONE);
                 if (mNeedShowDelete) {
@@ -194,7 +199,7 @@ public class VideoDownloadAdapter extends BaseAdapter {
         TextView flag[] = new TextView[2];
         ImageView delete[] = new ImageView[2];
         TextView downloadType[] = new TextView[2];
-
+        TextView vipTexts[] = new TextView[2];
         RelativeLayout downloadBox[] = new RelativeLayout[2];
         ProgressBar downloadProgressBar[] = new ProgressBar[2];
         TextView downloadTips[] = new TextView[2];

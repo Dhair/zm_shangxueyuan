@@ -25,6 +25,7 @@ public interface VideoDBConstant {
     String VALID = "valid";
     String CONTENT = "content";
     String CLARITY = "clarity";
+    String IS_LOGIN_VALID = "is_login_valid";
     String IS_TOPIC_TOP = "isTopicTop";
     String IS_TOP = "is_top";
     String CLICKED = "clicked";

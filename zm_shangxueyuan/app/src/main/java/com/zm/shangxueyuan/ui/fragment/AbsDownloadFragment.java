@@ -17,8 +17,10 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.sdk.download.providers.DownloadManager;
 import com.squareup.otto.Subscribe;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.model.UserModel;
 import com.zm.shangxueyuan.model.VideoDownloadModel;
 import com.zm.shangxueyuan.model.VideoModel;
+import com.zm.shangxueyuan.ui.activity.UserLoginActivity;
 import com.zm.shangxueyuan.ui.activity.VideoDetailActivity;
 import com.zm.shangxueyuan.ui.activity.VideoTopicActivity;
 import com.zm.shangxueyuan.ui.adapter.VideoDownloadAdapter;
@@ -84,10 +86,14 @@ public abstract class AbsDownloadFragment extends AbsLoadingEmptyFragment {
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (VideoModel.isTopicVideo(videoModel)) {
-                                        startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                                    if (videoModel.isLoginValid() && !UserModel.isLogin(getApplicationContext())) {
+                                        startActivity(UserLoginActivity.getIntent(getActivity()));
                                     } else {
-                                        startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                                        if (VideoModel.isTopicVideo(videoModel)) {
+                                            startActivity(VideoTopicActivity.getIntent(getApplicationContext(), videoModel.getVideoId(), videoModel.getTitle()));
+                                        } else {
+                                            startActivity(VideoDetailActivity.getIntent(getApplicationContext(), videoModel));
+                                        }
                                     }
                                 }
                             });
