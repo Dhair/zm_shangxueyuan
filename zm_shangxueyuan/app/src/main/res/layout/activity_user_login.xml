@@ -30,7 +30,6 @@
                 android:imeOptions="actionNext"
                 android:padding="10dp"
                 android:singleLine="true"
-                android:text="al001"
                 android:textColorHint="@color/black_30_alpha"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="16sp"/>
@@ -46,7 +45,6 @@
                 android:inputType="textPassword"
                 android:padding="10dp"
                 android:singleLine="true"
-                android:text="12345"
                 android:textColorHint="@color/black_30_alpha"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="16sp"/>
