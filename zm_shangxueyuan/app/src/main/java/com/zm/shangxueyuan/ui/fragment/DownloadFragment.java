@@ -1,10 +1,15 @@
 package com.zm.shangxueyuan.ui.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.format.Formatter;
+import android.util.Log;
 
 import com.sdk.download.providers.DownloadManager;
 import com.sdk.download.providers.downloads.Downloads;
@@ -20,6 +25,7 @@ import java.io.File;
 import java.net.URLDecoder;
 
 public final class DownloadFragment extends AbsDownloadFragment {
+    private DownloadBroadcastReceiver mDownloadBroadcastReceiver;
 
     public static DownloadFragment newInstance() {
         DownloadFragment fragment = new DownloadFragment();
@@ -53,6 +59,10 @@ public final class DownloadFragment extends AbsDownloadFragment {
     @Override
     protected void registerDataSetObserver() {
         super.registerDataSetObserver();
+        if (mDownloadBroadcastReceiver == null) {
+            mDownloadBroadcastReceiver = new DownloadBroadcastReceiver();
+        }
+        getActivity().registerReceiver(mDownloadBroadcastReceiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         if (downloadObserver == null) {
             downloadObserver = new DownloadChangeObserver(null);
         }
@@ -62,7 +72,17 @@ public final class DownloadFragment extends AbsDownloadFragment {
     @Override
     protected void unregisterDataSetObserver() {
         super.unregisterDataSetObserver();
+        if (mDownloadBroadcastReceiver != null) {
+            getActivity().unregisterReceiver(mDownloadBroadcastReceiver);
+        }
         getActivity().getContentResolver().unregisterContentObserver(downloadObserver);
+    }
+
+    final class DownloadBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadData();
+        }
     }
 
     final class DownloadChangeObserver extends ContentObserver {
@@ -87,43 +107,58 @@ public final class DownloadFragment extends AbsDownloadFragment {
                 try {
                     cursor = mDownloadManager.query(query);
                     while (cursor.moveToNext()) {
-                        long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
-                        String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
-                        int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                        long videoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
-                        int videoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
-                        String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                        localUri = URLDecoder.decode(localUri, "UTF-8");
-                        localUri = DownloadManagerHelper.getFilePath(localUri);
-                        long currentBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                        long totalBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-                        switch (status) {
-                            case DownloadManager.STATUS_PAUSED:
-                            case DownloadManager.STATUS_PENDING:
-                            case DownloadManager.STATUS_RUNNING:
-                            case DownloadManager.STATUS_SUCCESSFUL:
-                                VideoModel videoModel = VideoDBUtil.queryVideo(videoId);
-                                VideoDownloadModel downloadModel = new VideoDownloadModel();
-                                downloadModel.mVideoId = videoId;
-                                downloadModel.mDownloadType = videoType;
-                                downloadModel.mDownloadId = downloadId;
-                                downloadModel.mFilePath = localUri;
-                                downloadModel.mStatus = status;
-                                final int progress = getProgressValue(totalBytes, currentBytes);
-                                downloadModel.mProgress = progress;
-                                String progressTips = Formatter.formatFileSize(getApplicationContext(), currentBytes) + "/" + Formatter.formatFileSize(getApplicationContext(), totalBytes);
-                                downloadModel.mProgressTips = progressTips;
-                                downloadModel.mTitle = videoModel.getTitle();
-                                downloadModel.mSubTitle = videoModel.getSubTitle();
-                                downloadModel.mImage = videoModel.getImage();
-                                downloadModel.mType = videoModel.getType();
-                                getVideoAdapter().addModel(downloadModel);
+                        try {
+                            long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
+                            String downloadUrl = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_DOWNLOAD_URL));
+                            int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+                            long videoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
+                            int videoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
+                            String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+                            try {
+                                localUri = URLDecoder.decode(localUri, "UTF-8");
+                            } catch (Throwable t) {
+                                t.printStackTrace();
+                            }
+                            localUri = DownloadManagerHelper.getFilePath(localUri);
+                            long currentBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                            long totalBytes = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
+                            Log.e("", "DownloadChangeObserver " + videoId + "," + videoType + "," + cursor.getCount());
+                            switch (status) {
+                                case DownloadManager.STATUS_PAUSED:
+                                case DownloadManager.STATUS_PENDING:
+                                case DownloadManager.STATUS_RUNNING:
+                                case DownloadManager.STATUS_SUCCESSFUL:
+                                    VideoModel videoModel = VideoDBUtil.queryVideo(videoId);
+                                    final VideoDownloadModel downloadModel = new VideoDownloadModel();
+                                    downloadModel.mVideoId = videoId;
+                                    downloadModel.mDownloadType = videoType;
+                                    downloadModel.mDownloadId = downloadId;
+                                    downloadModel.mFilePath = localUri;
+                                    downloadModel.mStatus = status;
+                                    final int progress = getProgressValue(totalBytes, currentBytes);
+                                    downloadModel.mProgress = progress;
+                                    String progressTips = Formatter.formatFileSize(getApplicationContext(), currentBytes) + "/" + Formatter.formatFileSize(getApplicationContext(), totalBytes);
+                                    downloadModel.mProgressTips = progressTips;
+                                    downloadModel.mTitle = videoModel.getTitle();
+                                    downloadModel.mSubTitle = videoModel.getSubTitle();
+                                    downloadModel.mImage = videoModel.getImage();
+                                    downloadModel.mType = videoModel.getType();
+                                    getHandler().post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            getVideoAdapter().addModel(downloadModel);
+                                        }
+                                    });
 
-                                break;
-                            case DownloadManager.STATUS_FAILED:
-                                mDownloadManager.remove(downloadId);
-                                new File(localUri).delete();
-                                break;
+
+                                    break;
+                                case DownloadManager.STATUS_FAILED:
+                                    mDownloadManager.remove(downloadId);
+                                    new File(localUri).delete();
+                                    break;
+                            }
+                        } catch (Throwable t) {
+                            t.printStackTrace();
                         }
 
                     }

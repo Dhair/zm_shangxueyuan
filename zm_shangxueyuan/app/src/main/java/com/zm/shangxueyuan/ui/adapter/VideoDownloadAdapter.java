@@ -176,7 +176,7 @@ public class VideoDownloadAdapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if (mOnDownloadItemClickListener != null) {
-                            mOnItemClickListener.onItemClick(v, videoModel, pos);
+                            mOnDownloadItemClickListener.onItemClick(v, videoModel, pos);
                         }
                     }
                 });
@@ -217,16 +217,24 @@ public class VideoDownloadAdapter extends BaseAdapter {
             mDownloadList = new LinkedList<>();
             mDownloadList.add(downloadModel);
         } else {
-            for (int i = 0, size = mDownloadList.size(); i < size; i++) {
-                VideoDownloadModel videoModel = mDownloadList.get(i);
-                if (videoModel.needUpdate(downloadModel)) {
-                    videoModel.update(downloadModel);
-                    break;
-                }
+            if (needAddToList(downloadModel)) {
+                mDownloadList.add(downloadModel);
             }
-            mDownloadList.add(downloadModel);
         }
         notifyDataSetChanged();
+    }
+
+    private boolean needAddToList(VideoDownloadModel downloadModel) {
+        boolean needAdd = true;
+        for (int i = 0, size = mDownloadList.size(); i < size; i++) {
+            VideoDownloadModel videoModel = mDownloadList.get(i);
+            if (videoModel.equals(downloadModel)) {
+                videoModel.update(downloadModel);
+                needAdd = false;
+                break;
+            }
+        }
+        return needAdd;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

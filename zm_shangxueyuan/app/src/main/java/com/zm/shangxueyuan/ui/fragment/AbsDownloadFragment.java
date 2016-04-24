@@ -71,6 +71,9 @@ public abstract class AbsDownloadFragment extends AbsLoadingEmptyFragment {
 
             @Override
             public void onItemClick(View v, final VideoDownloadModel downloadModel, int position) {
+                if (downloadModel == null) {
+                    return;
+                }
                 if (mVideoAdapter.isNeedShowDelete()) {
                     showDeleteAlert(downloadModel);
                 } else {
@@ -98,6 +101,10 @@ public abstract class AbsDownloadFragment extends AbsLoadingEmptyFragment {
             @Override
             public void onItemClick(View v, VideoDownloadModel downloadModel, int position) {
                 if (downloadModel == null) {
+                    return;
+                }
+                if (mVideoAdapter.isNeedShowDelete()) {
+                    showDeleteAlert(downloadModel);
                     return;
                 }
                 if (downloadModel.mStatus == DownloadManager.STATUS_PENDING || downloadModel.mStatus == DownloadManager.STATUS_RUNNING) {

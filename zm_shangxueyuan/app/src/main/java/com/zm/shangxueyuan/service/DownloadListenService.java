@@ -124,7 +124,11 @@ public class DownloadListenService extends Service {
                 int status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
                 long videoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
                 String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                localUri = URLDecoder.decode(localUri, "UTF-8");
+                try {
+                    localUri = URLDecoder.decode(localUri, "UTF-8");
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
                 localUri = DownloadManagerHelper.getFilePath(localUri);
                 final VideoModel videoModel = VideoDBUtil.queryVideo(videoId);
                 if (videoModel == null) {
@@ -148,6 +152,12 @@ public class DownloadListenService extends Service {
                         Log.e("", "url= download fail");
                         mDownloadManager.remove(downloadId);
                         new File(localUri).delete();
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                ToastUtil.showToast(context, String.format(context.getString(R.string.video_download_fail), videoModel.getTitleUpload()));
+                            }
+                        });
                         break;
                 }
 

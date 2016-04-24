@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.sdk.download.providers.DownloadManager;
@@ -88,7 +89,11 @@ public class DownloadManagerHelper {
                 long serverVideoId = DownloadManagerHelper.getVideoIdByUrl(downloadUrl);
                 int serverVideoType = DownloadManagerHelper.getVideoTypeByUrl(downloadUrl);
                 String localUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-                localUri = URLDecoder.decode(localUri, "UTF-8");
+                try {
+                    localUri = URLDecoder.decode(localUri, "UTF-8");
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
                 localUri = getFilePath(localUri);
                 if (videoId == serverVideoId && serverVideoType == downloadType) {
                     hasDownloadRecord = true;
@@ -203,6 +208,9 @@ public class DownloadManagerHelper {
     }
 
     public static String getFilePath(String filePath) {
+        if (TextUtils.isEmpty(filePath)) {
+            return "";
+        }
         if (filePath.startsWith("file://")) {
             return filePath.replace("file://", "");
         }

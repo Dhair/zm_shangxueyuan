@@ -24,7 +24,7 @@ public class VideoDownloadModel extends BaseModel {
         return VideoDBUtil.queryVideo(videoId);
     }
 
-    public boolean needUpdate(VideoDownloadModel videoDownloadModel) {
+    public boolean equals(VideoDownloadModel videoDownloadModel) {
         return (mVideoId == videoDownloadModel.mVideoId && mDownloadType == videoDownloadModel.mDownloadType);
     }
 
