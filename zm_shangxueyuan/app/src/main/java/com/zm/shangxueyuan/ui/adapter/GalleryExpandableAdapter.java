@@ -1,8 +1,10 @@
 package com.zm.shangxueyuan.ui.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -195,6 +197,20 @@ public class GalleryExpandableAdapter extends BaseExpandableListAdapter {
                     }
                 });
             }
+            holder.view[pos].getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        holder.view[pos].getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    } else {
+                        holder.view[pos].getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    }
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.view[pos].getLayoutParams();
+                    layoutParams.height = holder.view[pos].getHeight();
+                    holder.view[pos].requestLayout();
+                }
+            });
         }
 
         return convertView;
