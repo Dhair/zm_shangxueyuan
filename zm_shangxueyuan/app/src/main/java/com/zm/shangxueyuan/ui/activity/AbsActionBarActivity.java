@@ -28,6 +28,9 @@ public abstract class AbsActionBarActivity extends AbsActivity {
     @Bind(R.id.back_image)
     ImageView mBack;
 
+    @Bind(R.id.header_line)
+    View mHeaderLine;
+
     private View.OnClickListener mOnBackOnClickListener;
 
 
@@ -69,9 +72,13 @@ public abstract class AbsActionBarActivity extends AbsActivity {
 
     }
 
-    protected void setActionToolsBg(int bgResId,int backResId,int titleResId){
+    protected void setActionToolsBg(int bgResId, int backResId, int titleResId) {
         mHeaderBox.setBackgroundResource(bgResId);
         mBack.setImageResource(backResId);
-        mTitle.setTextColor(ContextCompat.getColor(getContext(),titleResId));
+        mTitle.setTextColor(ContextCompat.getColor(getContext(), titleResId));
+    }
+
+    protected void setHeaderLineInvisible() {
+        mHeaderLine.setVisibility(View.GONE);
     }
 }

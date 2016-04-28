@@ -1,12 +1,16 @@
 package com.zm.shangxueyuan.model;
 
+import android.content.Context;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.zm.shangxueyuan.constant.VideoDBConstant;
 import com.zm.shangxueyuan.db.GalleryDBUtil;
+import com.zm.shangxueyuan.db.SettingDBUtil;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -97,25 +101,14 @@ public class GalleryTopicModel extends Model implements Serializable {
         this.image = image;
     }
 
-    public static boolean parseTopics(JSONObject jsonObject) {
+    public static boolean parseTopics(Context context, JSONObject jsonObject) {
         if (jsonObject == null) {
             return false;
         }
         List<GalleryTopicModel> list = new LinkedList<>();
         JSONArray topTopicsArr = jsonObject.optJSONArray("top_topics");
         if (topTopicsArr != null) {
-            for (int i = 0, len = topTopicsArr.length(); i < len; i++) {
-                JSONObject topTopicObj = topTopicsArr.optJSONObject(i);
-                GalleryTopicModel topicModel = new GalleryTopicModel();
-                topicModel.setUploadTitle(topTopicObj.optString("upload_title"));
-                topicModel.setImage(topTopicObj.optString("image"));
-                topicModel.setSubTitle(topTopicObj.optString("sub_title"));
-                topicModel.setTopicId(topTopicObj.optLong("id"));
-                topicModel.setTitle(topTopicObj.optString("title"));
-                topicModel.setIsTop(true);
-                topicModel.setCategoryId(0l);
-                list.add(topicModel);
-            }
+            SettingDBUtil.getInstance(context).setGalleryTopic(topTopicsArr.toString());
         }
         JSONArray categoryArr = jsonObject.optJSONArray("categories");
         if (categoryArr != null) {
@@ -144,6 +137,30 @@ public class GalleryTopicModel extends Model implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public static List<GalleryTopicModel> queryTopTopics(String jsonStr) {
+        try {
+            JSONArray topTopicsArr = new JSONArray(jsonStr);
+            List<GalleryTopicModel> list = new LinkedList<>();
+            for (int i = 0, len = topTopicsArr.length(); i < len; i++) {
+                JSONObject topTopicObj = topTopicsArr.optJSONObject(i);
+                GalleryTopicModel topicModel = new GalleryTopicModel();
+                topicModel.setUploadTitle(topTopicObj.optString("upload_title"));
+                topicModel.setImage(topTopicObj.optString("image"));
+                topicModel.setSubTitle(topTopicObj.optString("sub_title"));
+                topicModel.setTopicId(topTopicObj.optLong("id"));
+                topicModel.setTitle(topTopicObj.optString("title"));
+                topicModel.setIsTop(true);
+                topicModel.setCategoryId(0l);
+
+                list.add(topicModel);
+            }
+            return list;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static boolean isTopTopic(GalleryTopicModel videoModel) {

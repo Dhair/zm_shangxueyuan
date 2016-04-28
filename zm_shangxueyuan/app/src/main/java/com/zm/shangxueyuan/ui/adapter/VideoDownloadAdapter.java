@@ -1,10 +1,13 @@
 package com.zm.shangxueyuan.ui.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -89,6 +92,7 @@ public class VideoDownloadAdapter extends BaseAdapter {
             for (int i = 0; i < 2; i++) {
                 holder.view[i] = convertView.findViewById(ResUtil.getInstance(mContext).viewId("view" + i));
                 holder.picture[i] = (ImageView) holder.view[i].findViewById(R.id.image);
+                holder.topLines[i] = holder.view[i].findViewById(R.id.top_line);
                 holder.title[i] = (TextView) holder.view[i].findViewById(R.id.title);
                 holder.subTitle[i] = (TextView) holder.view[i].findViewById(R.id.sub_title);
                 holder.flag[i] = (TextView) holder.view[i].findViewById(R.id.flag_text);
@@ -115,11 +119,16 @@ public class VideoDownloadAdapter extends BaseAdapter {
             if (i >= mDownloadList.size()) {
                 holder.view[pos].setVisibility(View.INVISIBLE);
                 holder.view[pos].setOnClickListener(null);
+                holder.topLines[pos].setVisibility(View.GONE);
             } else {
                 if (holder.view[pos].getVisibility() != View.VISIBLE) {
                     holder.view[pos].setVisibility(View.VISIBLE);
                 }
-
+                if (position == 0) {
+                    holder.topLines[pos].setVisibility(View.VISIBLE);
+                } else {
+                    holder.topLines[pos].setVisibility(View.GONE);
+                }
                 final VideoDownloadModel videoModel = mDownloadList.get(i);
                 holder.title[pos].setText(videoModel.mTitle);
                 holder.subTitle[pos].setText(videoModel.mSubTitle);
@@ -186,6 +195,20 @@ public class VideoDownloadAdapter extends BaseAdapter {
                     }
                 });
             }
+            holder.view[pos].getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        holder.view[pos].getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    } else {
+                        holder.view[pos].getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    }
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.view[pos].getLayoutParams();
+                    layoutParams.height = holder.view[pos].getHeight();
+                    holder.view[pos].requestLayout();
+                }
+            });
         }
 
         return convertView;
@@ -203,6 +226,7 @@ public class VideoDownloadAdapter extends BaseAdapter {
         RelativeLayout downloadBox[] = new RelativeLayout[2];
         ProgressBar downloadProgressBar[] = new ProgressBar[2];
         TextView downloadTips[] = new TextView[2];
+        View topLines[] = new View[2];
     }
 
     public void clear() {

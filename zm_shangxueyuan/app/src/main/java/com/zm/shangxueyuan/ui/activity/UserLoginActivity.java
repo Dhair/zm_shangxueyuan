@@ -122,7 +122,7 @@ public class UserLoginActivity extends AbsActionBarActivity {
         if (TextUtils.isEmpty(password)) {
             return;
         }
-        mLoadingDialog.show();
+        mLoadingDialog.show(R.string.logining);
         mRequest.login(account, password, CommonConstant.LOGIN_CLIENT_TYPE, new Callback<JSONObject>() {
             @Override
             public void success(final JSONObject jsonObject, Response response) {
@@ -175,5 +175,11 @@ public class UserLoginActivity extends AbsActionBarActivity {
     @Override
     protected int getContentView() {
         return R.layout.activity_user_login;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLoadingDialog.cancel();
     }
 }

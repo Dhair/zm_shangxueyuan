@@ -9,6 +9,12 @@ import com.zm.utils.PhoneUtil;
  * Email: deng.shengjin@zuimeia.com
  */
 public class OssHelper {
+    public static String getImageRealUrl(Context context, String sourceUrl) {
+        String resUrl = "@%sw_%sh_0e";
+        String finalUrl = sourceUrl + String.format(resUrl, (int) (PhoneUtil.getDisplayWidth(context) * 1.5f), (int) (PhoneUtil.getDisplayHeight(context) * 1.5f));
+        return finalUrl;
+    }
+
     public static String getImageTopicUrl(Context context, String sourceUrl) {
         String finalUrl = sourceUrl + "@" + PhoneUtil.getDisplayWidth(context) + "w";
         return finalUrl;

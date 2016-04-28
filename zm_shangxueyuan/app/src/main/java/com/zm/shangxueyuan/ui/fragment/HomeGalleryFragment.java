@@ -16,15 +16,15 @@ import android.widget.TextView;
 import com.viewpagerindicator.CirclePageIndicator;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.db.GalleryDBUtil;
+import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.model.GalleryCategoryModel;
 import com.zm.shangxueyuan.model.GalleryTopicModel;
-import com.zm.shangxueyuan.ui.activity.GalleryListActivity;
 import com.zm.shangxueyuan.ui.activity.GalleryActivity;
+import com.zm.shangxueyuan.ui.activity.GalleryListActivity;
 import com.zm.shangxueyuan.ui.adapter.GalleryExpandableAdapter;
 import com.zm.shangxueyuan.ui.listener.OnItemClickListener;
 import com.zm.shangxueyuan.ui.widget.SlidingMenuGalleryViewPager;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -79,7 +79,7 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
             public void run() {
                 final List<GalleryCategoryModel> galleryCategoryList = GalleryDBUtil.query();
                 final List<GalleryTopicModel> galleryTopicList = GalleryDBUtil.queryTopics();
-                final List<GalleryTopicModel> topTopicList = queryTopTopics(galleryTopicList);
+                final List<GalleryTopicModel> topTopicList = GalleryTopicModel.queryTopTopics(SettingDBUtil.getInstance(getApplicationContext()).getGalleryTopic());
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -88,7 +88,6 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
                             return;
                         }
                         hideLoading();
-
                         if (topTopicList != null && !topTopicList.isEmpty()) {
                             View headerView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.fragment_home_gallery_header, null);
                             initHeaderViews(headerView, topTopicList);
@@ -110,20 +109,20 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
         });
     }
 
-    private List<GalleryTopicModel> queryTopTopics(List<GalleryTopicModel> topics) {
-        if (topics == null) {
-            return null;
-        }
-        List<GalleryTopicModel> topTopics = new LinkedList<>();
-        for (int i = 0; i < topics.size(); i++) {
-            GalleryTopicModel topicModel = topics.get(i);
-            if (GalleryTopicModel.isTopTopic(topicModel)) {
-                topTopics.add(topicModel);
-                topics.remove(topicModel);
-            }
-        }
-        return topTopics;
-    }
+//    private List<GalleryTopicModel> queryTopTopics(List<GalleryTopicModel> topics) {
+//        if (topics == null) {
+//            return null;
+//        }
+//        List<GalleryTopicModel> topTopics = new LinkedList<>();
+//        for (int i = 0; i < topics.size(); i++) {
+//            GalleryTopicModel topicModel = topics.get(i);
+//            if (GalleryTopicModel.isTopTopic(topicModel)) {
+//                topTopics.add(topicModel);
+//                topics.remove(topicModel);
+//            }
+//        }
+//        return topTopics;
+//    }
 
     private void initHeaderViews(View headerView, final List<GalleryTopicModel> topicList) {
         SlidingMenuGalleryViewPager headerViewPager = (SlidingMenuGalleryViewPager) headerView.findViewById(R.id.header_view_pager);

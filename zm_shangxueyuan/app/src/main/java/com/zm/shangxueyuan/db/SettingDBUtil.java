@@ -22,6 +22,7 @@ public class SettingDBUtil {
     private final static String USER_ACCOUNT = "userAccount";
     private final static String USER_TOKEN_ID = "userTokenId";
     private final static String USER_ACCOUNTS_ID = "userAccountsId";
+    private final static String GALLERY_TOPIC = "GalleryTopic";
 
     private SettingDBUtil(Context context) {
         this.context = context;
@@ -81,6 +82,14 @@ public class SettingDBUtil {
 
     public void setUserAccountsId(String accountsId) {
         SharePrefHelper.getInstance(context).setPref(USER_ACCOUNTS_ID, accountsId);
+    }
+
+    public String getGalleryTopic() {
+        return SharePrefHelper.getInstance(context).getPref(GALLERY_TOPIC, "");
+    }
+
+    public void setGalleryTopic(String galleryTopic) {
+        SharePrefHelper.getInstance(context).setPref(GALLERY_TOPIC, galleryTopic);
     }
 
     public void removeUser() {

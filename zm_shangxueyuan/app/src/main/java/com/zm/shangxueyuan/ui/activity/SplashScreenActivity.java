@@ -196,7 +196,7 @@ public class SplashScreenActivity extends AbsActivity {
                             @Override
                             public void run() {
                                 boolean parseGalleryCategory = GalleryCategoryModel.parseCategory(jsonObject);
-                                boolean parseGalleryTopics = GalleryTopicModel.parseTopics(jsonObject);
+                                boolean parseGalleryTopics = GalleryTopicModel.parseTopics(getApplicationContext(), jsonObject);
                                 if (parseGalleryCategory && parseGalleryTopics) {
                                     queryConfigData();
                                     if (existData) {

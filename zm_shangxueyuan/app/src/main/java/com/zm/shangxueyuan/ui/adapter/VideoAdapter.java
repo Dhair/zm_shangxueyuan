@@ -1,10 +1,14 @@
 package com.zm.shangxueyuan.ui.adapter;
 
 import android.content.Context;
+import android.os.Build;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -32,6 +36,7 @@ public class VideoAdapter extends BaseAdapter {
     private ImageLoader mImageLoader;
     private DisplayImageOptions mOptions;
     private int mDisplayWidth;
+    private DisplayMetrics mDisplayMetrics;
 
     private boolean mNeedShowTopicFlag;
     private boolean mNeedShowDelete;
@@ -53,6 +58,7 @@ public class VideoAdapter extends BaseAdapter {
     }
 
     private void init(Context context) {
+        mDisplayMetrics = context.getResources().getDisplayMetrics();
         mDisplayWidth = PhoneUtil.getDisplayWidth(context);
         if (!ImageLoader.getInstance().isInited()) {
             ImageLoadUtil.initImageLoader(context);
@@ -87,10 +93,10 @@ public class VideoAdapter extends BaseAdapter {
             holder = new ViewHolder();
             convertView = View.inflate(mContext, R.layout.fragment_home_video_item, null);
 
-            int layoutW = (mItemWidth > 0 ? mItemWidth : (int) Math.ceil(mDisplayWidth / 2.0f));
-
+            int layoutW = (mItemWidth > 0 ? mItemWidth : (int) Math.ceil((mDisplayWidth) / 2.0f));
             for (int i = 0; i < 2; i++) {
                 holder.view[i] = convertView.findViewById(ResUtil.getInstance(mContext).viewId("view" + i));
+                holder.topLines[i] = holder.view[i].findViewById(R.id.top_line);
                 holder.picture[i] = (ImageView) holder.view[i].findViewById(R.id.image);
                 holder.title[i] = (TextView) holder.view[i].findViewById(R.id.title);
                 holder.subTitle[i] = (TextView) holder.view[i].findViewById(R.id.sub_title);
@@ -115,11 +121,16 @@ public class VideoAdapter extends BaseAdapter {
             if (i >= mVideoList.size()) {
                 holder.view[pos].setVisibility(View.INVISIBLE);
                 holder.view[pos].setOnClickListener(null);
+                holder.topLines[pos].setVisibility(View.GONE);
             } else {
                 if (holder.view[pos].getVisibility() != View.VISIBLE) {
                     holder.view[pos].setVisibility(View.VISIBLE);
                 }
-
+                if (position == 0) {
+                    holder.topLines[pos].setVisibility(View.VISIBLE);
+                } else {
+                    holder.topLines[pos].setVisibility(View.GONE);
+                }
                 final VideoModel videoModel = mVideoList.get(i);
                 holder.title[pos].setText(videoModel.getTitle());
                 holder.subTitle[pos].setText(videoModel.getSubTitle());
@@ -162,6 +173,21 @@ public class VideoAdapter extends BaseAdapter {
                     }
                 });
             }
+            holder.view[pos].getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        holder.view[pos].getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    } else {
+                        holder.view[pos].getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    }
+
+                    LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) holder.view[pos].getLayoutParams();
+                    layoutParams.height = holder.view[pos].getHeight();
+                    holder.view[pos].requestLayout();
+                }
+            });
+
         }
 
         return convertView;
@@ -180,6 +206,7 @@ public class VideoAdapter extends BaseAdapter {
         ImageView delete[] = new ImageView[2];
         TextView downloadType[] = new TextView[2];
         TextView vipTexts[] = new TextView[2];
+        View topLines[] = new View[2];
     }
 
     public void clear() {

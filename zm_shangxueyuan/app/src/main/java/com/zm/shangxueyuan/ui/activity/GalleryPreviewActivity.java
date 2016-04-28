@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,10 +17,13 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.model.GalleryModel;
 import com.zm.shangxueyuan.ui.fragment.GalleryFragment;
 import com.zm.shangxueyuan.ui.widget.HackyViewPager;
+import com.zm.shangxueyuan.ui.widget.LoadingDialog;
 import com.zm.shangxueyuan.utils.PermissionUtil;
 import com.zm.shangxueyuan.utils.ToastUtil;
 
@@ -50,6 +54,7 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
     @Bind(R.id.download_btn)
     RelativeLayout mDownloadBtn;
 
+    private LoadingDialog mLoadingDialog;
     private GalleryPagerAdapter mPagerAdapter;
     private static final int EXTERNAL_REQUEST_CODE = 1 << 3;
 
@@ -78,6 +83,7 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
             mGalleryList = (List<GalleryModel>) object;
         }
         mPagerAdapter = new GalleryPagerAdapter(getSupportFragmentManager(), mGalleryList);
+        mLoadingDialog = new LoadingDialog(GalleryPreviewActivity.this, R.style.dialog_style);
     }
 
     @Override
@@ -136,18 +142,68 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
     }
 
     private void onDownloadEvent() {
-        String imageUrl = mPagerAdapter.getDetailUrl(mViewPager.getCurrentItem());
-        File file = ImageLoader.getInstance().getDiscCache().get(imageUrl);
+        File file = ImageLoader.getInstance().getDiscCache().get(mPagerAdapter.getDetailUrl(mViewPager.getCurrentItem()));
         if (file == null || !file.exists()) {
+            mLoadingDialog.cancel();
             ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
             return;
         }
-        boolean addToSysGallery = addToSysGallery(file.getAbsolutePath(), "zhongmei_" + System.currentTimeMillis() + "_shangxueyuan.jpg");
-        if (addToSysGallery) {
-            ToastUtil.showToast(getApplicationContext(), R.string.gallery_success);
-        } else {
-            ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
-        }
+
+        final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+        ImageLoader.getInstance().loadImage(galleryModel.getImageRealUrl(), new ImageLoadingListener() {
+            @Override
+            public void onLoadingStarted(String s, View view) {
+                mLoadingDialog.show(R.string.downloading);
+            }
+
+            @Override
+            public void onLoadingFailed(String s, View view, FailReason failReason) {
+                final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+                if (galleryModel != null && !galleryModel.getImageRealUrl().equals(s)) {
+                    return;
+                }
+                mLoadingDialog.cancel();
+                ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+            }
+
+            @Override
+            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
+                final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+                if (galleryModel != null && !galleryModel.getImageRealUrl().equals(s)) {
+                    return;
+                }
+                File file = ImageLoader.getInstance().getDiscCache().get(galleryModel.getImageRealUrl());
+                if (file == null || !file.exists()) {
+                    mLoadingDialog.cancel();
+                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+                    return;
+                }
+                boolean addToSysGallery = addToSysGallery(file.getAbsolutePath(), "zhongmei_" + System.currentTimeMillis() + "_shangxueyuan.jpg");
+                if (addToSysGallery) {
+                    mLoadingDialog.cancel();
+                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_success);
+                } else {
+                    mLoadingDialog.cancel();
+                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+                }
+            }
+
+            @Override
+            public void onLoadingCancelled(String s, View view) {
+                final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+                if (galleryModel != null && !galleryModel.getImageRealUrl().equals(s)) {
+                    return;
+                }
+                mLoadingDialog.cancel();
+                ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLoadingDialog.cancel();
     }
 
     private MediaScannerConnection mConnection;

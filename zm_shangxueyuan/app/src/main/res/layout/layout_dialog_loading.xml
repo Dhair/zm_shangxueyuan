@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:id="@+id/content_box"
-    android:layout_width="160dip"
-    android:layout_height="50dip"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@drawable/dialog_bg"
     android:gravity="center"
     android:orientation="horizontal"
-    android:padding="10dip" >
+    android:padding="10dip">
 
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
         android:indeterminateDrawable="@drawable/progress_bar_circle"
-        android:indeterminateDuration="800" />
+        android:indeterminateDuration="800"/>
 
     <TextView
         android:id="@+id/loading_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:ellipsize="end"
+        android:maxWidth="280dp"
         android:paddingRight="10dip"
         android:singleLine="true"
         android:text="@string/loading"
         android:textColor="@android:color/white"
-        android:textSize="14sp" />
+        android:textSize="14sp"/>
 
 </LinearLayout>

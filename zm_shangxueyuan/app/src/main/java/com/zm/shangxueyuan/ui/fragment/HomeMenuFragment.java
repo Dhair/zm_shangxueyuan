@@ -58,6 +58,9 @@ public class HomeMenuFragment extends BaseFragment {
 
     private void updateStatusBarHeightV19(View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+                return;
+            }
             View space = view.findViewById(R.id.notification_space);
             if (space != null) {
                 ViewGroup.LayoutParams lp = space.getLayoutParams();

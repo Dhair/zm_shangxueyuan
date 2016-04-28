@@ -3,9 +3,9 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:windowTranslucentStatus">true</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
         <!--<item name="android:windowTranslucentNavigation">true</item>-->
-        <item name="android:windowActionBarOverlay">false</item>
+        <!--<item name="android:windowActionBarOverlay">false</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -25,7 +25,7 @@
     </style>
 
     <style name="AppTheme.NoActionBar.Translucent">
-        <item name="android:windowTranslucentStatus">true</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar.TranslucentBg">

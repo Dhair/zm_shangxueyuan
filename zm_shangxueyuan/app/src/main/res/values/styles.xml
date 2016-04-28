@@ -113,7 +113,7 @@
         <item name="tabPaddingStart">5dp</item>
         <item name="tabPaddingEnd">5dp</item>
         <item name="tabTextAppearance">@style/CustomTabTextAppearance</item>
-        <item name="tabSelectedTextColor">@color/black_50</item>
+        <item name="tabSelectedTextColor">@color/colorPrimary</item>
     </style>
 
     <style name="CustomTabTextAppearance" parent="TextAppearance.Design.Tab">

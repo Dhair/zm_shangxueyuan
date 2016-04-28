@@ -72,6 +72,9 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
 
     private void updateStatusBarHeightV19() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT && !PhoneUtil.isFullScreen(this)) {
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+                return;
+            }
             ViewGroup mStatusBarBox = (ViewGroup) findViewById(R.id.status_bar_box);
             if (mStatusBarBox != null) {
                 ViewGroup.LayoutParams lp = mStatusBarBox.getLayoutParams();
@@ -80,7 +83,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
                 if (getStatusBarColor() > 0) {
                     mStatusBarBox.setBackgroundResource(getStatusBarColor());
                 } else {
-                    mStatusBarBox.setBackgroundResource(R.color.colorPrimaryDark);
+                    mStatusBarBox.setBackgroundResource(R.color.black_30_alpha);
                 }
             }
 

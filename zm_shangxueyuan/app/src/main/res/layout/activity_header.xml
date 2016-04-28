@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/header_box"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/activity_header_height"
-    android:id="@+id/header_box"
     android:background="@color/white">
 
     <ImageView
@@ -39,4 +39,11 @@
         android:textColor="@color/colorPrimary"
         android:textSize="18sp"
         android:visibility="invisible"/>
+
+    <View
+        android:id="@+id/header_line"
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black_30_alpha"/>
 </RelativeLayout>

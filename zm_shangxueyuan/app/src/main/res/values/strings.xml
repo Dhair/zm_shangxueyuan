@@ -21,12 +21,14 @@
     <string name="finish">完成</string>
     <string name="feedback_content_hint">请输入您的反馈信息</string>
     <string name="feedback_phone_hint">请输入您的联系方式</string>
-    <string name="loading">加载中.....</string>
-
+    <string name="loading">正在努力加载中.....</string>
+    <string name="logining">正在登录中.....</string>
+    <string name="feedbacking">正在努力反馈中.....</string>
+    <string name="downloading">正在努力下载高清图.....</string>
     <string name="nodata_str">没有找到相关信息</string>
-    <string name="fav_nodata_str">没有收藏过视频</string>
-    <string name="history_nodata_str">没有播放过视频</string>
-    <string name="download_nodata_str">没有下载过视频</string>
+    <string name="fav_nodata_str">您还未收藏过视频</string>
+    <string name="history_nodata_str">您还未播放过视频</string>
+    <string name="download_nodata_str">您还未下载过视频</string>
 
     <string name="video_delete_request">您确定删除该视频？</string>
     <string name="cancel">取消</string>
@@ -114,5 +116,5 @@
     <string name="logout">退出登录</string>
     <string name="login_success">登录成功</string>
     <string name="login_fail">登录失败</string>
-    <string name="login_tips">该视频需要登录才能观看，是否进入登录页面？</string>
+    <string name="login_tips">该视频仅中脉商学院学院可观看，是否现在登录？</string>
 </resources>

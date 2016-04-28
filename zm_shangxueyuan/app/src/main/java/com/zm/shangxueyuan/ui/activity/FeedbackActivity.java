@@ -78,7 +78,7 @@ public class FeedbackActivity extends AbsActionBarActivity {
         if (TextUtils.isEmpty(phone)) {
             return;
         }
-        mLoadingDialog.show();
+        mLoadingDialog.show(R.string.feedbacking);
         mRequest.feedback(content, phone, new Callback<JSONObject>() {
             @Override
             public void success(JSONObject jsonObject, Response response) {
@@ -100,6 +100,12 @@ public class FeedbackActivity extends AbsActionBarActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mLoadingDialog.cancel();
     }
 
     private boolean isOpenSoftKeyboard() {

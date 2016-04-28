@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.db.SettingDBUtil;
 import com.zm.shangxueyuan.model.UserModel;
 
@@ -65,6 +66,7 @@ public class PersonalActivity extends AbsActionBarActivity {
     protected void initWidgets() {
         setActionTitle(R.string.personal);
         setActionToolsBg(R.color.colorPrimary, R.drawable.icon_back_white, R.color.white);
+        mLogout.setVisibility(View.GONE);
     }
 
     @Override
@@ -72,9 +74,9 @@ public class PersonalActivity extends AbsActionBarActivity {
         super.onResume();
         UserModel userModel = UserModel.parse(getApplicationContext());
         if (userModel != null) {
-            onLoginEvent(userModel);
+//            onLoginEvent(userModel);
         } else {
-            onLogoutEvent();
+//            onLogoutEvent();
         }
     }
 
@@ -100,8 +102,9 @@ public class PersonalActivity extends AbsActionBarActivity {
             @Override
             public void onClick(View v) {
                 if (!mIsLogin) {
-                    startActivity(UserLoginActivity.getIntent(PersonalActivity.this));
+//                    startActivity(UserLoginActivity.getIntent(PersonalActivity.this));
                 }
+                startActivity(WebViewActivity.getIntent(PersonalActivity.this, CommonConstant.LOGIN_WEB_URl, getString(R.string.user)));
             }
         });
         mDownload.setOnClickListener(new View.OnClickListener() {
@@ -141,6 +144,7 @@ public class PersonalActivity extends AbsActionBarActivity {
                 SettingDBUtil.getInstance(getApplicationContext()).removeUser();
             }
         });
+        setHeaderLineInvisible();
     }
 
     @Override
