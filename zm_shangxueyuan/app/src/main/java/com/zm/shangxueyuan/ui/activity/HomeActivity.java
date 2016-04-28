@@ -8,10 +8,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.squareup.otto.Subscribe;
+import com.umeng.message.ALIAS_TYPE;
 import com.umeng.message.IUmengRegisterCallback;
 import com.umeng.message.PushAgent;
 import com.zm.shangxueyuan.R;
@@ -54,7 +56,7 @@ public class HomeActivity extends AbsSlidingActivity {
             }
         });
         mPushAgent.setDebugMode(false);
-        new AddAliasTask("All", "").execute();
+        new AddAliasTask("All", ALIAS_TYPE.QQ).execute();
 
     }
 
@@ -79,7 +81,7 @@ public class HomeActivity extends AbsSlidingActivity {
 
         @Override
         protected void onPostExecute(Boolean result) {
-
+            Log.e("", "AddAliasTask success" + result);
         }
 
     }
