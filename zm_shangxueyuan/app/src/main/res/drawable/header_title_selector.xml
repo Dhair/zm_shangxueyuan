@@ -5,7 +5,8 @@
     <!--从上往下    android:centerColor="@color/black_20_alpha"-->
     <gradient
         android:angle="270"
-        android:endColor="@color/black_70_alpha"
+        android:endColor="@color/black_50_alpha"
+        android:centerColor="@color/black_20_alpha"
         android:startColor="@android:color/transparent"
         android:type="linear"/>
 
