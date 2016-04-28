@@ -23,6 +23,7 @@ public class StorageHelper {
     // Image cache name
     private static final String IMAGE_CACHE_DIR_NAME = File.separator + CommonConstant.APP_BASE_DIR_NAME + File.separator + "images" + File.separator;
     private static final String VIDEO_CACHE_DIR_NAME = File.separator + CommonConstant.APP_BASE_DIR_NAME + File.separator + "videos" + File.separator;
+    private static final String PICTURE_CACHE_DIR_NAME = File.separator + "ZMPictures" + File.separator;
 
     public static String getImgDir(Context context) {
         String baseCacheLocation = IOUtil.getBaseLocalLocation(context);
@@ -33,6 +34,12 @@ public class StorageHelper {
     public static String getVideoDir(Context context) {
         String baseCacheLocation = IOUtil.getBaseLocalLocation(context);
         String images = baseCacheLocation + VIDEO_CACHE_DIR_NAME;
+        return createFileDir(images);
+    }
+
+    public static String getPictureCacheDir(Context context) {
+        String baseCacheLocation = IOUtil.getBaseLocalLocation(context);
+        String images = baseCacheLocation + PICTURE_CACHE_DIR_NAME;
         return createFileDir(images);
     }
 

@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,9 +18,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.zm.shangxueyuan.R;
+import com.zm.shangxueyuan.helper.FileTransferService;
+import com.zm.shangxueyuan.helper.StorageHelper;
 import com.zm.shangxueyuan.model.GalleryModel;
 import com.zm.shangxueyuan.ui.fragment.GalleryFragment;
 import com.zm.shangxueyuan.ui.widget.HackyViewPager;
@@ -28,8 +29,11 @@ import com.zm.shangxueyuan.utils.PermissionUtil;
 import com.zm.shangxueyuan.utils.ToastUtil;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import butterknife.Bind;
 import cn.sharesdk.framework.ShareSDK;
@@ -57,6 +61,9 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
     private LoadingDialog mLoadingDialog;
     private GalleryPagerAdapter mPagerAdapter;
     private static final int EXTERNAL_REQUEST_CODE = 1 << 3;
+    private Executor mExecutor = Executors.newFixedThreadPool(3);
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private FileTransferService mFileTransferService;
 
     public static Intent getIntent(Context context, int currPosition, LinkedList<GalleryModel> galleryModels) {
         Intent intent = new Intent(context, GalleryPreviewActivity.class);
@@ -77,6 +84,7 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
 
     @Override
     protected void initData() {
+        mFileTransferService = new FileTransferService(getApplicationContext());
         mPosition = getIntent().getIntExtra(POSITION, 0);
         Object object = getIntent().getSerializableExtra(MODEL);
         if (object != null) {
@@ -144,60 +152,42 @@ public class GalleryPreviewActivity extends AbsActionBarActivity {
     private void onDownloadEvent() {
         File file = ImageLoader.getInstance().getDiscCache().get(mPagerAdapter.getDetailUrl(mViewPager.getCurrentItem()));
         if (file == null || !file.exists()) {
-            mLoadingDialog.cancel();
             ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
             return;
         }
-
         final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
-        ImageLoader.getInstance().loadImage(galleryModel.getImageRealUrl(), new ImageLoadingListener() {
+        mLoadingDialog.show(R.string.downloading);
+        mExecutor.execute(new Runnable() {
             @Override
-            public void onLoadingStarted(String s, View view) {
-                mLoadingDialog.show(R.string.downloading);
-            }
-
-            @Override
-            public void onLoadingFailed(String s, View view, FailReason failReason) {
-                final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
-                if (galleryModel != null && !galleryModel.getImageRealUrl().equals(s)) {
+            public void run() {
+                String imageUrl = galleryModel.getImageRealUrl();
+                final String destFilePath = StorageHelper.getPictureCacheDir(getApplicationContext());
+                final File destFile = new File(destFilePath + "zhongmai_" + Calendar.getInstance().getTimeInMillis() + ".jpg");
+                final boolean downloadSuccess = mFileTransferService.downloadFile(imageUrl, destFile);
+                final GalleryModel currGalleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
+                if (!currGalleryModel.getImageRealUrl().equals(imageUrl)) {
                     return;
                 }
-                mLoadingDialog.cancel();
-                ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
-            }
-
-            @Override
-            public void onLoadingComplete(String s, View view, Bitmap bitmap) {
-                final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
-                if (galleryModel != null && !galleryModel.getImageRealUrl().equals(s)) {
-                    return;
-                }
-                File file = ImageLoader.getInstance().getDiscCache().get(galleryModel.getImageRealUrl());
-                if (file == null || !file.exists()) {
-                    mLoadingDialog.cancel();
-                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
-                    return;
-                }
-                boolean addToSysGallery = addToSysGallery(file.getAbsolutePath(), "zhongmei_" + System.currentTimeMillis() + "_shangxueyuan.jpg");
-                if (addToSysGallery) {
-                    mLoadingDialog.cancel();
-                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_success);
+                if (downloadSuccess) {
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingDialog.cancel();
+                            ToastUtil.showToast(getApplicationContext(), String.format(getString(R.string.gallery_success), destFilePath));
+                        }
+                    });
                 } else {
-                    mLoadingDialog.cancel();
-                    ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mLoadingDialog.cancel();
+                            ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
+                        }
+                    });
                 }
-            }
-
-            @Override
-            public void onLoadingCancelled(String s, View view) {
-                final GalleryModel galleryModel = mPagerAdapter.getModel(mViewPager.getCurrentItem());
-                if (galleryModel != null && !galleryModel.getImageRealUrl().equals(s)) {
-                    return;
-                }
-                mLoadingDialog.cancel();
-                ToastUtil.showToast(getApplicationContext(), R.string.gallery_fail);
             }
         });
+
     }
 
     @Override

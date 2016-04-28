@@ -124,9 +124,9 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:lineSpacingMultiplier="1.2"
-                android:textColor="@color/gray"
+                android:textColor="@color/black_60_alpha"
                 android:textIsSelectable="true"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
         </LinearLayout>
     </ScrollView>
 

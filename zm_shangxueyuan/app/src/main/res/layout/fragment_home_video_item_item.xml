@@ -41,7 +41,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/black_80_alpha"
-        android:textSize="15sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:id="@+id/sub_title"
@@ -54,7 +54,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/black_50"
-        android:textSize="13sp"/>
+        android:textSize="12sp"/>
 
     <TextView
         android:id="@+id/flag_text"

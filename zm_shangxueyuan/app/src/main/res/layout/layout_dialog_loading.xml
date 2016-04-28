@@ -27,7 +27,7 @@
         android:paddingRight="10dip"
         android:singleLine="true"
         android:text="@string/loading"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white_90_alpha"
         android:textSize="14sp"/>
 
 </LinearLayout>

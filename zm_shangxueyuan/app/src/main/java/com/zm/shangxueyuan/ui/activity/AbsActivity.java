@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.PushAgent;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.ActivityFinishHelper;
 import com.zm.shangxueyuan.helper.AppUpgradeHelper;
@@ -46,6 +47,8 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
         initData();
         initWidgets();
         initWidgetsActions();
+
+        PushAgent.getInstance(getApplicationContext()).onAppStart();
     }
 
     private void initAbsData() {

@@ -28,7 +28,7 @@
             android:layout_alignParentBottom="true"
             android:background="@drawable/header_title_selector"
             android:orientation="horizontal"
-            android:paddingBottom="8dp"
+            android:paddingBottom="5dp"
             android:paddingLeft="12dp"
             android:paddingTop="8dp">
 
@@ -37,8 +37,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="16sp"/>
+                android:textColor="@color/white_90_alpha"
+                android:textSize="15sp"/>
 
             <com.viewpagerindicator.CirclePageIndicator
                 android:id="@+id/indicator"
@@ -92,8 +92,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:singleLine="true"
-            android:textColor="@color/black_50_alpha"
-            android:textSize="16sp"/>
+            android:textColor="@color/black_80_alpha"
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <View

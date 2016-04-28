@@ -31,6 +31,7 @@
                 android:imeOptions="actionNext"
                 android:padding="10dp"
                 android:scrollbars="vertical"
+                android:textColor="@color/black_60_alpha"
                 android:textColorHint="@color/black_30_alpha"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="16sp"/>
@@ -47,6 +48,7 @@
                 android:imeOptions="actionGo"
                 android:padding="10dp"
                 android:singleLine="true"
+                android:textColor="@color/black_60_alpha"
                 android:textColorHint="@color/black_30_alpha"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="16sp"/>

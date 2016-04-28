@@ -75,7 +75,7 @@
     <string name="exit_warn">再按一次退出程序</string>
 
     <string name="gallery_detail">图片详情</string>
-    <string name="gallery_success">成功保存至相册</string>
+    <string name="gallery_success">成功保存至%s</string>
     <string name="gallery_fail">保存失败</string>
     <string name="gallery_permission_fail">保存失败，请授权存储空间权限</string>
 

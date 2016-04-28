@@ -74,4 +74,5 @@ dependencies {
     compile project(':oss-android-sdk')
     compile project(':zhongmei_sharesdk')
     compile project(':DownloadProvider')
+    compile project(':Pushlib')
 }

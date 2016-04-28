@@ -58,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/user_login_tips"
-                    android:textColor="@color/white_50_alpha"
+                    android:textColor="@color/white_70_alpha"
                     android:textSize="14sp"/>
             </LinearLayout>
 
@@ -116,6 +116,7 @@
                             android:layout_gravity="center_vertical"
                             android:drawableRight="@drawable/arrow_02"
                             android:text="@string/mine_download"
+                            android:textColor="@color/black_60_alpha"
                             android:textSize="16sp"/>
 
                     </LinearLayout>
@@ -150,6 +151,7 @@
                             android:layout_gravity="center_vertical"
                             android:drawableRight="@drawable/arrow_02"
                             android:text="@string/mine_record"
+                            android:textColor="@color/black_60_alpha"
                             android:textSize="16sp"/>
 
                     </LinearLayout>
@@ -184,6 +186,7 @@
                             android:layout_gravity="center_vertical"
                             android:drawableRight="@drawable/arrow_02"
                             android:text="@string/mine_favor"
+                            android:textColor="@color/black_60_alpha"
                             android:textSize="16sp"/>
 
                     </LinearLayout>
@@ -231,6 +234,7 @@
                             android:layout_gravity="center_vertical"
                             android:drawableRight="@drawable/arrow_02"
                             android:text="@string/feedback"
+                            android:textColor="@color/black_60_alpha"
                             android:textSize="16sp"/>
 
                     </LinearLayout>
@@ -267,6 +271,7 @@
                             android:layout_marginTop="0.15dp"
                             android:drawableRight="@drawable/arrow_02"
                             android:text="@string/about"
+                            android:textColor="@color/black_60_alpha"
                             android:textSize="16sp"/>
 
                     </LinearLayout>
@@ -283,17 +288,17 @@
                     android:id="@+id/logout"
                     android:layout_width="280dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/btn_search_selector"
                     android:gravity="center"
                     android:paddingBottom="10dp"
-                    android:layout_gravity="center_horizontal"
                     android:paddingTop="10dp"
                     android:singleLine="true"
                     android:text="@string/logout"
-                    android:visibility="gone"
                     android:textColor="@color/white"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp"
+                    android:visibility="gone"/>
 
             </LinearLayout>
         </ScrollView>

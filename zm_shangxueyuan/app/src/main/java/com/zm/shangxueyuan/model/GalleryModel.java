@@ -68,7 +68,7 @@ public class GalleryModel extends BaseModel {
             galleryModel.setTitleUpload(titleUpload);
             galleryModel.setImageListUrl(OssHelper.getImageListUrl(context, baseUrl));
             galleryModel.setImageDetailUrl(OssHelper.getImageDetailUrl(context, baseUrl));
-            galleryModel.setImageRealUrl(OssHelper.getImageRealUrl(context, baseUrl));
+            galleryModel.setImageRealUrl(baseUrl);
             galleryList.add(galleryModel);
         }
         return galleryList;

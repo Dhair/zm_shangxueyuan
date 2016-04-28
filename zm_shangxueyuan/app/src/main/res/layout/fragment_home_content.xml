@@ -45,7 +45,7 @@
                 android:gravity="center"
                 android:text="@string/menu_video"
                 android:textColor="@color/tab_text_color_selector"
-                android:textSize="15sp"/>
+                android:textSize="13sp"/>
 
             <TextView
                 android:id="@+id/tab_gallery"
@@ -56,7 +56,7 @@
                 android:gravity="center"
                 android:text="@string/menu_gallery"
                 android:textColor="@color/tab_text_color_selector"
-                android:textSize="15sp"/>
+                android:textSize="13sp"/>
         </LinearLayout>
 
         <View
@@ -107,7 +107,7 @@
                     android:gravity="bottom|center_horizontal"
                     android:text="@string/tools_record_history"
                     android:textColor="@color/tools_text_color_selector"
-                    android:textSize="15sp"/>
+                    android:textSize="14sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -124,7 +124,7 @@
                     android:gravity="bottom|center_horizontal"
                     android:text="@string/tools_fav"
                     android:textColor="@color/tools_text_color_selector"
-                    android:textSize="15sp"/>
+                    android:textSize="14sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -141,7 +141,7 @@
                     android:gravity="bottom|center_horizontal"
                     android:text="@string/tools_download"
                     android:textColor="@color/tools_text_color_selector"
-                    android:textSize="15sp"/>
+                    android:textSize="14sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -158,7 +158,7 @@
                     android:gravity="bottom|center_horizontal"
                     android:text="@string/tools_search"
                     android:textColor="@color/tools_text_color_selector"
-                    android:textSize="15sp"/>
+                    android:textSize="14sp"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -175,7 +175,7 @@
                     android:gravity="bottom|center_horizontal"
                     android:text="@string/tools_personal"
                     android:textColor="@color/tools_text_color_selector"
-                    android:textSize="15sp"/>
+                    android:textSize="14sp"/>
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

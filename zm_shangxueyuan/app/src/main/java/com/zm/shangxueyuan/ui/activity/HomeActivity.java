@@ -1,6 +1,7 @@
 package com.zm.shangxueyuan.ui.activity;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,8 @@ import android.view.KeyEvent;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.squareup.otto.Subscribe;
+import com.umeng.message.IUmengRegisterCallback;
+import com.umeng.message.PushAgent;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.constant.CommonConstant;
 import com.zm.shangxueyuan.helper.ActivityFinishHelper;
@@ -32,11 +35,53 @@ public class HomeActivity extends AbsSlidingActivity {
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private ActivityFinishHelper mActivityFinishHelper;
     private AppUpgradeHelper mAppUpgradeHelper;
+    private PushAgent mPushAgent;
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         init(bundle);
+        onPushEvent();
+    }
+
+    private void onPushEvent() {
+
+        mPushAgent = PushAgent.getInstance(getApplicationContext());
+        mPushAgent.enable(new IUmengRegisterCallback() {
+
+            @Override
+            public void onRegistered(final String registrationId) {
+            }
+        });
+        mPushAgent.setDebugMode(false);
+        new AddAliasTask("All", "").execute();
+
+    }
+
+    class AddAliasTask extends AsyncTask<Void, Void, Boolean> {
+
+        String alias;
+        String aliasType;
+
+        public AddAliasTask(String aliasString, String aliasTypeString) {
+            this.alias = aliasString;
+            this.aliasType = aliasTypeString;
+        }
+
+        protected Boolean doInBackground(Void... params) {
+            try {
+                return mPushAgent.addAlias(alias, aliasType);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+
+        }
+
     }
 
     @Override

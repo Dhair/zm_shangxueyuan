@@ -11,6 +11,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivityBase;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingActivityHelper;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.message.PushAgent;
 
 /**
  * Creator: dengshengjin on 16/4/16 22:32
@@ -29,6 +30,7 @@ public abstract class AbsSlidingActivity extends AppCompatActivity implements Sl
         mHelper = new SlidingActivityHelper(this);
         mHelper.onCreate(savedInstanceState);
         mHelper.setSlidingActionBarEnabled(false);
+        PushAgent.getInstance(getApplicationContext()).onAppStart();
     }
 
     /* (non-Javadoc)

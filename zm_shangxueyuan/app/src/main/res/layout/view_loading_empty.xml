@@ -30,8 +30,8 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="20dp"
             android:text="@string/loading"
-            android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textColor="@color/black_50"
+            android:textSize="15sp"
             android:visibility="gone">
         </TextView>
     </LinearLayout>

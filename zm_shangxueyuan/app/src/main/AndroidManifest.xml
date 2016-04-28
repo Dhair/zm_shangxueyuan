@@ -188,6 +188,10 @@
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1"/>
+
+        <meta-data
+            android:name="UMENG_MESSAGE_SECRET"
+            android:value="af80bec090e8a311484604a99fd4f95f"/>
     </application>
 
 </manifest>

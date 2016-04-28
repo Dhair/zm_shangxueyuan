@@ -1,3 +1,4 @@
 include ':app', ':AndroidUtils', ':zhongmei_sharesdk', ':DownloadProvider', 'sliding_menu_library', 'view_pager_indicator_library'
 include 'photo_view'
 include 'oss-android-sdk'
+include 'Pushlib'
