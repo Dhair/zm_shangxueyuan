@@ -37,8 +37,8 @@
                 android:drawablePadding="3dp"
                 android:gravity="center_vertical"
                 android:text="@string/share"
-                android:textColor="@color/white_80_alpha"
-                android:textSize="14sp"/>
+                android:textColor="@color/white_90_alpha"
+                android:textSize="15sp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -55,8 +55,8 @@
                 android:drawablePadding="3dp"
                 android:gravity="center_vertical"
                 android:text="@string/download"
-                android:textColor="@color/white_80_alpha"
-                android:textSize="14sp"/>
+                android:textColor="@color/white_90_alpha"
+                android:textSize="15sp"/>
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

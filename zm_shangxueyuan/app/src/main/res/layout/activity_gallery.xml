@@ -17,13 +17,13 @@
             android:id="@+id/gallery_grid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:horizontalSpacing="@dimen/menu_spacing"
+            android:horizontalSpacing="2dp"
             android:listSelector="@android:color/transparent"
             android:numColumns="4"
             android:overScrollMode="never"
             android:scrollbars="none"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="@dimen/menu_spacing"/>
+            android:verticalSpacing="2dp"/>
 
         <ViewStub
             android:id="@+id/view_stub"
