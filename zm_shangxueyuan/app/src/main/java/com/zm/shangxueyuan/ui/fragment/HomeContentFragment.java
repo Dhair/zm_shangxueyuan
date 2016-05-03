@@ -78,6 +78,12 @@ public class HomeContentFragment extends BaseFragment {
                 return true;
             }
         }
+        if (DeviceUtil.isFlyme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//Flyme4+
+            boolean isSuccess = DeviceUtil.setFlymeStatusBarDarkIcon(getActivity(), true);
+            if (isSuccess) {
+                return true;
+            }
+        }
         return false;
     }
 
