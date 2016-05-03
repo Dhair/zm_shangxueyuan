@@ -20,6 +20,7 @@ import com.umeng.message.PushAgent;
 import com.zm.shangxueyuan.R;
 import com.zm.shangxueyuan.helper.ActivityFinishHelper;
 import com.zm.shangxueyuan.helper.AppUpgradeHelper;
+import com.zm.utils.DeviceUtil;
 import com.zm.utils.PhoneUtil;
 
 import butterknife.ButterKnife;
@@ -73,11 +74,29 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
 
     }
 
+    protected boolean isDarkMode() {
+        return true;
+    }
+
+    private boolean needShowStatusBar() {
+        if (DeviceUtil.isMiui(getContext()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//MIUI V6
+            boolean isSuccess = DeviceUtil.setMIUIStatusBarDarkMode(this, isDarkMode());
+            if (isSuccess) {
+                return true;
+            }
+        }
+        if (DeviceUtil.isFlyme() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//Flyme4+
+            boolean isSuccess = DeviceUtil.setFlymeStatusBarDarkIcon(this, isDarkMode());
+            if (isSuccess) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void updateStatusBarHeightV19() {
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT && !PhoneUtil.isFullScreen(this)) {
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-                return;
-            }
+            boolean needShowStatusBar = needShowStatusBar();
             ViewGroup mStatusBarBox = (ViewGroup) findViewById(R.id.status_bar_box);
             if (mStatusBarBox != null) {
                 ViewGroup.LayoutParams lp = mStatusBarBox.getLayoutParams();
@@ -86,7 +105,11 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
                 if (getStatusBarColor() > 0) {
                     mStatusBarBox.setBackgroundResource(getStatusBarColor());
                 } else {
-                    mStatusBarBox.setBackgroundResource(R.color.black_30_alpha);
+                    if (needShowStatusBar) {
+                        mStatusBarBox.setBackgroundResource(R.color.colorPrimaryDark);
+                    } else {
+                        mStatusBarBox.setBackgroundResource(R.color.status_bar_color);
+                    }
                 }
             }
 
@@ -116,6 +139,7 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
     private void updateStatusBarHeightV21() {
         boolean isWindowTranslucentStatus = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && !PhoneUtil.isFullScreen(this) && isWindowTranslucentStatus) {
+            boolean needShowStatusBar = needShowStatusBar();
             ViewGroup mStatusBarBox = (ViewGroup) findViewById(R.id.status_bar_box);
             if (mStatusBarBox != null) {
                 ViewGroup.LayoutParams lp = mStatusBarBox.getLayoutParams();
@@ -124,7 +148,11 @@ public abstract class AbsActivity extends AppCompatActivity implements IStatusBa
                 if (getStatusBarColor() > 0) {
                     mStatusBarBox.setBackgroundResource(getStatusBarColor());
                 } else {
-                    mStatusBarBox.setBackgroundResource(R.color.colorPrimaryDark);
+                    if (needShowStatusBar) {
+                        mStatusBarBox.setBackgroundResource(R.color.colorPrimaryDark);
+                    } else {
+                        mStatusBarBox.setBackgroundResource(R.color.status_bar_color);
+                    }
                 }
             }
 

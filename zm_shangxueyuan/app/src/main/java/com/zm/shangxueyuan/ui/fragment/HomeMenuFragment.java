@@ -21,6 +21,7 @@ import com.zm.shangxueyuan.ui.provider.BusProvider;
 import com.zm.shangxueyuan.ui.provider.event.MenuClickedEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuControlEvent;
 import com.zm.shangxueyuan.ui.provider.event.MenuNavInitedEvent;
+import com.zm.utils.DeviceUtil;
 import com.zm.utils.PhoneUtil;
 
 import java.util.List;
@@ -56,16 +57,29 @@ public class HomeMenuFragment extends BaseFragment {
         return view;
     }
 
+    private boolean needShowStatusBar() {
+        if (DeviceUtil.isMiui(getContext()) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {//MIUI V6
+            boolean isSuccess = DeviceUtil.setMIUIStatusBarDarkMode(getActivity(), true);
+            if (isSuccess) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void updateStatusBarHeightV19(View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-                return;
-            }
+            boolean needShowStatusBar = needShowStatusBar();
             View space = view.findViewById(R.id.notification_space);
             if (space != null) {
                 ViewGroup.LayoutParams lp = space.getLayoutParams();
                 lp.height = PhoneUtil.getStatusBarHeight(getApplicationContext());
                 space.requestLayout();
+                if (needShowStatusBar) {
+                    space.setBackgroundResource(R.color.menu_bg);
+                } else {
+                    space.setBackgroundResource(R.color.menu_bg);
+                }
             }
         }
     }

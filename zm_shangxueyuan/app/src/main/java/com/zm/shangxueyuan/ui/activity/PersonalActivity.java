@@ -156,4 +156,9 @@ public class PersonalActivity extends AbsActionBarActivity {
     public int getStatusBarColor() {
         return R.color.colorPrimary;
     }
+
+    @Override
+    protected boolean isDarkMode() {
+        return true;
+    }
 }

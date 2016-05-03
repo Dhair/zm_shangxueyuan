@@ -5,6 +5,8 @@
     <color name="colorAccent">#C30D23</color>
     <color name="colorPrimary_splash">#C30D23</color>
 
+    <color name="status_bar_color">#EFEFF0</color>
+
     <color name="gray">#66000000</color>
     <color name="gray_3C">#3CCCCCCC</color>
     <color name="gray_7F">#7F000000</color>
