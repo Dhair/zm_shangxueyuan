@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.zm.shangxueyuan.ui.widget.SlidingMenuGalleryViewPager
+            <com.jmtop.edu.ui.widget.SlidingMenuGalleryViewPager
                 android:id="@+id/header_view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>

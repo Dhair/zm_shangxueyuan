@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="com.zm.shangxueyuan"
+    package="com.jmtop.edu"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -13,24 +13,24 @@
         android:xlargeScreens="true"/>
 
     <permission
-        android:name="com.zm.shangxueyuan.permission.ACCESS_DOWNLOAD_MANAGER"
+        android:name="com.jmtop.edu.permission.ACCESS_DOWNLOAD_MANAGER"
         android:description="@string/sdk_download_permdesc_downloadManager"
         android:label="@string/sdk_download_permlab_downloadManager"
         android:protectionLevel="normal"/>
     <permission
-        android:name="com.zm.shangxueyuan.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED"
+        android:name="com.jmtop.edu.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED"
         android:description="@string/sdk_download_permdesc_downloadManagerAdvanced"
         android:label="@string/sdk_download_permlab_downloadManagerAdvanced"
         android:protectionLevel="normal"/>
     <permission
-        android:name="com.zm.shangxueyuan.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"
+        android:name="com.jmtop.edu.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"
         android:description="@string/sdk_download_permdesc_downloadCompletedIntent"
         android:label="@string/sdk_download_permlab_downloadCompletedIntent"
         android:protectionLevel="normal"/>
 
-    <uses-permission android:name="com.zm.shangxueyuan.permission.ACCESS_DOWNLOAD_MANAGER"/>
-    <uses-permission android:name="com.zm.shangxueyuan.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED"/>
-    <uses-permission android:name="com.zm.shangxueyuan.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"/>
+    <uses-permission android:name="com.jmtop.edu.permission.ACCESS_DOWNLOAD_MANAGER"/>
+    <uses-permission android:name="com.jmtop.edu.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED"/>
+    <uses-permission android:name="com.jmtop.edu.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"/>
 
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="android.permission.READ_LOGS"/>
@@ -169,7 +169,7 @@
         </activity>
 
         <service
-            android:name="com.zm.shangxueyuan.service.DownloadListenService"
+            android:name="com.jmtop.edu.service.DownloadListenService"
             android:enabled="true"/>
 
         <activity
@@ -184,7 +184,7 @@
             android:value="${UMENG_CHANNEL_VALUE}"/>
         <meta-data
             android:name="AA_DB_NAME"
-            android:value="zm_shangxueyuan.db"/>
+            android:value="jmtop_edu.db"/>
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1"/>

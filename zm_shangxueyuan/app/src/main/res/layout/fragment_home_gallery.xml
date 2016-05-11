@@ -6,7 +6,7 @@
     android:background="@color/bg"
     android:layout_height="match_parent">
 
-    <com.zm.shangxueyuan.ui.widget.CustomExpandableListView
+    <com.jmtop.edu.ui.widget.CustomExpandableListView
         android:id="@+id/list_view"
         style="@style/CustomListView"
         android:layout_width="match_parent"

@@ -21,7 +21,7 @@
             android:paddingRight="10dp"
             android:src="@drawable/icon_list"/>
 
-        <com.zm.shangxueyuan.ui.widget.SlidingMenuTabLayout
+        <com.jmtop.edu.ui.widget.SlidingMenuTabLayout
             android:id="@+id/tab_layout"
             style="@style/CustomTabLayout"
             android:layout_width="0dp"
@@ -37,7 +37,7 @@
         android:layout_below="@+id/action_bar_tab_box"
         android:background="@color/black_30_alpha"/>
 
-    <com.zm.shangxueyuan.ui.widget.SlidingMenuViewPager
+    <com.jmtop.edu.ui.widget.SlidingMenuViewPager
         android:id="@+id/video_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

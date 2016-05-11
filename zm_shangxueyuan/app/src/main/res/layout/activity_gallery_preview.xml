@@ -8,7 +8,7 @@
 
     <include layout="@layout/activity_header"/>
 
-    <com.zm.shangxueyuan.ui.widget.HackyViewPager
+    <com.jmtop.edu.ui.widget.HackyViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

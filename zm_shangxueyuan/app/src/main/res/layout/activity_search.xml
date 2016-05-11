@@ -140,7 +140,7 @@
             android:layout_below="@+id/tips_title_box"
             android:layout_marginTop="15dp">
 
-            <com.zm.shangxueyuan.ui.widget.CustomListView
+            <com.jmtop.edu.ui.widget.CustomListView
                 android:id="@+id/list_view"
                 style="@style/CustomListView"
                 android:layout_width="match_parent"

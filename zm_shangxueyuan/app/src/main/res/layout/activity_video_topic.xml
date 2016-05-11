@@ -8,7 +8,7 @@
 
     <include layout="@layout/activity_header"/>
 
-    <com.zm.shangxueyuan.ui.widget.CustomListView
+    <com.jmtop.edu.ui.widget.CustomListView
         android:id="@+id/list_view"
         style="@style/CustomListView"
         android:layout_width="match_parent"

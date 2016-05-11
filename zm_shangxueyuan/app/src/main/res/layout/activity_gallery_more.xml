@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/activity_header_height">
 
-        <com.zm.shangxueyuan.ui.widget.CustomListView
+        <com.jmtop.edu.ui.widget.CustomListView
             android:id="@+id/list_view"
             style="@style/CustomListView"
             android:layout_width="match_parent"
