@@ -311,7 +311,7 @@ public class VideoDetailActivity extends AbsActionBarActivity {
         String videoUrl = StorageHelper.getVideoURL(mVideoModel.getTitleUpload(), getPlayType());
         oks.setTitleUrl(videoUrl);
         oks.setImagePath(ImageLoader.getInstance().getDiscCache().get(StorageHelper.getImageUrl(mVideoModel.getImage())).getAbsolutePath());
-        String shareText = String.format(getString(R.string.share_url), mVideoModel.getTitle(), videoUrl);
+        String shareText = String.format(getString(R.string.share_url), mVideoModel.getTitle());
         oks.setText(shareText);
         oks.setUrl(videoUrl);
         oks.setComment("");

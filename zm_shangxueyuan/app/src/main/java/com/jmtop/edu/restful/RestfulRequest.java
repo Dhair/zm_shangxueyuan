@@ -30,6 +30,10 @@ public interface RestfulRequest {
     void queryGalleryTopics(@Path("id") long topicId, @Field("tmp") String tmp, Callback<JSONObject> callback);
 
     @FormUrlEncoded
+    @POST("/gallery/topic/{id}/topics/")
+    void queryGallerySubTopics(@Path("id") long topicId, @Field("tmp") String tmp, Callback<JSONObject> callback);
+
+    @FormUrlEncoded
     @POST("/gallery/search/")
     void search(@Field("keyword") String keyword, Callback<JSONObject> callback);
 

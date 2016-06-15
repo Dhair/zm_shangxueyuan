@@ -89,8 +89,8 @@
     <string name="search_keyword">大家都在搜</string>
     <string name="search">搜索</string>
 
-    <string name="share_url" formatted="false">我正在使用中脉商学院App播放视频—\"%s\",视频地址:%s。</string>
-    <string name="share_url_picture" formatted="false">我正在使用中脉商学院查看图片—\"%s\",图片地址:%s。</string>
+    <string name="share_url" formatted="false">我正在使用中脉商学院APP播放视频—%s,APP下载地址:http://a.app.qq.com/o/simple.jsp?pkgname=com.jmtop.edu</string>
+    <string name="share_url_picture" formatted="false">我正在使用中脉商学院APP查看图片—\"%s\",APP下载地址:http://a.app.qq.com/o/simple.jsp?pkgname=com.jmtop.edu</string>
     <string name="download_fail">视频下载失败，请稍后再试</string>
 
     <string name="tools_record_history">播放记录</string>

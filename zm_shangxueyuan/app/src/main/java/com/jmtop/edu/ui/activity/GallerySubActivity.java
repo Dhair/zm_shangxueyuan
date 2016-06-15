@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.jmtop.edu.R;
-import com.jmtop.edu.model.GalleryCategoryModel;
 import com.jmtop.edu.model.GalleryTopicModel;
 import com.jmtop.edu.restful.ReqRestAdapter;
 import com.jmtop.edu.restful.RestfulRequest;
@@ -30,10 +29,10 @@ import retrofit.client.Response;
  * Creator: dengshengjin on 16/4/21 22:34
  * Email: deng.shengjin@zuimeia.com
  * <p/>
- * 具体某分类下下的图片信息
+ * 分类下的子分类
  */
-public class GalleryActivity extends AbsLoadingEmptyActivity {
-    private GalleryCategoryModel mModel;
+public class GallerySubActivity extends AbsLoadingEmptyActivity {
+    private GalleryTopicModel mModel;
     private static final String MODEL = "model";
     private ListView mListView;
     private Executor mExecutor = Executors.newCachedThreadPool();
@@ -41,9 +40,9 @@ public class GalleryActivity extends AbsLoadingEmptyActivity {
     private GalleryAdapter mAdapter;
     private RestfulRequest mRequest;
 
-    public static Intent getIntent(Context context, GalleryCategoryModel galleryCategoryModel) {
-        Intent intent = new Intent(context, GalleryActivity.class);
-        intent.putExtra(MODEL, galleryCategoryModel);
+    public static Intent getIntent(Context context, GalleryTopicModel galleryTopicModel) {
+        Intent intent = new Intent(context, GallerySubActivity.class);
+        intent.putExtra(MODEL, galleryTopicModel);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
@@ -54,7 +53,7 @@ public class GalleryActivity extends AbsLoadingEmptyActivity {
         mAdapter = new GalleryAdapter(getApplicationContext());
         Object object = getIntent().getSerializableExtra(MODEL);
         if (object != null) {
-            mModel = (GalleryCategoryModel) object;
+            mModel = (GalleryTopicModel) object;
         }
     }
 
@@ -83,7 +82,7 @@ public class GalleryActivity extends AbsLoadingEmptyActivity {
 
     private void onLoadData() {
         showLoading();
-        mRequest.queryGalleryTopics(mModel.getCategoryId(), "", new Callback<JSONObject>() {
+        mRequest.queryGallerySubTopics(mModel.getTopicId(), "", new Callback<JSONObject>() {
             @Override
             public void success(final JSONObject jsonObject, Response response) {
                 mExecutor.execute(new Runnable() {
