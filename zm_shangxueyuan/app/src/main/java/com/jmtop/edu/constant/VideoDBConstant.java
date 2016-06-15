@@ -39,6 +39,7 @@ public interface VideoDBConstant {
     String GALLERY_TOPIC_TITLE = "title";
     String GALLERY_TOPIC_TOP = "top";
     String GALLERY_TOPIC_CATEGORY = "categoryId";
+    String HAS_TOP_TOPIC = "hasTopTopic";
     //Gallery Category
     String T_CATEGORY = "t_gallery_category";
     String GALLERY_CATEGORY_IMAGE = "image";

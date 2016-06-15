@@ -192,7 +192,7 @@
             android:value="jmtop_edu.db"/>
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="1"/>
+            android:value="2"/>
 
         <meta-data
             android:name="UMENG_MESSAGE_SECRET"

@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
-import com.viewpagerindicator.CirclePageIndicator;
 import com.jmtop.edu.R;
 import com.jmtop.edu.db.GalleryDBUtil;
 import com.jmtop.edu.db.SettingDBUtil;
@@ -21,9 +20,11 @@ import com.jmtop.edu.model.GalleryCategoryModel;
 import com.jmtop.edu.model.GalleryTopicModel;
 import com.jmtop.edu.ui.activity.GalleryActivity;
 import com.jmtop.edu.ui.activity.GalleryListActivity;
+import com.jmtop.edu.ui.activity.GallerySubActivity;
 import com.jmtop.edu.ui.adapter.GalleryExpandableAdapter;
 import com.jmtop.edu.ui.listener.OnItemClickListener;
 import com.jmtop.edu.ui.widget.SlidingMenuGalleryViewPager;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -71,7 +72,11 @@ public class HomeGalleryFragment extends AbsLoadingEmptyFragment {
         mGalleryAdapter.setGalleryTopicModelOnItemClickListener(new OnItemClickListener<GalleryTopicModel>() {
             @Override
             public void onItemClick(View v, GalleryTopicModel galleryTopicModel, int position) {
-                getActivity().startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                if (galleryTopicModel.isHasSubTopic()) {
+                    getActivity().startActivity(GallerySubActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                } else {
+                    getActivity().startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                }
             }
         });
         mExecutor.execute(new Runnable() {

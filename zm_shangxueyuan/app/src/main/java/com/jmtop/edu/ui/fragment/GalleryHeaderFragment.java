@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.jmtop.edu.ui.activity.GallerySubActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.jmtop.edu.R;
@@ -54,7 +55,11 @@ public class GalleryHeaderFragment extends BaseFragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(GalleryListActivity.getIntent(getApplicationContext(), mGalleryTopicModel));
+                if (mGalleryTopicModel.isHasSubTopic()) {
+                    startActivity(GallerySubActivity.getIntent(getApplicationContext(), mGalleryTopicModel));
+                } else {
+                    startActivity(GalleryListActivity.getIntent(getApplicationContext(), mGalleryTopicModel));
+                }
             }
         });
         return view;

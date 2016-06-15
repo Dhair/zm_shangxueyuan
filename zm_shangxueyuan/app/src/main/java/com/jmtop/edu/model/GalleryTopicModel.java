@@ -45,14 +45,15 @@ public class GalleryTopicModel extends Model implements Serializable {
     @Column(name = VideoDBConstant.GALLERY_TOPIC_CATEGORY)
     private long categoryId;
 
-    private boolean hasSubTopic;
+    @Column(name = VideoDBConstant.HAS_TOP_TOPIC)
+    private int hasSubTopic;
 
     public boolean isHasSubTopic() {
-        return hasSubTopic;
+        return hasSubTopic == 1;
     }
 
     public void setHasSubTopic(boolean hasSubTopic) {
-        this.hasSubTopic = hasSubTopic;
+        this.hasSubTopic = (hasSubTopic ? 1 : 0);
     }
 
     public long getCategoryId() {
@@ -135,6 +136,7 @@ public class GalleryTopicModel extends Model implements Serializable {
                         topicModel.setTopicId(topicObj.optLong("id"));
                         topicModel.setTitle(topicObj.optString("title"));
                         topicModel.setCategoryId(categoryObj.optLong("id"));
+                        topicModel.setHasSubTopic(categoryObj.optBoolean("has_sub_topic"));
                         topicModel.setIsTop(false);
                         list.add(topicModel);
                     }
@@ -161,6 +163,7 @@ public class GalleryTopicModel extends Model implements Serializable {
                 topicModel.setSubTitle(topTopicObj.optString("sub_title"));
                 topicModel.setTopicId(topTopicObj.optLong("id"));
                 topicModel.setTitle(topTopicObj.optString("title"));
+                topicModel.setHasSubTopic(topTopicObj.optBoolean("has_sub_topic"));
                 topicModel.setIsTop(true);
                 topicModel.setCategoryId(0l);
 

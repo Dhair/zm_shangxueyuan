@@ -1,0 +1,1 @@
+ALTER TABLE t_gallery_topic ADD COLUMN hasTopTopic INTEGER;

@@ -187,7 +187,11 @@ public class SearchActivity extends AbsLoadingEmptyActivity {
         mGalleryAdapter.setOnItemClickListener(new OnItemClickListener<GalleryTopicModel>() {
             @Override
             public void onItemClick(View v, GalleryTopicModel galleryTopicModel, int position) {
-                startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                if (galleryTopicModel.isHasSubTopic()) {
+                    startActivity(GallerySubActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                } else {
+                    startActivity(GalleryListActivity.getIntent(getApplicationContext(), galleryTopicModel));
+                }
             }
 
         });
